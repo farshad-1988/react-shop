@@ -156,21 +156,37 @@ export const updateCartInfo =async (cart , user)=>{
 
 export const getCategoriesNameFromDB = async()=>{
   const localCat = JSON.parse(localStorage.getItem("categories"))
-  if(localCat?.timeSet + 360000 > new Date().getTime())return localCat
+  if(localCat && localCat?.timeSet + 360000 > new Date().getTime())return localCat.categories
 
 
   const docRef = doc(db , "ADDITIONAL_INFO" , "CATEGORIES")
   const categoriesSnapshot = await getDoc(docRef)
   const categories = categoriesSnapshot.data()
   localStorage.setItem("categories",JSON.stringify({...categories , timeSet:new Date().getTime()}))
-  return categories
+  return categories?.categories || []
 } 
 
+export const searchFirestore =async(categories,text)=>{
+  const allItems = await categories.map(async (category)=>{
+    try {
+      const colRef = collection(db , "SHOP_ITEMS" , category , category)
+      //you should make an array from words and use in for that array, also make all text in lowercase for simplicity
+      const q = query(colRef, where("category" ,"in", text[0].toUpperCase() +text.slice(1)))
+      const itemsSnapshot = await getDocs(q)
+      return itemsSnapshot.docs.map((item)=>{
+        return item.data()
+      })
+    } catch (error) {
+      console.log(error.code , error.message)
+    }
+  })
+  return await Promise.all(allItems)
+} 
 
 // collection should odd number in path
-export const getThreeOfEachCat = async ({categories})=>{
+export const getThreeOfEachCat = async (categories)=>{
 
-  const allItems = await categories.map(async (category)=>{
+  const allItems = await categories?.map(async (category)=>{
     try {
       const colRef = collection(db , "SHOP_ITEMS" , category , category)
       const q = query(colRef, limit(3))

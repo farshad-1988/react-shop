@@ -1,4 +1,4 @@
-import react, { useContext } from "react";
+import react, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,16 +8,17 @@ import {
   faMicrophone,
 } from "@fortawesome/free-solid-svg-icons";
 import "./navbar.css";
-import { signOutUser } from "../firebase.config";
+import { getCategoriesNameFromDB, searchFirestore, signOutUser } from "../firebase.config";
 import { UserContext } from "../context/UserContext";
 import { CartContext } from "../context/CartContext";
+import { ShopContext } from "../context/ShopContext";
 
 const Navbar = () => {
   // const { totalItemSelected, userInfo,dispatch} = useContext(ShopContext)
-  const navigate = useNavigate()
-  const {totalCountAndPrice} = useContext(CartContext)
   const {currentUser} = useContext(UserContext)
-  const {setCartItems ,setTotalCountAndPrice} = useContext(CartContext)
+  // const {setHomePageItems , categoriesTitle} = useContext(ShopContext)
+  const {setCartItems ,setTotalCountAndPrice , totalCountAndPrice} = useContext(CartContext)
+  const [searchText,setSearchText]= useState("")
  
 
   const logOut =async ()=>{
@@ -26,32 +27,42 @@ const Navbar = () => {
     setTotalCountAndPrice({price:0,count:0})
   }
   
+  
+  const setInputValue = (e)=>setSearchText(e.target.value)
 
+  const searchDb = async(e)=>{
+    e.preventDefault()
+    const categories = await getCategoriesNameFromDB()
+    console.log(searchText)
+    const allItems =  await searchFirestore(categories,searchText)
+    console.log(allItems)
+  }
 
   return (
     <react.Fragment>
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div className="container-fluid">
-          <button className="navbar-brand">
             <Link to={"/"} className="navbar-brand">
               Brand
             </Link>
-          </button>
+
 
           <div className="col-4 m-auto">
-            <div class="input-group">
-              <button className="input-group-text">
+            <form class="input-group">
+              <button type="submit" onClick={(e)=>searchDb(e)} className="input-group-text">
                 <FontAwesomeIcon icon={faMagnifyingGlass} />
               </button>
               <input
+                onChange={setInputValue}
                 type="text"
                 className="form-control"
                 placeholder="Search anything..."
+                value={searchText}
               />
-              <button className="input-group-text">
+              <button type="button" className="input-group-text">
                 <FontAwesomeIcon icon={faMicrophone} />
               </button>
-            </div>
+            </form>
           </div>
 
             {currentUser ? <div><span>{currentUser.displayName}</span> <button onClick={logOut}>signout</button></div> : 
