@@ -1,0 +1,222 @@
+[
+    {
+        "id":1 ,
+        "name":"asus",
+        "price":1000,
+        "category":"computer",
+        "subCategory":"gaming",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/computers/21313.jpg"],
+        "numInStock":[{"color":"black" , "count":25}, {"color":"red" , "count":20}],
+        "specification":{"material":"steal" , "memory":"1 Tb" , "ram":"16 Mb"},
+        "guarantee":"2 years"
+    },
+    {
+        "id":2 ,
+        "name":"lenovo",
+        "price":700,
+        "category":"computer",
+        "subCategory":"engineering",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/computers/computer-pictures.jpg"],
+        "numInStock":[{"color":"black" , "count":25}],
+        "specification":{"material":"steal" , "memory":"1 Tb" , "ram":"16 Mb"},
+        "guarantee":"2 years"
+    },
+    {
+        "id":3 ,
+        "name":"dell",
+        "price":2000,
+        "category":"computer",
+        "subCategory":"gaming",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/computers/contemporary-desktop-computer-isolated-image-blank-monitor-31813180.jpg"],
+        "numInStock":[{"color":"black" , "count":25}],
+        "specification":{"material":"steal" , "memory":"2 Tb" , "ram":"16 Mb"},
+        "guarantee":"2 years"
+    },
+    {
+        "id":4 ,
+        "name":"MSI",
+        "price":1000,
+        "category":"computer",
+        "subCategory":"gaming",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/computers/download.jpg" , "gs://shop2-8814c.appspot.com/computers/gsavdhsa.jpg"],
+        "numInStock":[{"color":"gray"}],
+        "specification":{"material":"steal" , "memory":"1 Tb" , "ram":"16 Mb"},
+        "guarantee":"2 years"
+    },
+    {
+        "id":5 ,
+        "name":"hp",
+        "price":500,
+        "category":"computer",
+        "subCategory":"programming",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/computers/photo-1587831990711-23ca6441447b.jpg" , "gs://shop2-8814c.appspot.com/computers/photo-1619597455322-4fbbd820250a.jpg"],
+        "numInStock":[{"color":"black" , "count":25}],
+        "specification":{"material":"steal" , "memory":"1 Tb" , "ram":"16 Mb"},
+        "guarantee":"2 years"
+    },
+    {
+        "id":6 ,
+        "name":"shirt1",
+        "price":100,
+        "category":"shirt",
+        "subCategory":"short-sleeves",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/shirts/shirt1.jpg"],
+        "numInStock":[{"color":"white" , "count":100,"size":"free"},{"color":"white" , "count":100,"size":"large"} , {"color":"gray" , "count":200 , "size":"medium"}],
+        "specification":{"material":"wool" , "kind":"short-sleeves" , "usage":"sport"},
+        "guarantee":"7 days"
+    },
+    {
+        "id":7 ,
+        "name":"shirt7",
+        "price":100,
+        "category":"shirt",
+        "subCategory":"long-sleeves",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/shirts/shirt2.jpg"],
+        "numInStock":[{"color":"white" , "count":100,"size":"free"},{"color":"white" , "count":100,"size":"large"} , {"color":"gray" , "count":200 , "size":"medium"}],
+        "specification":{"material":"wool" , "kind":"short-sleeves" , "usage":"sport"},
+        "guarantee":"7 days"
+    },
+    {
+        "id":8 ,
+        "name":"shirt8",
+        "price":100,
+        "category":"shirt",
+        "subCategory":"short-sleeves",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/shirts/shirt3.jpg"],
+        "numInStock":[{"color":"white" , "count":100,"size":"free"},{"color":"white" , "count":100,"size":"large"} , {"color":"gray" , "count":200 , "size":"medium"}],
+        "specification":{"material":"wool" , "kind":"short-sleeves" , "usage":"sport"},
+        "guarantee":"7 days"
+    },
+    {
+        "id":9 ,
+        "name":"shirt9",
+        "price":100,
+        "category":"shirt",
+        "subCategory":"short-sleeves",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/shirts/shirt5.jpg" , "gs://shop2-8814c.appspot.com/shirts/shirt6.jpg"],
+        "numInStock":[{"color":"white" , "count":250,"size":"free"},{"color":"white" , "count":100,"size":"large"} , {"color":"gray" , "count":200 , "size":"medium"}],
+        "specification":{"material":"wool" , "kind":"short-sleeves" , "usage":"sport"},
+        "guarantee":"7 days"
+    },
+    {
+        "id":10 ,
+        "name":"shirt10",
+        "price":100,
+        "category":"shirt",
+        "subCategory":"short-sleeves",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/shirts/shirt4.jpg"],
+        "numInStock":[{"color":"white" , "count":100,"size":"free"},{"color":"white" , "count":100,"size":"large"} , {"color":"gray" , "count":200 , "size":"medium"}],
+        "specification":{"material":"wool" , "kind":"short-sleeves" , "usage":"sport"},
+        "guarantee":"7 days"
+    },
+    {
+        "id":11 ,
+        "name":"shoes11",
+        "price":200,
+        "category":"shoes",
+        "subCategory":"sport",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/shoes/shoes1.jpg"],
+        "numInStock":[{"color":"white" , "count":100,"size":42},{"color":"white" , "count":100,"size":44} , {"color":"gray" , "count":50 , "size":43}],
+        "specification":{"material":"poliurtan" , "kind":"sport" , "usage":"sport"},
+        "guarantee":"7 days"
+    },
+    {
+        "id":12 ,
+        "name":"shoes12",
+        "price":200,
+        "category":"shoes",
+        "subCategory":"sport",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/shoes/shoes2.jpg"],
+        "numInStock":[{"color":"white" , "count":100,"size":42},{"color":"white" , "count":100,"size":44} , {"color":"gray" , "count":50 , "size":43}],
+        "specification":{"material":"poliurtan" , "kind":"sport" , "usage":"sport"},
+        "guarantee":"7 days"
+    },
+    {
+        "id":13 ,
+        "name":"shoes13",
+        "price":200,
+        "category":"shoes",
+        "subCategory":"sport",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/shoes/shoes3.jpg"],
+        "numInStock":[{"color":"white" , "count":100,"size":42},{"color":"white" , "count":100,"size":44} , {"color":"gray" , "count":50 , "size":43}],
+        "specification":{"material":"poliurtan" , "kind":"sport" , "usage":"sport"},
+        "guarantee":"7 days"
+    },
+    {
+        "id":14 ,
+        "name":"shoes14",
+        "price":50,
+        "category":"shoes",
+        "subCategory":"sport",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/shoes/shoes4.jpg" , "gs://shop2-8814c.appspot.com/shoes/shoes5.jpg" , "gs://shop2-8814c.appspot.com/shoes/shoes6.jpg"],
+        "numInStock":[{"color":"white" , "count":100,"size":42},{"color":"white" , "count":100,"size":44} , {"color":"gray" , "count":50 , "size":43}],
+        "specification":{"material":"poliurtan" , "kind":"sport" , "usage":"sport"},
+        "guarantee":"7 days"
+    },
+    {
+        "id":15 ,
+        "name":"shoes15",
+        "price":200,
+        "category":"shoes",
+        "subCategory":"sport",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/shoes/shoes7.jpg"],
+        "numInStock":[{"color":"white" , "count":100,"size":42},{"color":"white" , "count":100,"size":44} , {"color":"gray" , "count":50 , "size":43}],
+        "specification":{"material":"poliurtan" , "kind":"sport" , "usage":"sport"},
+        "guarantee":"7 days"
+    },
+    {
+        "id":16 ,
+        "name":"phone16",
+        "price":1000,
+        "category":"phone",
+        "subCategory":"apple",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/phones/iPhone-SE-2022-Starlight-Back-in-Hand.jpg"],
+        "numInStock":[{"color":"white" , "count":100},{"color":"white" , "count":100} , {"color":"gray" , "count":50 }],
+        "specification":{"material":"titanium , aluminium" , "kind":"daily"},
+        "guarantee":"2 years"
+    },
+    {
+        "id":17 ,
+        "name":"phone17",
+        "price":1000,
+        "category":"phone",
+        "subCategory":"samsung",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/phones/123.jpg"],
+        "numInStock":[{"color":"white" , "count":100},{"color":"white" , "count":100} , {"color":"gray" , "count":50 }],
+        "specification":{"material":"titanium , aluminium" , "kind":"daily"},
+        "guarantee":"2 years"
+    },
+    {
+        "id":18 ,
+        "name":"phone18",
+        "price":1000,
+        "category":"phone",
+        "subCategory":"xiaomi",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/phones/pms_1680030998.0464825!380x380.jpg"],
+        "numInStock":[{"color":"white" , "count":100},{"color":"white" , "count":100} , {"color":"gray" , "count":50 }],
+        "specification":{"material":"titanium , aluminium" , "kind":"daily"},
+        "guarantee":"2 years"
+    },
+    {
+        "id":19 ,
+        "name":"phone19",
+        "price":1000,
+        "category":"phone",
+        "subCategory":"nothing phone",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/phones/images.jpg"],
+        "numInStock":[{"color":"white" , "count":100},{"color":"white" , "count":100} , {"color":"gray" , "count":50 }],
+        "specification":{"material":"titanium , aluminium" , "kind":"daily"},
+        "guarantee":"2 years"
+    },
+    {
+        "id":20 ,
+        "name":"iphone 15 pro max",
+        "price":1000,
+        "category":"phone",
+        "subCategory":"apple",
+        "imagesUrl":["gs://shop2-8814c.appspot.com/phones/download.jpg"],
+        "numInStock":[{"color":"white" , "count":100},{"color":"white" , "count":100} , {"color":"gray" , "count":50 }],
+        "specification":{"material":"titanium , aluminium" , "kind":"daily"},
+        "guarantee":"2 years"
+    }
+]
