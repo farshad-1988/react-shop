@@ -16,9 +16,11 @@ import { ShopContext } from "../context/ShopContext";
 const Navbar = () => {
   // const { totalItemSelected, userInfo,dispatch} = useContext(ShopContext)
   const {currentUser} = useContext(UserContext)
-  // const {setHomePageItems , categoriesTitle} = useContext(ShopContext)
+  const { setFoundedItemsToShow} = useContext(ShopContext)
   const {setCartItems ,setTotalCountAndPrice , totalCountAndPrice} = useContext(CartContext)
   const [searchText,setSearchText]= useState("")
+
+  const navigate = useNavigate()
  
 
   const logOut =async ()=>{
@@ -34,8 +36,9 @@ const Navbar = () => {
     e.preventDefault()
     const categories = await getCategoriesNameFromDB()
     console.log(searchText)
-    const allItems =  await searchFirestore(categories,searchText)
-    console.log(allItems)
+    const allFoundedItems =  await searchFirestore(categories,searchText)
+    setFoundedItemsToShow(allFoundedItems)
+    navigate("/searchedItems")
   }
 
   return (

@@ -15,7 +15,7 @@ const ThreeItemsInOne = (props)=>{
     <div className="col-3" onClick={goToCategory}>
         <div className="col-3">
             {threeItems.map((item , index)=>{
-                return <img key={index} src={item.imageUrl} alt=""  className="rounded-circle" width="100" height="100"/>   
+                return <img key={index} src={item.imagesUrl[0]} alt=""  className="rounded-circle" width="100" height="100"/>   
             })}
         </div>
         <h2>{threeItems[0].category}</h2>

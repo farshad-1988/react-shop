@@ -4,6 +4,7 @@ import { getCategoriesNameFromDB, getThreeOfEachCat, setAllItemsOnFirestore } fr
 import { ShopContext } from "../context/ShopContext"
 import ThreeItemsInOne from "../components/ThreeItemsInOne"
 
+
 const Home = ()=>{
     const {homePageItems ,setHomePageItems} = useContext(ShopContext)
 
@@ -20,7 +21,7 @@ const Home = ()=>{
 
     //     const setItemOnDB = async(data)=>{
     //         await setAllItemsOnFirestore(data)
-    //         // console.log(categories.categories)
+    //         console.log("done")
     //         // await getThreeOfEachCat(categories)
     //     }
     //     setItemOnDB(data) 

@@ -1,8 +1,8 @@
 
 import { initializeApp } from "firebase/app";
-import { Timestamp, collection, collectionGroup, doc, getDoc, getDocs, getFirestore, limit, query, serverTimestamp, setDoc, updateDoc, where, writeBatch } from "firebase/firestore";
+import { Timestamp, collection, collectionGroup, doc, getDoc, getDocs, getFirestore, limit, or, query, serverTimestamp, setDoc, updateDoc, where, writeBatch } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword , createUserWithEmailAndPassword, onAuthStateChanged,signOut, updateProfile} from "firebase/auth";
-
+import { v4 as uuidv4 } from "uuid"
 const firebaseConfig = {
   apiKey: "AIzaSyBPJBEm5z9LMK2O4B4RcDE4DN31zGVeEuc",
   authDomain: "shop2-8814c.firebaseapp.com",
@@ -124,7 +124,18 @@ export const setAllItemsOnFirestore = async(data)=>{
     data.forEach((object) => {
       object.items?.forEach((obj, index)=>{
         const docRef = doc(colRef, object.title.toLocaleUpperCase() ,object.title.toLocaleUpperCase(), `item${index+1}`);
-        batch.set(docRef, {...obj , category:object.title , subCategory:object.title});
+        const imagesUrl = []
+        for(let i=0 ;i<3;i++){
+          imagesUrl.push(obj.imageUrl)
+        }
+
+        batch.set(docRef, {price:obj.price,
+          id:uuidv4(),
+          imagesUrl,
+          name:obj.name.toLocaleLowerCase() , 
+          splittedName:obj.name.toLocaleLowerCase().split(" ") , 
+          category:object.title.toLocaleLowerCase() , 
+          subCategory:object.title.toLocaleLowerCase()});
       })
   })
   await batch.commit()
@@ -169,9 +180,10 @@ export const getCategoriesNameFromDB = async()=>{
 export const searchFirestore =async(categories,text)=>{
   const allItems = await categories.map(async (category)=>{
     try {
+      console.log(text)
       const colRef = collection(db , "SHOP_ITEMS" , category , category)
       //you should make an array from words and use in for that array, also make all text in lowercase for simplicity
-      const q = query(colRef, where("category" ,"in", text[0].toUpperCase() +text.slice(1)))
+      const q = query(colRef, or(where("splittedName" ,"array-contains", text),where("category" ,"==", text)))
       const itemsSnapshot = await getDocs(q)
       return itemsSnapshot.docs.map((item)=>{
         return item.data()

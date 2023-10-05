@@ -7,7 +7,7 @@ import { syncLocalStorageDbAndContext } from "../firebase.config"
 
 
 const Item = (props)=>{
-    const {imageUrl , price , id } = {...props.itemInfo}
+    const {imagesUrl , price , id } = {...props.itemInfo}
     const {currentUser} = useContext(UserContext)
     const {cartItems , setCartItems , setChange } = useContext(CartContext)
     const [loading , setLoading] = useState(false)
@@ -62,7 +62,7 @@ const Item = (props)=>{
     // <div className="row">
         <div className="col-3 m-3 bg-secondary rounded-2">
             <div className="container mt-3">
-            <img className="w-100 img-thumbnail" src={imageUrl} alt="anotherPic" style={{ height:"200px"}}/>
+            <img className="w-100 img-thumbnail" src={imagesUrl[0]} alt="anotherPic" style={{ height:"200px"}}/>
             <div className="container d-flex">
                 <h2 className="ms-1">{price}$</h2>
                 {loading ? "loading" : !isItemOnCart ? <button onClick={addItem} className="btn ms-2">add to card</button> : 

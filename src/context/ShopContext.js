@@ -10,6 +10,7 @@ const ShopContextProvider = ({children})=>{
     const [categoriesTitle , setCategoriesTitle] = useState([])
     const [homePageItems , setHomePageItems] = useState([])
     const [singleCategoryToShow , setSingleCategoryToShow] = useState([])
+    const [foundedItemsToShow , setFoundedItemsToShow] = useState()
     
 
     useEffect(()=>{
@@ -22,7 +23,7 @@ const ShopContextProvider = ({children})=>{
     },[])
 
     return (
-    <ShopContext.Provider value={{ categoriesTitle, setHomePageItems , homePageItems , setSingleCategoryToShow , singleCategoryToShow}}>
+    <ShopContext.Provider value={{foundedItemsToShow , setFoundedItemsToShow ,  categoriesTitle, setHomePageItems , homePageItems , setSingleCategoryToShow , singleCategoryToShow}}>
         {children}
     </ShopContext.Provider>
     )

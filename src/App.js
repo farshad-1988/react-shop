@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar";
 import NavTips from "./components/NavTips";
 import CategoryPage from "./pages/CategoryPage";
 import Cart from "./pages/Cart";
+import ShowFoundItems from "./pages/ShowFoundItems";
 
 // import {QueryClientProvider , QueryClient} from "react-query"
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/category/:category" element={<CategoryPage/>}/>
           <Route path="/signup" element={<Signup/>}/>
           <Route path="/cart" element={<Cart/>}/>
+          <Route path="/searchedItems" element={<ShowFoundItems/>}/>
           <Route path="*" element={<NotFound/>}/>
         </Routes>
       </Router>
