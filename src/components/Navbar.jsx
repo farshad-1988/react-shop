@@ -14,10 +14,9 @@ import { CartContext } from "../context/CartContext";
 import { ShopContext } from "../context/ShopContext";
 
 const Navbar = () => {
-  // const { totalItemSelected, userInfo,dispatch} = useContext(ShopContext)
   const {currentUser} = useContext(UserContext)
   const { setFoundedItemsToShow} = useContext(ShopContext)
-  const {setCartItems ,setTotalCountAndPrice , totalCountAndPrice} = useContext(CartContext)
+  const {setCartItems , totalCountAndPrice , setChange} = useContext(CartContext)
   const [searchText,setSearchText]= useState("")
 
   const navigate = useNavigate()
@@ -26,7 +25,7 @@ const Navbar = () => {
   const logOut =async ()=>{
     await signOutUser()
     setCartItems([])
-    setTotalCountAndPrice({price:0,count:0})
+    setChange((prev)=>!prev)
   }
   
   
@@ -34,8 +33,8 @@ const Navbar = () => {
 
   const searchDb = async(e)=>{
     e.preventDefault()
+    navigate("/loading")
     const categories = await getCategoriesNameFromDB()
-    console.log(searchText)
     const allFoundedItems =  await searchFirestore(categories,searchText)
     setFoundedItemsToShow(allFoundedItems)
     navigate("/searchedItems")
@@ -80,7 +79,7 @@ const Navbar = () => {
                 <FontAwesomeIcon icon={faCartShopping} />
               </Link>
               <span className="badge rounded-pill bg-secondary numberOfItems">
-              {totalCountAndPrice?.count || 0}
+              {totalCountAndPrice?.totalCount || 0}
               </span>
             </div>
         </div>

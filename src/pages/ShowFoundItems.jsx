@@ -3,15 +3,10 @@ import { ShopContext } from "../context/ShopContext"
 import Item from "../components/Item"
 
 const ShowFoundItems = ()=>{
-    const {foundedItemsToShow } = useContext(ShopContext)
-
-    console.log(foundedItemsToShow)
-    
+    const {foundedItemsToShow } = useContext(ShopContext)    
 
 
     return (
-   
-        
         <div>
             {foundedItemsToShow?.map((category)=>{
                 if(category.length) {

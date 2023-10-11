@@ -1,5 +1,5 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useState } from "react"
-import { syncLocalStorageDbAndContext, updateCartInfo } from "../firebase.config"
+import { createContext, useContext, useEffect, useState } from "react"
+import { syncLocalStorageDbAndContext } from "../firebase.config"
 import { UserContext } from "./UserContext"
 
 
@@ -7,86 +7,48 @@ export const CartContext = createContext()
 
 
 
+
+
+
 const CartContextProvider = ({children})=>{
-    const [cartItems , setCartItems] = useState(JSON.parse(localStorage.getItem("cart"))||[])
-    // const [user , setUser] = useState()
-    const [totalCountAndPrice , setTotalCountAndPrice] = useState({count:0 , price:0})
+    const [cartItems , setCartItems] = useState(JSON.parse(localStorage.getItem("cart")) || [])
+    const [totalCountAndPrice , setTotalCountAndPrice] = useState({totalCount:0 , totalPrice:0})
     const {currentUser} = useContext(UserContext)
     const [change , setChange] = useState(true)
     const [newSignIn , setNewSignIn] = useState("refresh")
-//     const increment = async(cartItem , itemInCart)=>{
-//         // const itemInCart = cartItems.find((item)=>cartItem.id===item.id)
-//         if(!itemInCart){
-//             setCartItems((prev)=>([...prev , {...cartItem , count:1}]))
-//         }else{
-//             setCartItems((prev)=>{
-//                 return prev.map((item)=>{
-//                     return itemInCart.id === item.id ? {...item , count:item.count+1} : item
-//                 })
-//             }
-//             )
-//         }
-//         setChange((prev)=>!prev)
-//     }
-//     const decrement =async (cartItem,itemInCart)=>{
-//         console.log(cartItems)
-//         if(itemInCart.count===1){
-//             setCartItems((prev)=>(prev.filter((item)=>item.id!==cartItem.id)))
-//         }else{
-//             setCartItems((prev)=>{
-//                 return prev.map((item)=>{
-//                     return itemInCart.id === item.id ? {...item , count:item.count-1} : item
-//                 })
-//             })
-//         }
-//         setChange((prev)=>!prev)
-// }
 
-    // useEffect(()=>{  
-        
-    // },[])
-    // const aaa =useCallback(async function(active){
-    //     if(!active)return
-    //     const newCart = await syncLocalStorageDbAndContext(user , cartItems)
-    //     if(newCart === undefined)return
-    //     // setCartItems(newCart)
-    //     // console.log(newCart)
-    // })
 
-    // let myMemoizedResult = useMemo(() => syncLocalStorageDbAndContext)
-    // let myMemoizedResult = useMemo(() => cartItems)
-    // console.log(myMemoizedResult)
-    // useEffect(()=>{
-    //     // let active = true
-    //     // updateDB(active)
-        
-    // },[cartItems , user])
-    // // console.log(JSON.parse(localStorage.getItem("cart")))
-    // const mmm = useMemo(()=>{
-    //     console.log("memo")
-    //     return result
-    // },[cartItems])
-
-    // const updateDB = useMemo((async()=>{
-    //     const newCart = await syncLocalStorageDbAndContext(currentUser , cartItems) || []
-    //     console.log(newCart)
-    //     return newCart || []
-    // }),[currentUser])
-
-    // useEffect(()=>{
-    //     const f1 = async ()=>{
-    //         await syncLocalStorageDbAndContext(currentUser , cartItems)
-    //     }
-    //     f1()
-
-    // },[currentUser,cartItems])
-
-    // const newVal = useMemo(()=>{
-    //     return JSON.parse(localStorage.getItem("cart"))
-    // },[])
-    useEffect(()=>{
-        console.log(cartItems)
+    const increment =  (itemInfo , isItemInCart)=>{
+        if(!isItemInCart){
+            setCartItems((prev)=>([...prev , {...itemInfo , countInCart:1 , loading:true}]))
+        }else{
+            setCartItems((prev)=>{
+                return prev.map((item)=>{
+                    return itemInfo.id === item.id ? {...itemInfo , countInCart:item.countInCart+1 , loading:true} : item
+                })
+            }
+            )
+        }
         setNewSignIn("refresh")
+        setChange((prev)=>!prev)
+    }
+    const decrement = (itemInfo,isItemInCart)=>{
+            
+        if(isItemInCart.countInCart===1){
+            setCartItems((prev)=>prev.filter((item)=>item.id!==itemInfo.id))
+        }else{
+            setCartItems((prev)=>{
+                return prev.map((item)=>{
+                    return itemInfo.id === item.id ? {...itemInfo , countInCart:item.countInCart-1 , loading:true} : item
+                })
+            })
+        }
+        setNewSignIn("refresh")
+        setChange((prev)=>!prev)
+    }
+
+
+    useEffect(()=>{
         setChange((prev)=>!prev)
     },[])
 
@@ -94,29 +56,25 @@ const CartContextProvider = ({children})=>{
     //set new sign in as dependancy for signup and first time you signed in true
     useEffect(()=>{
         const f1 = async ()=>{
-            const bb = await syncLocalStorageDbAndContext(currentUser , cartItems , newSignIn )
-            setCartItems(bb)
+            const newv = await syncLocalStorageDbAndContext(currentUser , cartItems , newSignIn )
+            const newCartItem = newv.map((item)=>({...item , loading:false}))
+            setCartItems(newCartItem)
         }
         f1()
-    },[change,currentUser])
+    },[change,newSignIn])
     
+
     useEffect(()=>{
         setTotalCountAndPrice({
-            count:cartItems?.reduce((lastCount , current)=>lastCount + current.count ,0),
-            price:cartItems?.reduce((lastTotalPrice , current)=>lastTotalPrice + current.count*current.price ,0)
-        })
-    },[cartItems])
-
-    // useEffect(()=>{
-    //     setTotalCountAndPrice({
-    //         count:cartItems.reduce((lastCount , current)=>lastCount + current.count ,0),
-    //         price:cartItems.reduce((lastTotalPrice , current)=>lastTotalPrice + current.count*current.price ,0)
-    // })
-    // },[cartItems , currentUser])
+            totalCount:cartItems?.reduce((lastCount , current)=>lastCount + current.countInCart ,0),
+            totalPrice:cartItems?.reduce((lastTotalPrice , current)=>lastTotalPrice + current.countInCart*current.price ,0)
+    })
+    
+    },[cartItems , currentUser])
 
 
     return (
-    <CartContext.Provider value={{ cartItems , setCartItems , totalCountAndPrice , setTotalCountAndPrice , setNewSignIn}}>
+    <CartContext.Provider value={{increment , decrement , cartItems , setCartItems , totalCountAndPrice , setTotalCountAndPrice , setNewSignIn , setChange}}>
         {children}
     </CartContext.Provider>
     )

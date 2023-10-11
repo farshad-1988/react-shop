@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom"
 
 
 const Signin = ()=>{
-        const {setCartItems , setNewSignIn} = useContext(CartContext)
+        const {setNewSignIn} = useContext(CartContext)
         const navigate = useNavigate()
         const userSchema = yup.object().shape({
             email:yup.string().email("your email is not valid").required("you must enter your email address"),
@@ -24,7 +24,7 @@ const Signin = ()=>{
                 setNewSignIn("signin")
                 navigate("/")
             } catch (error) {
-                console.log(error)
+                console.error(errors)
             }
         }
 

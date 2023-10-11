@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react"
-import { syncLocalStorageDbAndContext, userAuthChange } from "../firebase.config"
+import { userAuthChange } from "../firebase.config"
 
 
 export const UserContext = createContext({
@@ -7,7 +7,6 @@ export const UserContext = createContext({
     setCurrentUser:()=>{}
 })
 
-// const getUser = ()=>auth.currentUser
 
 
 const UserContextProvider = ({children})=>{
@@ -15,13 +14,8 @@ const UserContextProvider = ({children})=>{
 
     useEffect(()=>{
         const unsubscribe = userAuthChange((user)=>{
-            // if(user){
-            //     // syncLocalStorageDbAndContext(user)
-            // }
-            console.log("userUpdated")
             setCurrentUser(user)
         })
-
         return unsubscribe
     },[])
 

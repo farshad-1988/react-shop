@@ -1,30 +1,22 @@
 import data from "../shop-data"
 import { useContext, useEffect } from "react"
-import { getCategoriesNameFromDB, getThreeOfEachCat, setAllItemsOnFirestore } from "../firebase.config"
 import { ShopContext } from "../context/ShopContext"
 import ThreeItemsInOne from "../components/ThreeItemsInOne"
+import { setAllItemsOnFirestore } from "../firebase.config"
 
 
 const Home = ()=>{
-    const {homePageItems ,setHomePageItems} = useContext(ShopContext)
+    const {homePageItems} = useContext(ShopContext)
 
-    useEffect(()=>{
-        const getItemsForHome = async()=>{
-            const categories = await getCategoriesNameFromDB()
-            const allItems =  await getThreeOfEachCat(categories)
-            setHomePageItems(allItems)
-        }
-       getItemsForHome()
-    //    console.log(homePageItems)
-    },[])
+
     // useEffect(()=>{
-
-    //     const setItemOnDB = async(data)=>{
-    //         await setAllItemsOnFirestore(data)
-    //         console.log("done")
-    //         // await getThreeOfEachCat(categories)
-    //     }
-    //     setItemOnDB(data) 
+        // const setItemOnDB = async(data)=>{
+        //     await setAllItemsOnFirestore(data)
+        //     console.log("done")
+        //     // await getThreeOfEachCat(categories)
+        // }
+        // setItemOnDB(data) 
+        // console.log(homePageItems)
     // },[])
     
     return (

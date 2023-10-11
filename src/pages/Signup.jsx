@@ -10,7 +10,7 @@ import { CartContext } from "../context/CartContext";
 
 const Signup = ()=>{
     const navigate = useNavigate()
-    const {setCartItems,setNewSignIn} = useContext(CartContext)
+    const {setCartItems,setNewSignIn , setChange} = useContext(CartContext)
 
 
     const userSchema = yup.object().shape({
@@ -25,10 +25,10 @@ const Signup = ()=>{
     const {register , handleSubmit , formState:{errors}} = useForm({resolver:yupResolver(userSchema)})
 
     const submitFormToDB = async ({email , password , name})=>{
-        setNewSignIn("signup")
-        setCartItems(JSON.parse(localStorage.getItem("cart")))
         await signUpWithEmail(email , password , name)
-        navigate("/")
+        setCartItems(JSON.parse(localStorage.getItem("cart")))
+        setNewSignIn("signup")
+        // navigate("/")
     }
 
     return (
