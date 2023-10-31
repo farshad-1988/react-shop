@@ -1,80 +1,98 @@
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useReducer, useState } from "react"
 import { syncLocalStorageDbAndContext } from "../firebase.config"
 import { UserContext } from "./UserContext"
+import { cartReducer, initialCartState } from "../reducers/cartReducer"
 
 
 export const CartContext = createContext()
 
 
 
-
-
-
 const CartContextProvider = ({children})=>{
-    const [cartItems , setCartItems] = useState(JSON.parse(localStorage.getItem("cart")) || [])
-    const [totalCountAndPrice , setTotalCountAndPrice] = useState({totalCount:0 , totalPrice:0})
+    const [state , dispatch] = useReducer(cartReducer , initialCartState)
     const {currentUser} = useContext(UserContext)
-    const [change , setChange] = useState(true)
-    const [newSignIn , setNewSignIn] = useState("refresh")
+    const [itemIdLoadingFalse , setItemIdLoadingFalse] = useState([])
+    // const [change , setChange] = useState(true)
 
 
-    const increment =  (itemInfo , isItemInCart)=>{
+
+    const increment = async (itemInfo , isItemInCart)=>{
+        let newItems
         if(!isItemInCart){
-            setCartItems((prev)=>([...prev , {...itemInfo , countInCart:1 , loading:true}]))
+            newItems = [...state.cartItems , {...itemInfo , countInCart:1 , loading:true}]
         }else{
-            setCartItems((prev)=>{
-                return prev.map((item)=>{
-                    return itemInfo.id === item.id ? {...itemInfo , countInCart:item.countInCart+1 , loading:true} : item
-                })
-            }
-            )
-        }
-        setNewSignIn("refresh")
-        setChange((prev)=>!prev)
-    }
-    const decrement = (itemInfo,isItemInCart)=>{
-            
-        if(isItemInCart.countInCart===1){
-            setCartItems((prev)=>prev.filter((item)=>item.id!==itemInfo.id))
-        }else{
-            setCartItems((prev)=>{
-                return prev.map((item)=>{
-                    return itemInfo.id === item.id ? {...itemInfo , countInCart:item.countInCart-1 , loading:true} : item
-                })
+            newItems = state.cartItems.map((item)=>{
+                return itemInfo.id === item.id ? {...itemInfo , countInCart:item.countInCart+1 , loading:true} : item
             })
         }
-        setNewSignIn("refresh")
-        setChange((prev)=>!prev)
+        dispatch({type:"SET_CART_ITEMS" , payload:newItems})
+        await syncLocalStorageDbAndContext(currentUser ,newItems)
+        setItemIdLoadingFalse((prev)=>[...prev , itemInfo.id])
+        dispatch({type:"CHANGING_IN_CART"})
     }
 
+    const decrement =async (itemInfo,isItemInCart)=>{
+        let newItems
+        if(isItemInCart.countInCart===1){
+            newItems = state.cartItems.filter((item)=>item.id!==itemInfo.id)
+
+        }else{
+                newItems =  state.cartItems.map((item)=>{
+                    return itemInfo.id === item.id ? {...itemInfo , countInCart:item.countInCart-1 , loading:true} : item
+                })
+
+        }
+        dispatch({type:"SET_CART_ITEMS" , payload:newItems})
+        try {
+            await syncLocalStorageDbAndContext (currentUser , newItems )
+        } catch (error) {
+            console.log(error)
+            dispatch({type:"SET_CART_ITEMS" , payload:state.cartItems})
+        }
+        
+        if(!(isItemInCart.countInCart === 1)){
+            setItemIdLoadingFalse((prev)=>[...prev , itemInfo.id])
+        }
+        dispatch({type:"CHANGING_IN_CART"})
+    }
 
     useEffect(()=>{
-        setChange((prev)=>!prev)
+        dispatch({type:"CHANGING_IN_CART"})
     },[])
 
     
     //set new sign in as dependancy for signup and first time you signed in true
     useEffect(()=>{
+        console.log(itemIdLoadingFalse)
         const f1 = async ()=>{
-            const newv = await syncLocalStorageDbAndContext(currentUser , cartItems , newSignIn )
-            const newCartItem = newv.map((item)=>({...item , loading:false}))
-            setCartItems(newCartItem)
+
+            const newItem = state.cartItems.map((item)=>{
+                if(itemIdLoadingFalse?.includes(item.id)){
+                    setItemIdLoadingFalse((prev)=>prev.filter((itemId)=>item.id!==itemId))
+                    return ({...item , loading:false})
+                } else{
+                    return item
+                }
+            })
+            console.log("rannnn")
+
+            dispatch({type:"SET_CART_ITEMS" , payload:newItem})
+            dispatch({type:"SET_TOTAL_COUNT_AND_PRICE" , 
+            payload:{
+                totalCount:state.cartItems?.reduce((lastCount , current)=>lastCount + current.countInCart ,0),
+                totalPrice:state.cartItems?.reduce((lastTotalPrice , current)=>lastTotalPrice + current.countInCart*current.price ,0)
+            }})
         }
         f1()
-    },[change,newSignIn])
+    },[state.change])
     
-
-    useEffect(()=>{
-        setTotalCountAndPrice({
-            totalCount:cartItems?.reduce((lastCount , current)=>lastCount + current.countInCart ,0),
-            totalPrice:cartItems?.reduce((lastTotalPrice , current)=>lastTotalPrice + current.countInCart*current.price ,0)
-    })
     
-    },[cartItems , currentUser])
+    // useEffect(()=>{
+    //     },[state.cartItems , currentUser])
 
 
     return (
-    <CartContext.Provider value={{increment , decrement , cartItems , setCartItems , totalCountAndPrice , setTotalCountAndPrice , setNewSignIn , setChange}}>
+    <CartContext.Provider value={{increment , decrement , cartItems:state.cartItems, cartDispatch:dispatch , totalCountAndPrice:state.totalCountAndPrice  , newSignIn:state.newSignIn}}>
         {children}
     </CartContext.Provider>
     )

@@ -1,24 +1,32 @@
 import ItemCounter from "./ItemCounter"
+import { useNavigate } from "react-router-dom"
 
 
 
 
 const Item = ({itemInfo})=>{
-    const {imagesUrl , price , countInStock } = {...itemInfo}
+    const {imagesUrl , price , countInStock , category , id } = {...itemInfo}
+    const navigate = useNavigate()
+
+    const goToSingleItem = ()=>{
+        navigate(`/${category}/${id}`)
+    }
+
 
     //just enter items in cart
     return (
     // <div className="row">
-        <div className="col-3 m-3 bg-secondary rounded-2">
+        <div className="m-3 rounded-2" style={{width:"280px" , height:"300px" , backgroundColor:"rgb(220, 220, 220)"}}>
             <div className="container mt-3">
-            <img className="w-100 img-thumbnail" src={imagesUrl[0]} alt="anotherPic" style={{ height:"200px"}}/>
-            <div className="container d-flex">
-                <div className="d-flex flex-column">
-                    <h2 className="ms-1">{price}$</h2>
-                    <p className="text-danger" style={{fontSize:"12px"}}>number in stock {countInStock}</p>
+            <img className="w-100 img-thumbnail" src={imagesUrl[0]} alt="anotherPic" style={{ height:"200px" , cursor:"pointer"}} onClick={goToSingleItem}/>
+            <div className="container d-flex w-100 justify-content-between mt-2" style={{height:"100px"}}>
+                <div className="d-flex flex-column w-50 h-100">
+                    <h2>{price}$</h2>
+                    <p className="text-danger text-nowrap   " style={{fontSize:"12px"}}>number in stock {countInStock}</p>
                 </div>
-                <ItemCounter itemInfo={itemInfo}/>
-                
+                <div>
+                    <ItemCounter itemInfo={itemInfo}/>
+                </div>
             </div>
             </div>
         </div>  

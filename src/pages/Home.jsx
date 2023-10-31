@@ -3,10 +3,11 @@ import { useContext, useEffect } from "react"
 import { ShopContext } from "../context/ShopContext"
 import ThreeItemsInOne from "../components/ThreeItemsInOne"
 import { setAllItemsOnFirestore } from "../firebase.config"
+import LoadingPageComponent from "../components/LoadingPageComponent"
 
 
 const Home = ()=>{
-    const {homePageItems} = useContext(ShopContext)
+    const {homePageItems, dispatch , loadingPage} = useContext(ShopContext)
 
 
     // useEffect(()=>{
@@ -18,11 +19,12 @@ const Home = ()=>{
         // setItemOnDB(data) 
         // console.log(homePageItems)
     // },[])
-    
+
+
     return (
-    <div className="row ms-3">
+        loadingPage ? <LoadingPageComponent/> : <div className="row ms-3">
         {homePageItems?.map((threeItems , index)=>{
-            return <ThreeItemsInOne key={index} threeItems={threeItems} />
+            return <ThreeItemsInOne key={"home"+index} threeItems={threeItems} />
         })}
     </div>
     )

@@ -8,6 +8,12 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js"
 import ShopContextProvider from "./context/ShopContext";
 import  UserContextProvider  from "./context/UserContext";
 import  CartContextProvider  from "./context/CartContext";
+import { Elements } from "@stripe/react-stripe-js";
+import {loadStripe} from "@stripe/stripe-js"
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"
+const stripePromise = loadStripe(process.env.REACT_APP_PUBLIC_STRIPE_KEY)
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -15,7 +21,10 @@ root.render(
     <UserContextProvider>
       <ShopContextProvider>
         <CartContextProvider>
-          <App />
+          <Elements stripe={stripePromise}>
+            <ToastContainer/>
+              <App />
+          </Elements>
         </CartContextProvider>
       </ShopContextProvider>
     </UserContextProvider>

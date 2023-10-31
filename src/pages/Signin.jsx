@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom"
 
 
 const Signin = ()=>{
-        const {setNewSignIn} = useContext(CartContext)
+        const {cartDispatch , cartItems} = useContext(CartContext)
         const navigate = useNavigate()
         const userSchema = yup.object().shape({
             email:yup.string().email("your email is not valid").required("you must enter your email address"),
@@ -20,8 +20,10 @@ const Signin = ()=>{
     
         const login = async({email , password})=>{
             try {
-                await signInWithEmail(email , password)
-                setNewSignIn("signin")
+                const cartAfterSignin = await signInWithEmail(email , password , cartItems)
+                cartDispatch({type:"SET_CART_ITEMS" , payload:cartAfterSignin})
+                cartDispatch({type:"CHANGING_IN_CART"})
+                // cartDispatch({type:"SET_SIGNING_TYPE" , payload:"signin"})
                 navigate("/")
             } catch (error) {
                 console.error(errors)
@@ -39,7 +41,7 @@ const Signin = ()=>{
             <div className="text-center mt-3">
                 <button className="btn btn-primary w-50" type="submit">log in</button>
             </div>
-            <button type="button" onClick={()=>signOutUser()}>signout</button>
+            {/* <button type="button" onClick={()=>signOutUser()}>signout</button> */}
         </form>
     )
 }

@@ -11,17 +11,19 @@ export const UserContext = createContext({
 
 const UserContextProvider = ({children})=>{
     const [currentUser , setCurrentUser] = useState(null)
+    const [userDoc , setUserDoc] = useState()
 
     useEffect(()=>{
         const unsubscribe = userAuthChange((user)=>{
             setCurrentUser(user)
+            
         })
         return unsubscribe
     },[])
 
 
     return (
-    <UserContext.Provider value={{currentUser}}>
+    <UserContext.Provider value={{currentUser , userDoc , setUserDoc}}>
         {children}
     </UserContext.Provider>
     )
