@@ -80,8 +80,8 @@ const CategoryPage = ()=>{
     return (
 
         <div>
-            <div className="nav-pills" role="tablist" style={{height:"40px"}}><span className="btn">sort by:</span>{categorySort.map((typeOfSort , index)=>{
-                return <button data-bs-toggle="pill" type="button" onClick={selectSortType} value={typeOfSort.slice(1,3)} key={`sort-type${index}`} className={`btn text-primary ${typeOfSort[0]==="newest" && "active"}`}>{typeOfSort[0]}</button>
+            <div className="nav-pills d-flex align-items-center" role="tablist" style={{height:"40px"}}><span>sort by:</span>{categorySort.map((typeOfSort , index)=>{
+                return <button data-bs-toggle="pill" type="button" onClick={selectSortType} value={typeOfSort.slice(1,3)} key={`sort-type${index}`} className={`btn text-primary p-1 ${typeOfSort[0]==="newest" && "active"}`}>{typeOfSort[0]}</button>
             })}</div>
             {loadingPage ? <LoadingPageComponent/> : 
             <InfiniteScroll style={{overflow:"hidden"}} endMessage={<p className="text-center text-success">you've seen all items</p>} dataLength={singleCategoryToShow.length}  hasMore={ifThereIsMoreItems} next={nextLoading} loader={<p className="text-center">loading<span className="spinner-border spinner-border-sm"></span></p>}>

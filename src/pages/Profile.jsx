@@ -39,8 +39,8 @@ const Profile = () => {
     // <Routes>
     //     <Route index element={
     <>
-      <div className="d-flex justify-content-between">
-        <div className="d-flex flex-column align-item-center" style={{ width: "300px", height: "400px" }}>
+      <div className="row">
+        <div className="d-flex flex-column align-item-center col-12 col-lg-6" >
           {!currentUser || !userDoc ? <span className="spinner spinner-border align-self-center mt-4"></span> : 
           <div>
             <div className="container row m-3 lh-base">
@@ -48,7 +48,7 @@ const Profile = () => {
               <span>{email}</span>
               <span>{phoneNumber}</span>
             </div>
-            <div className="container m-3">
+            <div className="container m-3" style={{width:"370px", height: "auto" }}>
             {userDoc.address ? <div className="row border border-secondary rounded text-capitalize lh-base p-3">
               <span>{address1}</span>
               {address2 && <span>{address2}</span>}
@@ -57,21 +57,21 @@ const Profile = () => {
               <span>{zipCode}</span>
               <span>{country}</span>
               </div>: <span className="text-danger">please click on edit button and complete your information</span>}
-            </div> 
-          </div>
-          }
 
           <button
             disabled={!userDoc}
-            className="btn btn-danger m-3 w-100"
+            className="btn btn-danger mt-3 w-100"
             onClick={() => navigate(`/editUserData/${userId}`)}
           >
             edit
           </button>
+            </div> 
+          </div>
+          }
 
         </div>
     
-        <div className="col-6">
+        <div className="col-12 col-lg-6">
           {allCompletedPurchase ?
             Object.entries(allCompletedPurchase)?.map(
               (allPurchasedItemsInfo) => {

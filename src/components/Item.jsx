@@ -16,9 +16,9 @@ const Item = ({itemInfo})=>{
     //just enter items in cart
     return (
     // <div className="row">
-        <div className="m-3 rounded-2" style={{width:"280px" , height:"300px" , backgroundColor:"rgb(220, 220, 220)"}}>
+        <div className="m-2 rounded-2" style={{width:"330px" , height:"350px" , backgroundColor:"rgb(220, 220, 220)"}}>
             <div className="container mt-3">
-            <img className="w-100 img-thumbnail" src={imagesUrl[0]} alt="anotherPic" style={{ height:"200px" , cursor:"pointer"}} onClick={goToSingleItem}/>
+            <img className="w-100 img-thumbnail" src={imagesUrl[0]} alt="anotherPic" style={{ height:"240px" , cursor:"pointer"}} onClick={goToSingleItem}/>
             <div className="container d-flex w-100 justify-content-between mt-2" style={{height:"100px"}}>
                 <div className="d-flex flex-column w-50 h-100">
                     <h2>{price}$</h2>

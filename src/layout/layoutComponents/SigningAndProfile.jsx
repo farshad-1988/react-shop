@@ -57,8 +57,8 @@ const SigningAndProfile = () => {
         </div>
       ) : (
         <div className="d-flex">
-          <button onClick={googleSignIn} className="btn"><GoogleIcon/></button>
-        <div className="d-flex flex-column me-4">
+          <button onClick={googleSignIn} className="btn p-1"><GoogleIcon/></button>
+        <div className="d-flex flex-column me-2">
           <Link to={"/signin"} className="text-end signinFont">
             sign in
           </Link>

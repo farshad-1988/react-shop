@@ -77,7 +77,7 @@ function Payment() {
   console.log(cartItems.length === 0 || !deliveryDay || currentUser)
  
   return (
-    <div className="col-3 bg-secondary rounded text-center mt-3 pt-4" style={{position:"fixed", right:"50px", height:"400px", width:"300px"}}>
+    <div className="col-12 col-lg-6 bg-secondary rounded text-center m-auto mb-5 p-4 w-auto h-auto r-1"  style={{position:`${window.innerWidth>750 && "fixed"}`, right:"50px"}}>
       <p>number of ordered item {totalCount}</p>
       <p>total price {totalPrice}$</p>
       {userDoc?.address ? <div>

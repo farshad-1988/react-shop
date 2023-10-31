@@ -14,12 +14,14 @@ const Cart = ()=>{
 
     return (
         <div className="row">
-            <div className="col-8 m-3" >
+            <div className="col-12 col-md-9 m-3" >
                 {cartItems?.map((item,index)=>(
                     <ItemToPurchase key={`itemToPurchase${index}`} item={item}/>
                 ))}
             </div>
-            <Payment/>
+            {/* <div className="col-12 col-lg-6"> */}
+                <Payment/>
+            {/* </div> */}
         </div>
     )
 }
