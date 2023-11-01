@@ -14,7 +14,7 @@ const CategoryPage = ()=>{
     const {singleCategoryToShow , dispatch , loadingPage } = useContext(ShopContext)
     const [lastItem  , setLastItem] = useState("")
     const [ifThereIsMoreItems , setIfThereIsMoreItems] = useState(true)
-    const [sortType , setSortType] = useState(["dateAdded", "asc"])
+    const [sortType , setSortType] = useState(["dateAdded", "desc"])
     // const loadMoreContent = ()=>{
     //     console.log(1111)
 
@@ -72,7 +72,8 @@ const CategoryPage = ()=>{
     // <RemoveScrollBar /> 
     const categorySort = [["newest" , "dateAdded" , "desc"], ["name" , "name", "asc"] ,["best seller" , "purchasedCount" , "desc"] , ["cheapest" , "price" , "asc"], ["the most expensive" , "price" , "desc"]]
     const selectSortType = (e)=>{
-        e.target.className = "btn text-primary active"
+        // console.log(e.target)
+        
         setSortType(e.target.value.split(","))
     }
  
@@ -80,14 +81,14 @@ const CategoryPage = ()=>{
     return (
 
         <div>
-            <div className="nav-pills d-flex align-items-center" role="tablist" style={{height:"40px"}}><span>sort by:</span>{categorySort.map((typeOfSort , index)=>{
-                return <button data-bs-toggle="pill" type="button" onClick={selectSortType} value={typeOfSort.slice(1,3)} key={`sort-type${index}`} className={`btn text-primary p-1 ${typeOfSort[0]==="newest" && "active"}`}>{typeOfSort[0]}</button>
+            <div className="nav-pills d-flex align-items-center" role="tablist"><span>sort by:</span>{categorySort.map((typeOfSort , index)=>{
+                return <button disabled={loadingPage} data-bs-toggle="pill" type="button" onClick={selectSortType} value={typeOfSort.slice(1,3)} key={`sort-type${index}`}  className={`btn text-primary p-1  ${typeOfSort[0]==="newest" && "active"} ff-sort-type`}>{typeOfSort[0]}</button>
             })}</div>
             {loadingPage ? <LoadingPageComponent/> : 
-            <InfiniteScroll style={{overflow:"hidden"}} endMessage={<p className="text-center text-success">you've seen all items</p>} dataLength={singleCategoryToShow.length}  hasMore={ifThereIsMoreItems} next={nextLoading} loader={<p className="text-center">loading<span className="spinner-border spinner-border-sm"></span></p>}>
+            <InfiniteScroll className="overflow-hidden" endMessage={<p className="text-center text-success">you've seen all items</p>} dataLength={singleCategoryToShow.length}  hasMore={ifThereIsMoreItems} next={nextLoading} loader={<p className="text-center">loading<span className="spinner-border spinner-border-sm"></span></p>}>
                 <div className="row ms-3" >
                 {singleCategoryToShow?.map((item , index) => {
-                    return <Item key={"singleCat"+index} itemInfo ={ item}/>
+                    return <Item key={"singleCat"+index} itemInfo ={item}/>
             })}
             </div>
             </InfiniteScroll>}

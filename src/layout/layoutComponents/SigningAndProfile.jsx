@@ -50,7 +50,7 @@ const SigningAndProfile = () => {
               signout
             </button>
           ) : (
-            <button className="btn btn-success d-flex justify-content-center"   onClick={goToProfile} style={{width:"50px"}} onMouseLeave={()=>setBeatUserIcon(false)} onMouseEnter={()=>setBeatUserIcon(true)}>
+            <button className="btn btn-success d-flex justify-content-center"   onClick={goToProfile} onMouseLeave={()=>setBeatUserIcon(false)} onMouseEnter={()=>setBeatUserIcon(true)}>
                 {beatUserIcon ? <FontAwesomeIcon icon={faHomeUser} beat/> : <FontAwesomeIcon icon={faHomeUser}/>}
             </button>
           )}
@@ -59,10 +59,10 @@ const SigningAndProfile = () => {
         <div className="d-flex">
           <button onClick={googleSignIn} className="btn p-1"><GoogleIcon/></button>
         <div className="d-flex flex-column me-2">
-          <Link to={"/signin"} className="text-end signinFont">
+          <Link to={"/signin"} className="text-end text-decoration-none ">
             sign in
           </Link>
-          <Link to={"/signup"} className="createFont">
+          <Link to={"/signup"} className="text-decoration-none border-top border-primary ff-font-12">
             create an account
           </Link>
         </div>

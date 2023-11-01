@@ -21,7 +21,6 @@ function SingleItem() {
 
 
 
-//style={{width:"400px",height:"400px"}}
     return (<div className='row m-auto'>
         <div id="demo" className="carousel slide m-auto mt-3 col-lg-3 col-md-4 col-sm-6 col-9" data-bs-ride="false">
             <div className="carousel-indicators">

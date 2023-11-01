@@ -1,9 +1,9 @@
+import "./app.css"
 import { BrowserRouter as Router , Routes , Route } from "react-router-dom";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
-import "./app.css"
 import Navbar from "./layout/Navbar";
 import NavTips from "./layout/NavTips";
 import CategoryPage from "./pages/CategoryPage";

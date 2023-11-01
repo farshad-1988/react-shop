@@ -48,7 +48,7 @@ const Profile = () => {
               <span>{email}</span>
               <span>{phoneNumber}</span>
             </div>
-            <div className="container m-3" style={{width:"370px", height: "auto" }}>
+            <div className="container m-3 h-auto ff-profile-address-box" >
             {userDoc.address ? <div className="row border border-secondary rounded text-capitalize lh-base p-3">
               <span>{address1}</span>
               {address2 && <span>{address2}</span>}
@@ -91,10 +91,7 @@ const Profile = () => {
                       <p>deliverty date:{purchasedInfo.deliveryDay}</p>
                     </div>
 
-                    <div
-                      className="col-6 bg-secondary rounded-circle d-flex m-3"
-                      style={{ width: "250px", height: "250px" }}
-                    >
+                    <div className="col-6 bg-secondary rounded-circle d-flex m-3 ff-purchased-items-container">
                       <div className="row m-auto border-primary rounded-circle w-75 h-75">
                         {purchasedItems?.map((purchasedItem, index) => {
                           if (index < 4)

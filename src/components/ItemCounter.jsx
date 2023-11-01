@@ -13,8 +13,8 @@ const ItemCounter = ({itemInfo})=>{
 
     return (
     // <div className="text-center w-50">
-        <div className="d-flex align-content-center justify-content-center" style={{width:"50px" , height:"50px"}}>
-        {cartItems.find((item)=>item.loading && itemInfo.id === item.id) ? <div class="spinner-border m-auto"></div>
+        <div className="d-flex align-content-center justify-content-center ff-item-counter-size">
+        {cartItems?.find((item)=>item.loading && itemInfo.id === item.id) ? <div class="spinner-border m-auto"></div>
         : !isItemInCart ? <button onClick={addItem} className="btn btn-danger text-nowrap">add to card</button> : 
             <div className="d-flex align-content-center">
                 <button className="btn" onClick={removeItem}> - </button>

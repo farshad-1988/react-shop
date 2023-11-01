@@ -17,8 +17,8 @@ const ThreeItemsInOne = (props)=>{
     
 
     return (
-    <div className="btn container col-3 text-center pt-3 border border-1 border-secondary rounded-2 m-2" style={{width:"330px"}}  onClick={goToCategory}>
-        <div className="row " style={{height:"270px"}}>
+    <div className="btn container col-3 text-center pt-3 border border-1 border-secondary rounded-2 m-2 ff-items-category-home"  onClick={goToCategory}>
+        <div className="row ">
             {threeItems.map((item , index)=>{
                 return <div className={` ${index === 2 ? "container" : "col-6"}`}><img key={index} src={item.imagesUrl[0]} alt=""  className="rounded-circle " width="110" height="110"/></div> 
             })}

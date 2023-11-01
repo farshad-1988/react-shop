@@ -7,7 +7,8 @@ import { getDocumentUser, registerPurchasedItem } from '../firebase.config'
 import { format, sub } from 'date-fns'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-
+import QueryResponsive from '../utilities/QueryResponsive'
+import "./components.css"
 
 
 function Payment() {
@@ -17,6 +18,7 @@ function Payment() {
   const {totalCountAndPrice,cartItems , cartDispatch} = useContext(CartContext)
   const {totalCount , totalPrice} = totalCountAndPrice
   const [deliveryDay , setDeliveryDay] = useState("")
+  const {sm} = QueryResponsive()
 
 
   const stripe = useStripe()
@@ -77,7 +79,7 @@ function Payment() {
   console.log(cartItems.length === 0 || !deliveryDay || currentUser)
  
   return (
-    <div className="col-12 col-lg-6 bg-secondary rounded text-center m-auto mb-5 p-4 w-auto h-auto r-1"  style={{position:`${window.innerWidth>750 && "fixed"}`, right:"50px"}}>
+    <div className={`col-12 col-lg-6 rounded text-center m-auto mb-5 p-4 w-auto h-auto r-1 mt-3 ${sm && "position-fixed"} ff-payment-box`} >
       <p>number of ordered item {totalCount}</p>
       <p>total price {totalPrice}$</p>
       {userDoc?.address ? <div>

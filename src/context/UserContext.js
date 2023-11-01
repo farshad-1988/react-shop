@@ -13,6 +13,10 @@ const UserContextProvider = ({children})=>{
     const [currentUser , setCurrentUser] = useState(null)
     const [userDoc , setUserDoc] = useState()
 
+    
+
+      
+
     useEffect(()=>{
         const unsubscribe = userAuthChange((user)=>{
             setCurrentUser(user)
