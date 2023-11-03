@@ -94,7 +94,7 @@ const Navbar = () => {
                 onClick={goToCart}
                 onMouseLeave={() => setShopIconBeat("")} onMouseEnter={() => setShopIconBeat("beat")}
               >
-                {/* onMouseEnter={(e)=>{e.target.setAttribute("class", "svg-inline--fa fa-house-user fa-beat-fade")}} onMouseLeave={(e)=>{e.target.setAttribute("class", "svg-inline--fa fa-house-user")}} */}
+                {/* onMouseEnter={(e)=>{e.target.setAttribute("class", "svg-inline--fa fa-house-user fa-beat-fade")}} onMouseLeave={(e)=>{e.target.setAttribute("className", "svg-inline--fa fa-house-user")}} */}
                 {shopIconBeat ? <FontAwesomeIcon icon={faCartShopping} beat /> : <FontAwesomeIcon icon={faCartShopping} />}
               </button>
               <span className="badge rounded-pill bg-danger ff-badge">

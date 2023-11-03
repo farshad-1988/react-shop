@@ -74,13 +74,13 @@ const Profile = () => {
         <div className="col-12 col-lg-6">
           {allCompletedPurchase ?
             Object.entries(allCompletedPurchase)?.map(
-              (allPurchasedItemsInfo) => {
+              (allPurchasedItemsInfo, index) => {
                 const purchasedItems = allPurchasedItemsInfo[1].purchasedItems;
                 const purchasedInfo =
                   allPurchasedItemsInfo[1].summaryPurchaseInfo;
                 let datePurchasedRegistered = purchasedInfo.purchasedAt.toDate()
                 return (
-                  <div className="row mt-2">
+                  <div className="row mt-2" key={`purchasedInfo${index}`}>
                     <div className=" col-6 mt-5">
                       {/* gh */}
                       <span className="text-danger">purchase Id: </span>
@@ -97,6 +97,7 @@ const Profile = () => {
                           if (index < 4)
                             return (
                               <div
+                              key={`purchasedItem${index}`}
                                 className="col-6 rounded-circle"
                                 style={{
                                   backgroundImage: `url(${purchasedItem.imagesUrl[0]})`,

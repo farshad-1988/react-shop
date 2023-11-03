@@ -15,6 +15,7 @@ import LoadingPageComponent from "./components/LoadingPageComponent";
 import Profile from "./pages/Profile";
 import EditUserData from "./components/EditUserData";
 import SingleItem from "./pages/SingleItem";
+import Admin from "./pages/Admin";
 // import { setAllItemsOnFirestore } from "./firebase.config";
 // import data from "./shop-data.js"
 
@@ -42,6 +43,7 @@ function App() {
         <Navbar/>
         <Routes>
           <Route path="/" element={<Home/>}/>
+          <Route path="/admin" element={<Admin/>}/>
           <Route path="/profile/:userId" element={<Profile/>}/>
           <Route path="/edituserdata/:userId" element={<EditUserData/>}/>
             

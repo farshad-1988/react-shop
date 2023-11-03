@@ -74,7 +74,7 @@ const CartContextProvider = ({children})=>{
                     return item
                 }
             })
-            console.log("rannnn")
+            
 
             dispatch({type:"SET_CART_ITEMS" , payload:newItem})
             dispatch({type:"SET_TOTAL_COUNT_AND_PRICE" , 

@@ -1,14 +1,20 @@
 const { initializeApp } = require("firebase/app");
 const { runTransaction, doc, getFirestore, updateDoc, collection, addDoc, arrayUnion } = require("firebase/firestore");
-
+// const { initializeApp } = require('firebase-admin/app');
+// var serviceAccount = require("path/to/serviceAccountKey.json");
+// var admin = require("firebase-admin");
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount)
+// });
 
 require("dotenv").config()
-
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
 
+
+
 const firebaseConfig = {
-    apiKey: "AIzaSyBPJBEm5z9LMK2O4B4RcDE4DN31zGVeEuc",
-    authDomain: "shop2-8814c.firebaseapp.com",
+  apiKey: "AIzaSyBPJBEm5z9LMK2O4B4RcDE4DN31zGVeEuc",
+  authDomain: "shop2-8814c.firebaseapp.com",
     projectId: "shop2-8814c",
     storageBucket: "shop2-8814c.appspot.com",
     messagingSenderId: "727418831827",
@@ -16,6 +22,10 @@ const firebaseConfig = {
     measurementId: "G-XKJR5KWZ6M",
   };
   //baag sign in empty cart , sign out dont empty context
+  
+  
+
+  
   
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);

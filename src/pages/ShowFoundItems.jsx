@@ -16,7 +16,7 @@ const ShowFoundItems = ()=>{
                     return (
                     <div className="row ms-3">
                         <h2>{category[0].category}</h2>
-                        {category.map((item,index)=><Item key={index} itemInfo = {{...item}}/>)}
+                        {category.map((item,index)=><Item key={`searchItems${index}`} itemInfo = {{...item}}/>)}
                     </div>)
                 }
             })}

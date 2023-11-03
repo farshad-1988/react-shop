@@ -43,8 +43,8 @@ const firebaseConfig = {
 //baag sign in empty cart , sign out dont empty context
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth();
+export const db = getFirestore(app);
+export const auth = getAuth();
 
 export const getUser = () => {
   return auth.currentUser;
@@ -94,6 +94,7 @@ export const registerPurchasedItem = async (
   await updateDoc(userDocRef, {
     purchasedItems: arrayUnion({ purchasedItems, summaryPurchaseInfo }),
   });
+  localStorage.setItem("cart" , JSON.stringify([]))
 };
 
 export const signUpWithEmail = async (
@@ -319,7 +320,6 @@ export const signInWithEmail = async (email, password , currentCart) => {
 export const setAllItemsOnFirestore = async (data) => {
   const categories = data.map((obj) => obj.title.toLocaleUpperCase());
   await setDoc(doc(db, "ADDITIONAL_INFO", "CATEGORIES"), { categories });
-
   const colRef = collection(db, "SHOP_ITEMS");
   const batch = writeBatch(db);
   data.forEach((object) => {

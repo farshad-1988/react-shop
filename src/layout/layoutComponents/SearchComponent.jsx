@@ -25,7 +25,7 @@ const SearchComponent = () => {
 
   return (
     <div className="m-auto col-12 col-sm-6 col-lg-4">
-    <form class="input-group">
+    <form className="input-group">
       <input
         onChange={setInputValue}
         type="text"

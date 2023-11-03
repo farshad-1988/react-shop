@@ -29,7 +29,7 @@ function SingleItem() {
                 )}
             </div>
 
-            <div class="carousel-inner">
+            <div className="carousel-inner">
                 {imagesUrl?.map((image, index) => 
                     (<div key={`img-pic${index}`} className={`carousel-item ${index===1 && "active"}`} >
                             <img  src={image} alt="" className="d-block w-100 rounded-3"/>

@@ -95,7 +95,7 @@ const EditUserData = ()=>{
                 {errors.address?.country?.message && <p className="text-danger">{errors.address?.country.message}</p>}
             </div>
             <div className="text-center">
-                <button className="mt-3 btn btn-primary w-50" type="submit">edit info</button>
+                <button className="mt-3 btn btn-primary w-50" type="submit">submit info</button>
                 <button type="button" className="btn">cancle</button>
             </div>
         </form>

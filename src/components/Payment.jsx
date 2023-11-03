@@ -66,17 +66,18 @@ function Payment() {
       console.log(paymentResult.error)
       return alert("check console for err")
     }else if(paymentResult.paymentIntent.status === "succeeded") {
-      alert("payment was successful")
+      toast.success("payment was successful")
     }
-
+    
     await registerPurchasedItem(currentUser.uid , cartItems ,{totalCountAndPrice} , deliveryDay )
     // await finalPay(currentUser ,cartItems)
     cartDispatch({type:"SET_CART_ITEMS" , payload:[]})
-    cartDispatch({type:"SET_CART_ITEMS"})
+    cartDispatch({type:"CHANGING_IN_CART"})
+    navigate(`/profile/${userId}`)
   }
 
   
-  console.log(cartItems.length === 0 || !deliveryDay || currentUser)
+
  
   return (
     <div className={`col-12 col-lg-6 rounded text-center m-auto mb-5 p-4 w-auto h-auto r-1 mt-3 ${sm && "position-fixed"} ff-payment-box`} >
@@ -93,7 +94,7 @@ function Payment() {
       <ul name="time" className='dropdown-menu'>
         {        
           Array.from({length:5}).map((item , index)=>{
-            return <li><button onClick={()=>setDeliveryDay(format((sub(new Date() , {days:-index-1})) , "PPPP"))} className='dropdown-item'>{format((sub(new Date() , {days:-index-1})) , "PPPP")}</button></li>
+            return <li key={`delivery_days_list${index}`}><button onClick={()=>setDeliveryDay(format((sub(new Date() , {days:-index-1})) , "PPPP"))} className='dropdown-item'>{format((sub(new Date() , {days:-index-1})) , "PPPP")}</button></li>
           })
         }
       </ul>
@@ -108,7 +109,7 @@ function Payment() {
           }
         }}}/></div>
         
-        <button disabled={cartItems.length === 0 || !deliveryDay || !userDoc?.address} type='submit' className="btn btn-danger mt-3" >proceed to payment</button>
+        <button disabled={cartItems?.length === 0 || !deliveryDay || !userDoc?.address} type='submit' className="btn btn-danger mt-3" >proceed to payment</button>
       </form>
     </div>
   )
