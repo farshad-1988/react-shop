@@ -59,7 +59,7 @@ export const getDocumentUser = async (uid) => {
 
 export const editDocumentUser = async (uid , email ,name , lastName ,address , phoneNumber) => {
   const docRef = doc(db, "USERS", uid);
-  const userSnapshot = await updateDoc(docRef , {email ,name , lastName ,address , phoneNumber});
+  await updateDoc(docRef , {email ,name , lastName ,address , phoneNumber});
   console.log("done");
 };
 
@@ -92,7 +92,7 @@ export const registerPurchasedItem = async (
   };
   const userDocRef = doc(db, "USERS", uid);
   await updateDoc(userDocRef, {
-    purchasedItems: arrayUnion({ purchasedItems, summaryPurchaseInfo }),
+    purchasedItems: arrayUnion({ purchasedItems, summaryPurchaseInfo ,cart:[]}),
   });
   localStorage.setItem("cart" , JSON.stringify([]))
 };

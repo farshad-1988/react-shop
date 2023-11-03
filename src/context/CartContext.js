@@ -63,7 +63,7 @@ const CartContextProvider = ({children})=>{
     
     //set new sign in as dependancy for signup and first time you signed in true
     useEffect(()=>{
-        console.log(itemIdLoadingFalse)
+        
         const f1 = async ()=>{
 
             const newItem = state.cartItems.map((item)=>{

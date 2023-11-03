@@ -27,7 +27,7 @@ const Admin = () => {
   const [imageBtnClass, setImageBtnClass] = useState("btn btn-primary")
   const [registerEnable, setRegisterEnable] = useState(false)
   const [progressBarContent, setProgressBarContent] = useState([])
-  console.log(progressBarContent)
+  
   const userSchema = yup.object().shape({
     name: yup.string().min(3).required("please enter a valid name"),
     category: yup.string().min(2).required("please enter a valid family"),
@@ -47,9 +47,9 @@ const Admin = () => {
       const additionalDocRef = doc(db, "ADDITIONAL_INFO", "CATEGORIES")
       const allCat = await getDoc(additionalDocRef)
       let catData = allCat.data()
-      console.log(1)
+
       !catData.categories.includes(category) && await updateDoc(additionalDocRef, { categories: [...catData.categories, category] })
-      console.log(2)
+      
       await setDoc(docRef, objToUpload)
       toast.success("file uploaded successfully")
     } catch (error) {
