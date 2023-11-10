@@ -57,10 +57,24 @@ const SigningAndProfile = () => {
   return (
     currentUser ? (
       <div className="me-3">
-        {window.location.pathname.includes("profile") ? (
+        {window.location.pathname.includes("profile") ? (<div className="d-flex align-items-center">
           <button className="btn btn-danger" onClick={logOut}>
             signout
           </button>
+          <div className="me-1 ff-cart-icon-container ms-3" >
+            <button
+              className="btn btn-success d-flex flex-column-reverse"
+              onClick={goToCart}
+              onMouseLeave={() => setShopIconBeat("")} onMouseEnter={() => setShopIconBeat("beat")}
+            >
+              {/* onMouseEnter={(e)=>{e.target.setAttribute("class", "svg-inline--fa fa-house-user fa-beat-fade")}} onMouseLeave={(e)=>{e.target.setAttribute("className", "svg-inline--fa fa-house-user")}} */}
+              {shopIconBeat ? <FontAwesomeIcon icon={faCartShopping} beat /> : <FontAwesomeIcon icon={faCartShopping} />}
+            </button>
+            <span className="badge rounded-pill bg-danger ff-badge">
+              {totalCountAndPrice?.totalCount || 0}
+            </span>
+          </div>
+          </div>
         ) : (<div className="d-flex">
           <button className="btn btn-success d-flex" onClick={goToProfile} onMouseLeave={() => setBeatUserIcon(false)} onMouseEnter={() => setBeatUserIcon(true)}>
             {beatUserIcon ? <FontAwesomeIcon icon={faHomeUser} beat /> : <FontAwesomeIcon icon={faHomeUser} />}
