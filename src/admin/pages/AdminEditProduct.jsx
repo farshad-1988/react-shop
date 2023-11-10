@@ -4,11 +4,8 @@ import { useEffect } from 'react'
 import { useContext } from 'react'
 import { ShopContext } from '../../context/ShopContext'
 import { useState } from 'react'
-import Item from '../../components/Item'
 import LoadingPageComponent from '../../components/LoadingPageComponent'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { deleteObject, getStorage, ref } from 'firebase/storage'
-import { toast } from 'react-toastify'
 import EdittingItem from '../components/EdittingItem'
 
 const AdminEditProduct = () => {

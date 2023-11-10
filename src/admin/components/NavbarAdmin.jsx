@@ -4,11 +4,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faUserEdit } from '@fortawesome/free-solid-svg-icons';
 import SigningAndProfile from '../../layout/layoutComponents/SigningAndProfile';
-import { getCategoriesNameFromDB, getDocumentUser, searchFirestore, signOutUser } from '../../firebase.config';
+import { getCategoriesNameFromDB, searchFirestore } from '../../firebase.config';
 import { ShopContext } from '../../context/ShopContext';
 import { useContext } from 'react';
 import { UserContext } from '../../context/UserContext';
-import { useEffect } from 'react';
 import { useState } from 'react';
 import QueryResponsive from "../../utilities/QueryResponsive"
 
@@ -56,12 +55,6 @@ const NavbarAdmin = () => {
         setSearchText("")
     };
 
-    const logOut = async () => {
-        if (window.confirm("confirm to signout ?") === true) {
-            await signOutUser();
-            navigate("/")
-        }
-    };
 
     return (
         <>
@@ -103,7 +96,7 @@ const NavbarAdmin = () => {
 
                         <div className="d-flex align-items-center">
                              <Link to={"/admin"} className=" ms-3 d-flex align-items-center" >
-                                <button className='d-flex btn btn-success border border-none me-4'>{<FontAwesomeIcon icon={faUserEdit} style={{ fontSize: "24px" }} />}</button>
+                                <button className='d-flex btn btn-success me-4'>{<FontAwesomeIcon icon={faUserEdit} style={{ fontSize: "16px" }} />}</button>
                             </Link>
                             <SigningAndProfile/>
 

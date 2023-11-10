@@ -50,6 +50,7 @@ function App() {
           <Route path="/" element={<Home/>}/>
           {/* <Route index element={<Navbar/>}/> */}
           <Route path="/admin/*" element={<Admin/>}/>
+
           {/* <Route path="/adminproductedit" element={<AdminEditProduct/>}/> */}
           <Route path="/profile/:userId" element={<Profile/>}/>
           <Route path="/edituserdata/:userId" element={<EditUserData/>}/>

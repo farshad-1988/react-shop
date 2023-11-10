@@ -1,11 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Routes, useNavigate, useParams } from "react-router-dom";
+import React, { useContext, useEffect } from "react";
+import {  useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { getDocumentUser } from "../firebase.config";
-import EditUserData from "../components/EditUserData";
-import { Route } from "react-router-dom";
-import { CartContext } from "../context/CartContext";
-import { toast } from "react-toastify";
+
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -114,7 +111,7 @@ const Profile = () => {
                 );
               }
             ) : <span className="spinner spinner-border  mt-4"></span>}
-          {allCompletedPurchase?.length === 0 && <div className="text-center mt-5">you have not any completed purchase</div>}
+          {allCompletedPurchase?.length === 0 && <div className="text-center mt-5 text-danger">you don't have any completed purchase.</div>}
         </div>
       </div>
     </>

@@ -1,13 +1,12 @@
-import data from "../shop-data"
-import { useContext, useEffect } from "react"
+
+import { useContext } from "react"
 import { ShopContext } from "../context/ShopContext"
 import ThreeItemsInOne from "../components/ThreeItemsInOne"
-import { setAllItemsOnFirestore } from "../firebase.config"
 import LoadingPageComponent from "../components/LoadingPageComponent"
 
 
 const Home = ()=>{
-    const {homePageItems, dispatch , loadingPage} = useContext(ShopContext)
+    const {homePageItems , loadingPage} = useContext(ShopContext)
 
 
     // useEffect(()=>{
