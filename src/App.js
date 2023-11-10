@@ -15,7 +15,10 @@ import LoadingPageComponent from "./components/LoadingPageComponent";
 import Profile from "./pages/Profile";
 import EditUserData from "./components/EditUserData";
 import SingleItem from "./pages/SingleItem";
-import Admin from "./pages/Admin";
+import Admin from "./admin/Admin";
+import AdminEditProduct from "./admin/pages/AdminEditProduct";
+import NavbarAdmin from "./admin/components/NavbarAdmin";
+import { UserContext } from "./context/UserContext";
 // import { setAllItemsOnFirestore } from "./firebase.config";
 // import data from "./shop-data.js"
 
@@ -24,6 +27,7 @@ import Admin from "./pages/Admin";
 // const client = new QueryClient({})
 
 function App() {
+  const {currentUser} = useContext(UserContext)
   // useEffect(()=>{
 
   //   const seasf = async()=>{
@@ -37,13 +41,16 @@ function App() {
 
 
   return (
-
+    //add admin uid and secret of json file in cloud function in process env
     <Router>
-        <NavTips/>
-        <Navbar/>
+      {currentUser?.uid === process.env.REACT_APP_ADMIN_UID ? <NavbarAdmin/> :(<><NavTips/>
+        <Navbar/></>)}
+        
         <Routes>
           <Route path="/" element={<Home/>}/>
-          <Route path="/admin" element={<Admin/>}/>
+          {/* <Route index element={<Navbar/>}/> */}
+          <Route path="/admin/*" element={<Admin/>}/>
+          {/* <Route path="/adminproductedit" element={<AdminEditProduct/>}/> */}
           <Route path="/profile/:userId" element={<Profile/>}/>
           <Route path="/edituserdata/:userId" element={<EditUserData/>}/>
             

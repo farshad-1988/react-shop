@@ -41,14 +41,13 @@ const CategoryPage = ()=>{
     }
 
     useEffect(()=>{
-        
         const getItems = async (category)=>{
             dispatch({type:"LOADING_PAGE_ON"})
             const tenItemsDocs= await getSingleCategoryItem(category , 0 , sortType)
             setLastItem(tenItemsDocs[tenItemsDocs.length-1])
             const tenItems = tenItemsDocs.map((item) => item.data())
             dispatch({type:"SET_SINGLE_CATEGORY" , payload:tenItems})
-            setIfThereIsMoreItems(true)
+            tenItems.length <= 4 ? setIfThereIsMoreItems(false) : setIfThereIsMoreItems(true)
         }
         getItems(category)
         return () => dispatch({type:"RESET_SINGLE_CATEGORY"})
@@ -61,7 +60,7 @@ const CategoryPage = ()=>{
             setLastItem(tenItemsDocs[tenItemsDocs.length-1])
             const tenItems = tenItemsDocs.map((item) => item.data())
             dispatch({type:"SET_SINGLE_CATEGORY" , payload:tenItems})
-            setIfThereIsMoreItems(true)
+            tenItems.length <= 4 ? setIfThereIsMoreItems(false) : setIfThereIsMoreItems(true)
         }
         getItems(category)
         return () => dispatch({type:"RESET_SINGLE_CATEGORY"})
@@ -72,8 +71,7 @@ const CategoryPage = ()=>{
     // <RemoveScrollBar /> 
     const categorySort = [["newest" , "dateAdded" , "desc"], ["name" , "name", "asc"] ,["best seller" , "purchasedCount" , "desc"] , ["cheapest" , "price" , "asc"], ["the most expensive" , "price" , "desc"]]
     const selectSortType = (e)=>{
-        // console.log(e.target)
-        
+
         setSortType(e.target.value.split(","))
     }
  

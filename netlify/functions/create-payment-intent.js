@@ -1,34 +1,44 @@
-const { initializeApp } = require("firebase/app");
-const { runTransaction, doc, getFirestore, updateDoc, collection, addDoc, arrayUnion } = require("firebase/firestore");
-// const { initializeApp } = require('firebase-admin/app');
-// var serviceAccount = require("path/to/serviceAccountKey.json");
-// var admin = require("firebase-admin");
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount)
-// });
-
+// const { initializeApp } = require("firebase/app");
+const admin = require("firebase-admin")
+// const { runTransaction, doc, getFirestore, updateDoc, collection, addDoc, arrayUnion } = require("firebase/firestore");
+// const { initializeApp , runTransaction } = require('firebase-admin/app');
+const serviceAccount = require("./shop2-8814c-firebase-adminsdk-1hngd-5cc85cf7af.json");
 require("dotenv").config()
+// const ini = admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   databaseURL:"https://shop2-8814c.firebaseapp.com/"
+// });
+const ini = admin.initializeApp({
+  credential: admin.credential.cert({
+    projectId:"shop2-8814c",
+    clientEmail:"firebase-adminsdk-1hngd@shop2-8814c.iam.gserviceaccount.com",
+    privateKey:process.env.FIREBASE_PRIVATE_KEY
+  }),
+  databaseURL:"https://shop2-8814c.firebaseapp.com/"
+}, "admin");
+//.split(String.raw`\n`).join('\n')
+
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
+const db = admin.firestore(ini)
 
 
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBPJBEm5z9LMK2O4B4RcDE4DN31zGVeEuc",
-  authDomain: "shop2-8814c.firebaseapp.com",
-    projectId: "shop2-8814c",
-    storageBucket: "shop2-8814c.appspot.com",
-    messagingSenderId: "727418831827",
-    appId: "1:727418831827:web:2e383f2375726baa91e526",
-    measurementId: "G-XKJR5KWZ6M",
-  };
-  //baag sign in empty cart , sign out dont empty context
+// const firebaseConfig = {
+//   apiKey: "AIzaSyBPJBEm5z9LMK2O4B4RcDE4DN31zGVeEuc",
+//   authDomain: "shop2-8814c.firebaseapp.com",
+//     projectId: "shop2-8814c",
+//     storageBucket: "shop2-8814c.appspot.com",
+//     messagingSenderId: "727418831827",
+//     appId: "1:727418831827:web:2e383f2375726baa91e526",
+//     measurementId: "G-XKJR5KWZ6M",
+//   };
+//   //baag sign in empty cart , sign out dont empty context
   
   
 
   
-  
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+
+//   const app = initializeApp(firebaseConfig);
+//   const db = getFirestore(app);
 
 
 exports.handler = async(event) => { 
@@ -38,22 +48,22 @@ exports.handler = async(event) => {
     let totalPrice=0
 
     
-    await runTransaction(db, async (transaction) => {
+    await db.runTransaction( async (transaction) => {
         let arrayOfDocRefAndCount = []
 
         for (let item of cart) {
-
-          const docRef = doc(
-            db,
-            "SHOP_ITEMS",
-            item.category.toLocaleUpperCase(),
-            item.category.toLocaleUpperCase(),
-            item.id
-          )
+          
+          const docRef = db.collection("PRODUCTS").doc(item.category.toLocaleUpperCase()).collection(item.category.toLocaleUpperCase()).doc(item.id)
+            // "PRODUCTS",
+            // item.category.toLocaleUpperCase(),
+          //   item.category.toLocaleUpperCase(),
+          //   item.id
+          // )
           try {
             
             const purchasedItemDoc = await transaction.get(docRef);
-            if (!purchasedItemDoc.exists()) throw new Error("Document does not exist!");
+            if (!purchasedItemDoc) throw new Error("Document does not exist!");
+            // console.log(purchasedItemDoc)
             
             const newCountInStock = purchasedItemDoc.data().countInStock - item.countInCart;
             const newPurchasedCount = purchasedItemDoc.data().purchasedCount + item.countInCart;

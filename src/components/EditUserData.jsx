@@ -13,12 +13,12 @@ const EditUserData = ()=>{
     const {userId} = useParams()
     const {currentUser , userDoc} = useContext(UserContext)
 
-    const {name , lastName , email , phoneNumber , address}={...userDoc}
+    const {name , lastName  , phoneNumber , address}={...userDoc}
 
     const userSchema = yup.object().shape({
         name: yup.string().min(3).required("please enter a valid name"),
         lastName: yup.string().min(3).required("please enter a valid family"),
-        email: yup.string().email("you must enter valid email address").required("enter email address"),
+        // email: yup.string().email("you must enter valid email address").required("enter email address"),
         phoneNumber: yup.number().min(10).required("enter phone number"),
         address: yup.object({
             address1 : yup.string().max(30).required("please enter your address"),
@@ -31,12 +31,12 @@ const EditUserData = ()=>{
     })
     
     const {register , handleSubmit , formState:{errors}} = useForm({ resolver:yupResolver(userSchema),
-        "defaultValues":{name , lastName , email , phoneNumber , address}
+        "defaultValues":{name , lastName  , phoneNumber , address}
     })
 
-    const submitFormToDB = async ({email ,name , lastName,address , phoneNumber})=>{
+    const submitFormToDB = async ({name , lastName,address , phoneNumber})=>{
         if(!currentUser) return
-        await editDocumentUser(currentUser.uid , email ,name , lastName ,address, phoneNumber)
+        await editDocumentUser(currentUser.uid  ,name , lastName ,address, phoneNumber)
         navigate(`/profile/${userId}`)
     }
 
@@ -52,11 +52,11 @@ const EditUserData = ()=>{
                 <input className="form-control" type="text" placeholder="please enter your lastname..." {...register("lastName")}/>
                 {errors.lastName?.message && <p className="text-danger">{errors.lastName.message}</p>}
             </div>
-            <div className="mt-2">
+            {/* <div className="mt-2">
                 <span>email address:</span>
                 <input className="form-control" type="text" placeholder="please enter your email..." {...register("email")}/>
                 {errors.email?.message && <p className="text-danger">{errors.email.message}</p>}
-            </div>
+            </div> */}
             <div className="mt-2">
                 <span>phone number</span>
                 <input className="form-control" type="number" placeholder="please enter your phone number..." {...register("phoneNumber")}/>

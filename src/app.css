@@ -10,15 +10,15 @@ body{
 
 
 .ff-font-12{
-    font-size: 12px;
+    font-size: 12px !important;
 }
 .ff-font-14{
-    font-size: 14px;
+    font-size: 15px !important;
 }
 
 .ff-cart-icon-container{
-    width: 50px;
-    position: relative;
+    width: 50px !important;
+    position: relative !important;
 }
 
 .ff-badge {
@@ -62,8 +62,8 @@ body{
 }
 
 .ff-purchased-items-container {
-    width: 250px;
-    height: 250px;
+    width: 250px !important;
+    height: 250px !important;
 }
 
 

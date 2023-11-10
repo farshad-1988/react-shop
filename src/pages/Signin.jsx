@@ -33,7 +33,7 @@ const Signin = ()=>{
 
     
     return (
-        <form className="container" onSubmit={handleSubmit(login)}>
+        <form className="container w-50" onSubmit={handleSubmit(login)}>
             <span>email: </span>
             <input className="form-control" type="email" {...register("email")}/>
             <span>password: </span>

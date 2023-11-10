@@ -5,12 +5,13 @@ import { ShopContext } from "../context/ShopContext"
 
 
 const ThreeItemsInOne = (props)=>{
+    
     const {dispatch} = useContext(ShopContext)
     const threeItems =  [...props.threeItems]
     const navigate = useNavigate()
 
     const goToCategory=()=>{
-        navigate(`category/${threeItems[0].category}`)
+        navigate(`category/${threeItems[0]?.category}`)
     }
 
 

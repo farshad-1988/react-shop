@@ -57,9 +57,9 @@ export const getDocumentUser = async (uid) => {
   return userInfo;
 };
 
-export const editDocumentUser = async (uid , email ,name , lastName ,address , phoneNumber) => {
+export const editDocumentUser = async (uid  ,name , lastName ,address , phoneNumber) => {
   const docRef = doc(db, "USERS", uid);
-  await updateDoc(docRef , {email ,name , lastName ,address , phoneNumber});
+  await updateDoc(docRef , {name , lastName ,address , phoneNumber});
   console.log("done");
 };
 
@@ -124,7 +124,8 @@ export const signUpWithEmail = async (
       createAt: serverTimestamp(),
       loginAt: serverTimestamp(),
       cart: currentCart,
-      uid
+      uid,
+      purchasedItems:[]
     });
   } catch (error) {
     console.log(error);
@@ -176,9 +177,10 @@ export const getCategoriesNameFromDB = async () => {
 
 
 export const searchFirestore = async (categories, text) => {
-  const allItems = await categories.map(async (category) => {
-    try {
-      const colRef = collection(db, "SHOP_ITEMS", category, category);
+  const CATEGORIES = categories.map((category)=>category.toLocaleUpperCase())
+  try {
+  const allItems = await CATEGORIES.map(async (category) => {
+      const colRef = collection(db, "PRODUCTS", category, category);
       const q = query(
         colRef,
         or(
@@ -187,20 +189,20 @@ export const searchFirestore = async (categories, text) => {
         )
       );
       const itemsSnapshot = await getDocs(q);
-      return itemsSnapshot.docs.map((item) => {
-        return item.data();
-      });
-    } catch (error) {
-      console.log(error.code, error.message);
-    }
-  });
-  return await Promise.all(allItems);
+      return itemsSnapshot.docs.map((item) => item.data())
+    })
+
+    return await Promise.all(allItems);
+  } catch (error) {
+    console.log(error.code, error.message);
+  }
 };
 
 export const getThreeOfEachCat = async (categories) => {
-  const allItems = await categories?.map(async (category) => {
+  const CATEGORIES = categories.map((category)=>category.toLocaleUpperCase())
+  const allItems = await CATEGORIES?.map(async (category) => {
     try {
-      const colRef = collection(db, "SHOP_ITEMS", category, category);
+      const colRef = collection(db, "PRODUCTS", category, category);
       const q = query(colRef, limit(3));
       const itemsSnapshot = await getDocs(q);
       return itemsSnapshot.docs.map((item) => {
@@ -215,7 +217,7 @@ export const getThreeOfEachCat = async (categories) => {
 
 export const getSingleCategoryItem = async (category , lastItem , sortType) => {
   category = category?.toLocaleUpperCase();
-  const colRef = collection(db, "SHOP_ITEMS", category, category);
+  const colRef = collection(db, "PRODUCTS", category, category);
   
   let q
   if(lastItem){
@@ -231,7 +233,7 @@ export const getSingleCategoryItem = async (category , lastItem , sortType) => {
 
 
 export const singleItemFullInfo = async(category , productId)=>{
-  const docRef = doc(db ,"SHOP_ITEMS", category , category , productId)
+  const docRef = doc(db ,"PRODUCTS", category , category , productId)
   const snapShot = await getDoc(docRef)
   const itemInfo =snapShot.data()
   return itemInfo
@@ -320,7 +322,7 @@ export const signInWithEmail = async (email, password , currentCart) => {
 export const setAllItemsOnFirestore = async (data) => {
   const categories = data.map((obj) => obj.title.toLocaleUpperCase());
   await setDoc(doc(db, "ADDITIONAL_INFO", "CATEGORIES"), { categories });
-  const colRef = collection(db, "SHOP_ITEMS");
+  const colRef = collection(db, "PRODUCTS");
   const batch = writeBatch(db);
   data.forEach((object) => {
     object.items?.forEach((obj, index) => {

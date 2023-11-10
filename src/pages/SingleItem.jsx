@@ -22,7 +22,7 @@ function SingleItem() {
 
 
     return (<div className='row m-auto'>
-        <div id="demo" className="carousel slide m-auto mt-3 col-lg-3 col-md-4 col-sm-6 col-9" data-bs-ride="false">
+        <div id="demo" className="carousel slide mt-3 col-lg-5 col-md-6 col-sm-11 col-11" data-bs-ride="false">
             <div className="carousel-indicators">
                 {imagesUrl?.map((image, index) => 
                     <button key={`img-btn${index}`} type="button" data-bs-target="#demo" data-bs-slide-to={index} className={index===0 && "active"}></button>
@@ -31,7 +31,7 @@ function SingleItem() {
 
             <div className="carousel-inner">
                 {imagesUrl?.map((image, index) => 
-                    (<div key={`img-pic${index}`} className={`carousel-item ${index===1 && "active"}`} >
+                    (<div key={`img-pic${index}`} className={`carousel-item ${index===1 && "active bg-image hover-zoom"}`} >
                             <img  src={image} alt="" className="d-block w-100 rounded-3"/>
                     </div>)
                 )}
@@ -45,7 +45,7 @@ function SingleItem() {
             </button>
         </div>
 
-        <div className='mt-4 m-auto col-lg-3 col-md-4 col-sm-6 col-9'>
+        <div className='mt-4 m-auto col-lg-5 col-md-5 col-sm-11 col-11'>
             <p>name of product: {name}</p>
             <p>category: {category}</p>
             <p>price: {price}$</p>

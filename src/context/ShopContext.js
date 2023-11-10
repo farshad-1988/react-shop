@@ -26,7 +26,7 @@ const ShopContextProvider = ({children})=>{
 
 
     return (
-    <ShopContext.Provider value={{dispatch,lastItemLoadedInSingleCat:state.lastItemLoadedInSingleCat ,  singleCategoryToShow : state.singleCategoryToShow,loadingPage:state.loadingPage,searchedItem:state.searchedItem ,homePageItems:state.homePageItems , shoppingTips:state.shoppingTips}}>
+    <ShopContext.Provider value={{dispatch,lastItemLoadedInSingleCat:state.lastItemLoadedInSingleCat ,  singleCategoryToShow : state.singleCategoryToShow,loadingPage:state.loadingPage,searchedItem:state.searchedItem ,homePageItems:state.homePageItems , shoppingTips:state.shoppingTips , categoriesTitle:state.categoriesTitle}}>
         {children}
     </ShopContext.Provider>
     )
