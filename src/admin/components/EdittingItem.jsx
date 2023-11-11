@@ -57,7 +57,7 @@ const EdittingItem = ({ item, getEditedProductId }) => {
         // imagesUrl
         const CATEGORY = category.toLocaleUpperCase()
         const oldDocRef = doc(db, "PRODUCTS", CATEGORY, CATEGORY, id)
-        const objToUpload = { imagesUrl: [...editedImagesUrl, ...addedImagesUrl], name: editedName, category: editedCategory, subCategory: editedCategory, countInStock: editedCountInStock, price: editedPrice, purchasedCount: editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), id, dateAdded, dateEdited: new Date() }
+        const objToUpload = { imagesUrl: [...editedImagesUrl, ...addedImagesUrl], name: editedName, category: editedCategory.trim(), subCategory: editedCategory.trim(), countInStock: editedCountInStock, price: editedPrice, purchasedCount: editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), id, dateAdded, dateEdited: new Date() }
         try {
             if (category !== editedCategory) {
                 await deleteDoc(oldDocRef)
