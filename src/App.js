@@ -9,16 +9,14 @@ import NavTips from "./layout/NavTips";
 import CategoryPage from "./pages/CategoryPage";
 import Cart from "./pages/Cart";
 import ShowFoundItems from "./pages/ShowFoundItems";
-import { useContext, useEffect } from "react";
-import { ShopContext } from "./context/ShopContext";
-import LoadingPageComponent from "./components/LoadingPageComponent";
+import { useContext } from "react";
 import Profile from "./pages/Profile";
 import EditUserData from "./components/EditUserData";
 import SingleItem from "./pages/SingleItem";
 import Admin from "./admin/Admin";
-import AdminEditProduct from "./admin/pages/AdminEditProduct";
 import NavbarAdmin from "./admin/components/NavbarAdmin";
 import { UserContext } from "./context/UserContext";
+import PurchaseItemsDetailPage from "./pages/PurchaseItemsDetailPage";
 // import { setAllItemsOnFirestore } from "./firebase.config";
 // import data from "./shop-data.js"
 
@@ -53,7 +51,8 @@ function App() {
 
           {/* <Route path="/adminproductedit" element={<AdminEditProduct/>}/> */}
           <Route path="/profile/:userId" element={<Profile/>}/>
-          <Route path="/edituserdata/:userId" element={<EditUserData/>}/>
+          <Route path="/profile/:userId/edituserdata" element={<EditUserData/>}/>
+          <Route path="/profile/:userId/purchasedItems/:purchaseId" element={<PurchaseItemsDetailPage/>}/>
             
 
           <Route path="/signin" element={<Signin/>}/>

@@ -2,12 +2,14 @@ import React, { useContext, useEffect } from "react";
 import {  useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { getDocumentUser } from "../firebase.config";
+import PurchasedItems from "./PurchasedItems";
 
 
 const Profile = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
   const { userDoc, setUserDoc, currentUser } = useContext(UserContext)
+
 
 
   useEffect(() => {
@@ -58,7 +60,7 @@ const Profile = () => {
                 <button
                   disabled={!userDoc}
                   className="btn btn-danger mt-3 w-100"
-                  onClick={() => navigate(`/editUserData/${userId}`)}
+                  onClick={() => navigate(`editUserData`)}
                 >
                   edit
                 </button>
@@ -72,42 +74,8 @@ const Profile = () => {
           {allCompletedPurchase ?
             Object.entries(allCompletedPurchase)?.map(
               (allPurchasedItemsInfo, index) => {
-                const purchasedItems = allPurchasedItemsInfo[1].purchasedItems;
-                const purchasedInfo =
-                  allPurchasedItemsInfo[1].summaryPurchaseInfo;
-                let datePurchasedRegistered = purchasedInfo.purchasedAt.toDate()
                 return (
-                  <div className="row mt-2 ms-2" key={`purchasedInfo${index}`}>
-                    <div className=" col-6 mt-5">
-                      {/* gh */}
-                      <span className="text-danger">purchase Id: </span>
-                      <p>{purchasedInfo.purchasedId}</p>
-                      <p>{purchasedInfo.totalCountAndPrice.totalPrice}$</p>
-                      <p>{purchasedInfo.totalCountAndPrice.totalCount} items have purchased</p>
-                      <p>order date:{datePurchasedRegistered.toDateString()}</p>
-                      <p>deliverty date:{purchasedInfo.deliveryDay}</p>
-                    </div>
-
-                    <div className="col-6 bg-secondary rounded-circle d-flex m-3 ff-purchased-items-container">
-                      <div className="d-flex flex-wrap justify-content-center m-auto">
-                        {purchasedItems?.map((purchasedItem, index) => {
-                          if (index < 4)
-                            return (
-                              <div
-                                key={`purchasedItem${index}`}
-                                className="rounded-circle mt-1 me-1"
-                                style={{
-                                  backgroundImage: `url(${purchasedItem.imagesUrl[0]})`,
-                                  backgroundSize: "cover",
-                                  width:"95px",
-                                  height:"95px",
-                                }}
-                              ></div>
-                            );
-                        })}
-                      </div>
-                    </div>
-                  </div>
+                    <PurchasedItems allPurchasedItemsInfo={allPurchasedItemsInfo} key={`purchasedInfo${index}`}/>
                 );
               }
             ) : <span className="spinner spinner-border  mt-4"></span>}
