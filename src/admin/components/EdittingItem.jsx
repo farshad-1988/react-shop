@@ -3,7 +3,7 @@ import { useEffect } from "react"
 import { useState } from "react"
 import AdminInputImage from "./AdminInputImage"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faAngleLeft, faAngleRight, faImage, faPanorama, faTrashCan, faX } from "@fortawesome/free-solid-svg-icons"
+import { faAngleLeft, faAngleRight, faCheck, faImage, faPanorama, faTrashCan, faX } from "@fortawesome/free-solid-svg-icons"
 import { deleteObject, getStorage, ref } from "firebase/storage"
 import { toast } from "react-toastify"
 import { deleteDoc, doc, setDoc, updateDoc } from "firebase/firestore"
@@ -12,14 +12,14 @@ import { db } from "../../firebase.config"
 
 const EdittingItem = ({ item, getEditedProductId }) => {
     const [enableEditting, setEnableEdittng] = useState(false)
-    const { name, countInStock, purchasedCount, category, price, imagesUrl, id, dateAdded } = { ...item }
+    const { name, countInStock, purchasedCount, category, price, imagesUrl, id, dateAdded,firstPicture } = { ...item }
 
     const editedInfo = { addedImagesUrl: [], editedName: name, editedCountInStock: countInStock, editedPurchasedCount: purchasedCount, editedCategory: category, editedPrice: price, editedImagesUrl: [...imagesUrl] }
     const [editedItem, setEditedItem] = useState(Object.assign({}, editedInfo))
     const [editedImagesUrl, seteditedImagesUrl] = useState([...imagesUrl])
     const { editedName, editedCountInStock, editedPurchasedCount, editedCategory, editedPrice, addedImagesUrl } = { ...editedItem }
-    const [activeImageNum, setActiveImageNum] = useState(0)
-
+    const [activeImageNum, setActiveImageNum] = useState(firstPicture || 0)
+    const [firstPictureInUi , setFirstPictureInUi] = useState(firstPicture)
 
 
 
@@ -152,6 +152,17 @@ const EdittingItem = ({ item, getEditedProductId }) => {
         item.length && setEditedItem({ ...item })
     }
 
+    const setAsActiveImageInDb = async ()=>{
+        try {
+            const docRef = doc(db , "PRODUCTS" , category.toLocaleUpperCase() , category.toLocaleUpperCase() , id)
+            await updateDoc(docRef , {firstPicture:activeImageNum})
+            toast.success("image set as active image")
+            setFirstPictureInUi(activeImageNum)
+        } catch (error) {
+            toast.error("image is not set as active image")
+        }
+    }
+
 
     return (
         <div className="row mb-3" style={{ position: "relative" }}>
@@ -159,6 +170,7 @@ const EdittingItem = ({ item, getEditedProductId }) => {
                 {!imagesUrl.length ? <FontAwesomeIcon style={{ width: "250px", height: "250px" }} icon={faImage} /> :
                     !enableEditting && <div className="col-xl-3 col-12 d-flex flex-column" style={{ width: "330px", height: "350px" }}>
                         <img alt={"product"} className="rounded-3" width={300} height={300} src={imagesUrl[activeImageNum]} />
+                        {firstPictureInUi===activeImageNum && <button className="btn text-success" style={{position:"absolute", left:"270px" , top:"30px"}}><FontAwesomeIcon size="xl" icon={faCheck} /></button>}
                         <div className="col-12 d-flex justify-content-between">
                             <button className="btn border-0 text-primary" disabled={activeImageNum === 0 ? true : false} onClick={decrementImageNum}><FontAwesomeIcon icon={faAngleLeft} size="lg" /></button>
                             {enableEditting && <button className="btn text-danger" onClick={() => deletePic(imagesUrl[activeImageNum])}><FontAwesomeIcon icon={faTrashCan} size="lg" /></button>}
@@ -169,6 +181,7 @@ const EdittingItem = ({ item, getEditedProductId }) => {
                 {!editedImagesUrl.length ? <FontAwesomeIcon style={{ width: "250px", height: "250px" }} icon={faImage} /> :
                     enableEditting && <div className="col-xl-3 col-12 d-flex flex-column" style={{ width: "330px", height: "350px" }}>
                         <img alt="product" className="rounded-3" width={300} height={300} src={editedImagesUrl[activeImageNum]} />
+                        {firstPictureInUi===activeImageNum && <button className="btn text-success" style={{position:"absolute", left:"270px" , top:"30px"}}><FontAwesomeIcon size="xl" icon={faCheck} /></button>}
                         <div className="col-12 d-flex justify-content-between">
                             <button className="btn border-0 text-primary" disabled={activeImageNum == 0 ? true : false} onClick={decrementImageNum}><FontAwesomeIcon icon={faAngleLeft} size="lg" /></button>
                             {enableEditting && <button className="btn text-danger" onClick={() => deletePic(imagesUrl[activeImageNum])}><FontAwesomeIcon icon={faTrashCan} size="lg" /></button>}
@@ -184,6 +197,7 @@ const EdittingItem = ({ item, getEditedProductId }) => {
                     {!enableEditting ? <div> <span className="text-primary">price:</span>{price}$</div> : <div className="d-flex flex-column"><span>price</span><input name="editedPrice" onChange={updateeditedItem} type="text" defaultValue={price} /></div>}
                     {!enableEditting ? <div> <span className="text-primary">warehouse count:</span>{countInStock}</div> : <div className="d-flex flex-column"><span>count in stock</span><input name="editedCountInStock" onChange={updateeditedItem} type="text" defaultValue={countInStock} /></div>}
                     {!enableEditting ? <div> <span className="text-primary">sold count:</span> {purchasedCount}</div> : <div className="d-flex flex-column"><span>purchased count</span><input name="editedPurchasedCount" onChange={updateeditedItem} type="text" defaultValue={purchasedCount} /></div>}
+                    <button disabled={activeImageNum===firstPictureInUi} onClick={setAsActiveImageInDb} className="btn btn-success mt-3">set as active image</button>
                 </div>
 
                 <div className="col-xl-5 col-12 d-flex flex-column justify-content-between">
@@ -197,8 +211,8 @@ const EdittingItem = ({ item, getEditedProductId }) => {
                     {!enableEditting ? <div className="d-flex flex-column col-5 align-self-end mt-5">
                         <button className="btn btn-primary" onClick={enableEditingFunc}>ENABLE EDIT MODE</button>
                         <button className="btn btn-danger mt-3" onClick={removeProduct}>DELETE</button>
-                    </div> : 
-                    <div className="d-flex justify-content-end mb-4">
+                    </div> :
+                        <div className="d-flex justify-content-end mb-4">
                             <button className="btn btn-danger me-3" onClick={abortEditedData}>ABORT</button>
                             <button className="btn btn-primary" onClick={postEditedData}>POST</button>
                         </div>}

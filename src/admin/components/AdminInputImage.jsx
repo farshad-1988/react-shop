@@ -12,7 +12,7 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
   const storage = getStorage()
   const [formImages, setFormImages] = useState([])
   const [imagesUrl, setImagesUrl] = useState([])
-
+  const [activeImage , setActiveImage] = useState(0)
   const [progressBarContent, setProgressBarContent] = useState({})
   const imageInputRef = useRef()
 
@@ -102,6 +102,7 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
       setFormImages([])
       setProgressBarContent({})
       setImagesUrl([])
+      imageInputRef.current.value = null
       //   categoryRef.current.disabled = false
     }
   }
@@ -110,8 +111,6 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
     const uploadData = async () => {
       await uploadImages()
     }
-    // if (formImages.length >= 4) imageInputRef.current.disabled = true
-
     uploadData()
   }, [formImages])
 
@@ -126,7 +125,7 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
 
 
   useEffect(() => {
-    getImagesUrl(imagesUrl)
+    getImagesUrl(imagesUrl , activeImage)
   }, [imagesUrl])
 
 
@@ -135,6 +134,12 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
 
     
   // },[])
+  const selectAciveImage = (e)=>{
+    console.log(`${category}/${productId}/` + formImages[e.target.value].name)
+    const indexOfImageInUrlArr = imagesUrl.findIndex((url)=>getPathStorageFromUrl(url) === `${category}/${productId}/` + formImages[e.target.value].name)
+    console.log(indexOfImageInUrlArr)
+    setActiveImage(indexOfImageInUrlArr)
+  }
 
     function getPathStorageFromUrl(url) {
 
@@ -164,11 +169,15 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
       const newImagesUrl = imagesUrl.filter((url)=>getPathStorageFromUrl(url)!==`${category}/${productId}/` + image.name)
       setImagesUrl(newImagesUrl)
       setProgressBarContent((prev)=>({...prev , [image.name]:0}))
+      getImagesUrl(newImagesUrl)
+      if(!newImagesUrl.length) imageInputRef.current.value=null
     }).catch((error) => {
       //double check
       toast.error(error)
     })
   }
+  
+  
 
   return (
     <div className="d-flex flex-column">
@@ -193,6 +202,7 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
             <div className={`progress mt-2 ${!progressBarContent[image.name] ? "d-none" : "d-block"} }`}>
               <div key={`progressBar${index}`} className={`progress-bar ${progressBarContent[image.name] === 100 && "bg-success"}`} style={{ width: `${progressBarContent[image.name]}%` }}>{Math.floor(progressBarContent[image.name])}%</div>
             </div>
+            <input className="mt-1" title="set as active image" defaultChecked={index===0} type="radio" name="selectPic" value={index} onChange={selectAciveImage}/>
           </div>
         })}
       </div>

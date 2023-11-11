@@ -31,6 +31,7 @@ const AdminAddProduct = () => {
   const [productInfo, setProductInfo] = useState({})
   const [uploadingSpinner , setUploadingSpinner]=useState("")
   const [dataUploaded , setDataUploaded] = useState(false)
+  const [firstPicture , setFirstPicture] = useState(0)
 
 
   const submitFormToDB = async (e) => {
@@ -42,7 +43,7 @@ const AdminAddProduct = () => {
       toast.error("please complete all fields...")
       return
     }
-    const objToUpload = { name, category, subCategory: category, countInStock, price, purchasedCount: 0, splittedName: name.toLocaleLowerCase().split(" "), id: productId, dateAdded: new Date(), imagesUrl }
+    const objToUpload = { name, category, subCategory: category, countInStock, price, purchasedCount: 0, splittedName: name.toLocaleLowerCase().split(" "), id: productId, dateAdded: new Date(), imagesUrl ,firstPicture}
     const CATEGORY = category.toLocaleUpperCase()
     const docRef = doc(db, "PRODUCTS", CATEGORY, CATEGORY, productId)
     try {
@@ -104,11 +105,12 @@ const AdminAddProduct = () => {
 
 
 
-  function getImagesUrl(imagesURL) {
+  function getImagesUrl(imagesURL , activeImage) {
     setImagesUrl(imagesURL)
+    setFirstPicture(activeImage)
   }
 
-
+  
 
   return (
 

@@ -6,7 +6,7 @@ import ItemCounter from '../components/ItemCounter'
 function SingleItem() {
     const { productId, category } = useParams()
     const [itemFullInfo, setItemFullInfo] = useState([])
-    const { imagesUrl ,name , price , countInStock  } = itemFullInfo
+    const { imagesUrl ,name , price , countInStock , firstPicture } = itemFullInfo
 
 
     useEffect(() => {
@@ -31,7 +31,7 @@ function SingleItem() {
 
             <div className="carousel-inner">
                 {imagesUrl?.map((image, index) => 
-                    (<div key={`img-pic${index}`} className={`carousel-item ${index===1 && "active bg-image hover-zoom"}`} >
+                    (<div key={`img-pic${index}`} className={`carousel-item ${index===firstPicture && "active bg-image hover-zoom"}`} >
                             <img  src={image} alt="" className="d-block w-100 rounded-3"/>
                     </div>)
                 )}

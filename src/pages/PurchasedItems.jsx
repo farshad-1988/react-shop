@@ -37,7 +37,7 @@ const PurchasedItems = ({allPurchasedItemsInfo}) => {
                 key={`purchasedItem${index}`}
                 className="rounded-circle mt-1 me-1"
                 style={{
-                  backgroundImage: `url(${purchasedItem.imagesUrl[0]})`,
+                  backgroundImage: `url(${purchasedItem.imagesUrl[purchasedItem.firstPicture || 0]})`,
                   backgroundSize: "cover",
                   width:"95px",
                   height:"95px",
