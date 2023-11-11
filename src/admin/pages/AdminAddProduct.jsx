@@ -24,17 +24,21 @@ const AdminAddProduct = () => {
 
   const [productId, setProductId] = useState("")
   const categoryRef = useRef()
+  const nameRef = useRef()
+  const priceRef = useRef()
+  const countRef = useRef()
   const [imagesUrl, setImagesUrl] = useState([])
   const [productInfo, setProductInfo] = useState({})
   const [uploadingSpinner , setUploadingSpinner]=useState("")
+  const [dataUploaded , setDataUploaded] = useState(false)
 
 
   const submitFormToDB = async (e) => {
     e.preventDefault()
     setUploadingSpinner("spinner-border")
-    const { name, category, price } = { ...productInfo }
-    const countInStock = 100
-    if(!name || !category || !price || !imagesUrl.length){
+    let { name, category, price , countInStock } = { ...productInfo }
+    category = category.trim()
+    if(!name || !category || !price || !countInStock || !imagesUrl.length){
       toast.error("please complete all fields...")
       return
     }
@@ -50,16 +54,21 @@ const AdminAddProduct = () => {
 
       await setDoc(docRef, objToUpload)
       toast.success("file uploaded successfully")
-      setTimeout(() => {
-        window.location.reload()
-      }, 1000);
+      setDataUploaded(true)
+      setProductId(uuidv4())
+      
+      // setTimeout(() => {
+      //   window.location.reload()
+      // }, 1000);
+
+
+      setUploadingSpinner("")
     } catch (error) {
       console.log(error)
       setUploadingSpinner("")
       toast.error("something's wrong,check the console...")
-    } finally {
       setUploadingSpinner("")
-    }
+    } 
   }
 
   // console.log(cat)
@@ -73,8 +82,18 @@ const AdminAddProduct = () => {
 
 
   const updateProductInfo = (e) => {
+    setDataUploaded(false)
     setProductInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
+  useEffect(()=>{
+    categoryRef.current.value = ""
+    nameRef.current.value = ""
+    countRef.current.value = ""
+    priceRef.current.value = ""
+    setImagesUrl([])
+    setProductInfo({})
+    
+  },[productId])
 
 
 
@@ -90,7 +109,6 @@ const AdminAddProduct = () => {
   }
 
 
-  // console.log(progressBarContent)
 
   return (
 
@@ -108,13 +126,13 @@ const AdminAddProduct = () => {
           </p>
         </div>
 
-        <AdminInputImage items={{ category: productInfo.category, productId }} getImagesUrl={getImagesUrl} />
+        <AdminInputImage items={{ category: productInfo?.category, productId , dataUploaded }} getImagesUrl={getImagesUrl} />
       </div>
 
       <form className="container m-auto col-12 col-md-5 row" onSubmit={submitFormToDB}>
         <div className="mt-2">
           <span>name :</span>
-          <input required onChange={updateProductInfo} className="form-control" name='name' type="text" placeholder="products name..." />
+          <input required ref={nameRef} onChange={updateProductInfo} className="form-control" name='name' type="text" placeholder="products name..." />
           {/* {errors?.name?.message && <p className="text-danger">{errors?.name?.message}</p>} */}
         </div>
 
@@ -123,19 +141,18 @@ const AdminAddProduct = () => {
           <input className="form-control" type="text" placeholder="please enter your subCategory..." {...register("subCategory")} />
           {errors?.subCategory?.message && <p className="text-danger">{errors?.subCategory?.message}</p>}
         </div> */}
-        {/* <div className="mt-2">
+        <div className="mt-2">
           <span>count in stock :</span>
-          <input onChange={updateProductInfo} className="form-control" type="number" name='countInStock' placeholder="warehouse count..." />
-         
-        </div> */}
+          <input ref={countRef} onChange={updateProductInfo} className="form-control" type="number" name='countInStock' placeholder="warehouse count..." />
+        </div>
         <div className="mt-2">
           <span>price : </span>
-          <input required onChange={updateProductInfo} className="form-control" type="text" name='price' placeholder="price in dolar..." />
+          <input required ref={priceRef} onChange={updateProductInfo} className="form-control" type="number" name='price' placeholder="price in dolar..." />
           {/* {errors?.price?.message && <p className="text-danger">{errors?.price?.message}</p>} */}
         </div>
         <div>
           <div className="text-center">
-            <button className="mt-5 btn btn-primary w-50" style={{fontSize:"20px"}} type="submit"><span style={{width:"15px", height:"15px", fontSize:"10px"}} className={`${uploadingSpinner}`}></span> upload data </button>
+            <button disabled={!imagesUrl.length} className="mt-5 btn btn-primary w-50" style={{fontSize:"20px"}} type="submit"><span style={{width:"15px", height:"15px", fontSize:"10px"}} className={`${uploadingSpinner}`}></span> upload data </button>
           </div>
 
         </div>

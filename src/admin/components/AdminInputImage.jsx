@@ -7,7 +7,7 @@ import { useState } from "react"
 import { toast } from "react-toastify"
 
 
-const AdminInputImage = ({ items: { category, productId }, getImagesUrl }) => {
+const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImagesUrl }) => {
   // console.log(productId)
   const storage = getStorage()
   const [formImages, setFormImages] = useState([])
@@ -116,11 +116,25 @@ const AdminInputImage = ({ items: { category, productId }, getImagesUrl }) => {
   }, [formImages])
 
 
+  useEffect(()=>{
+    if(dataUploaded){
+      setFormImages([])
+      setProgressBarContent({})
+      setImagesUrl([])
+    }
+  },[dataUploaded])
+
 
   useEffect(() => {
     getImagesUrl(imagesUrl)
   }, [imagesUrl])
 
+
+
+  // useEffect(()=>{
+
+    
+  // },[])
 
     function getPathStorageFromUrl(url) {
 
