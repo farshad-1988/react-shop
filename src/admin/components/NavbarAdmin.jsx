@@ -95,8 +95,8 @@ const NavbarAdmin = () => {
                         </Link>}
 
                         <div className="d-flex align-items-center">
-                             <Link to={"/admin"} className=" ms-3 d-flex align-items-center" >
-                                <button className='d-flex btn btn-success me-4'>{<FontAwesomeIcon icon={faUserEdit} style={{ fontSize: "16px" }} />}</button>
+                             <Link to={"/admin"} className=" ms-3 d-flex align-items-center text-decoration-none">
+                                <button className='d-flex btn btn-success me-4'><span className='me-2'>Admin</span><span>{<FontAwesomeIcon icon={faUserEdit} style={{ fontSize: "16px" }} />}</span></button>
                             </Link>
                             <SigningAndProfile/>
 
