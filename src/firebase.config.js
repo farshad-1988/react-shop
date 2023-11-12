@@ -159,7 +159,7 @@ export const syncLocalStorageDbAndContext = async (
 
 export const getCategoriesNameFromDB = async () => {
   const localCat = JSON.parse(localStorage.getItem("categories"));
-  if (localCat && localCat?.timeSet + 360000 > new Date().getTime())
+  if (localCat && localCat?.timeSet + 180000 > new Date().getTime())
     return localCat;
 
   const docRef = doc(db, "ADDITIONAL_INFO", "CATEGORIES");

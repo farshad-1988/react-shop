@@ -1,5 +1,5 @@
 import React from 'react'
-import { getCategoriesNameFromDB, getSingleCategoryItem } from '../../firebase.config'
+import { db, getCategoriesNameFromDB, getSingleCategoryItem } from '../../firebase.config'
 import { useEffect } from 'react'
 import { useContext } from 'react'
 import { ShopContext } from '../../context/ShopContext'
@@ -7,10 +7,12 @@ import { useState } from 'react'
 import LoadingPageComponent from '../../components/LoadingPageComponent'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import EdittingItem from '../components/EdittingItem'
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+import { toast } from 'react-toastify'
 
 const AdminEditProduct = () => {
   const { categoriesTitle, singleCategoryToShow, dispatch, loadingPage } = useContext(ShopContext)
-  console.log(categoriesTitle)
+  const [categorySelectBox , setCategorySelectBox] = useState(categoriesTitle)
   const [selectedCategory, setSelectedCategory] = useState("")
 
   const [lastItem, setLastItem] = useState("")
@@ -67,6 +69,22 @@ const AdminEditProduct = () => {
     // singleCategoryToShow.map((item) => { setActiveImageNumber((prev) => ({ ...prev, [item.id]: 0 })) })
     // return () => dispatch({ type: "RESET_SINGLE_CATEGORY" })
   }, [])
+  useEffect(() => {
+    const getItems = async () => {
+      // dispatch({ type: "LOADING_PAGE_ON" })
+      const categories = await getCategoriesNameFromDB();
+      setSelectedCategory(categories.categories[0])
+      const tenItemsDocs = await getSingleCategoryItem(categories.categories[0], 0, sortType)
+      setLastItem(tenItemsDocs[tenItemsDocs.length - 1])
+      const tenItems = tenItemsDocs.map((item) => item.data())
+      dispatch({ type: "SET_SINGLE_CATEGORY", payload: tenItems })
+      tenItemsDocs.length <= 4 ? setIfThereIsMoreItems(false) : setIfThereIsMoreItems(true)
+
+    }
+    getItems()
+    // singleCategoryToShow.map((item) => { setActiveImageNumber((prev) => ({ ...prev, [item.id]: 0 })) })
+    // return () => dispatch({ type: "RESET_SINGLE_CATEGORY" })
+  }, [categorySelectBox])
 
 
   const categorySort = [["newest", "dateAdded", "desc"], ["name", "name", "asc"], ["best seller", "purchasedCount", "desc"], ["cheapest", "price", "asc"], ["the most expensive", "price", "desc"]]
@@ -74,7 +92,19 @@ const AdminEditProduct = () => {
     setSortType(e.target.value.split(","))
   }
 
-
+const removeCategoryCompletely = async()=>{
+  if(singleCategoryToShow.length){
+    return toast.error("you could only remove empty category...")
+  }
+  const catDocRef = doc(db , "ADDITIONAL_INFO" , "CATEGORIES")
+  const snapshot = await getDoc(catDocRef)
+  const catList = snapshot.data()
+  const newCatList = catList.categories.filter((category)=>category.toLocaleLowerCase() !== selectedCategory.toLocaleLowerCase())
+  console.log(newCatList)
+  setCategorySelectBox(newCatList)
+  await updateDoc(catDocRef , {categories:newCatList})
+  toast.success("you successfully delete category, it will remove from local storage after half an hour")
+}
 
   // function getPathStorageFromUrl(url) {
 
@@ -116,7 +146,7 @@ const AdminEditProduct = () => {
     <div className='d-flex flex-column' style={{ width: "100%" }}>
       <div className='d-flex align-items-center'>
         <select onChange={chooseCategory} className='w-25 m-auto text-center rounded-2 mt-3 mb-2'>
-          {categoriesTitle?.map((category, index) => {
+          {categorySelectBox?.map((category, index) => {
             // index===1 && setSelectedCategory(category)
             return <option key={`categoryChoose${index}`} selected={category === selectedCategory} value={category}>{category}</option>
           })}
@@ -127,7 +157,7 @@ const AdminEditProduct = () => {
         <div className="nav-pills d-flex align-items-center ms-3" role="tablist"><span>sort by:</span>{categorySort.map((typeOfSort, index) => {
           return <button disabled={loadingPage} data-bs-toggle="pill" type="button" onClick={selectSortType} value={typeOfSort.slice(1, 3)} key={`sort-type${index}`} className={`btn text-primary p-1  ${typeOfSort[0] === "newest" && "active"} ff-sort-type`}>{typeOfSort[0]}</button>
         })}</div>
-
+        {!loadingPage && !singleCategoryToShow.length && <div className='d-flex justify-content-center mt-5'><button onClick={removeCategoryCompletely} className='btn btn-danger'>remove category</button></div>}
         {loadingPage ? <LoadingPageComponent /> :
           <InfiniteScroll className="overflow-hidden" endMessage={<p className="text-center text-success">you've seen all items</p>} dataLength={singleCategoryToShow.length} hasMore={ifThereIsMoreItems} next={nextLoading} loader={<p className="text-center">loading<span className="spinner-border spinner-border-sm"></span></p>}>
             <div className="m-auto" style={{ width: "95%" }} >
