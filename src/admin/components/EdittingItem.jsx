@@ -18,7 +18,7 @@ const EdittingItem = ({ item, getEditedProductId }) => {
     const [editedItem, setEditedItem] = useState(Object.assign({}, editedInfo))
     const [editedImagesUrl, seteditedImagesUrl] = useState([...imagesUrl])
     const { editedName, editedCountInStock, editedPurchasedCount, editedCategory, editedPrice, addedImagesUrl } = { ...editedItem }
-    const [activeImageNum, setActiveImageNum] = useState(firstPicture || 0)
+    const [activeImageNum, setActiveImageNum] = useState(firstPicture)
     const [firstPictureInUi , setFirstPictureInUi] = useState(firstPicture)
 
 
@@ -124,6 +124,7 @@ const EdittingItem = ({ item, getEditedProductId }) => {
         })
     }
     const decrementImageNum = (e) => {
+        console.log(activeImageNum)
         !enableEditting && seteditedImagesUrl([...imagesUrl])
         setActiveImageNum((prev) => {
             if (prev > 0) {

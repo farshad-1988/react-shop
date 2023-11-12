@@ -1,20 +1,9 @@
 import React from 'react'
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  deleteObject
-} from 'firebase/storage'
 import { v4 as uuidv4 } from 'uuid'
-import { auth, db } from '../../firebase.config'
-import { useForm } from "react-hook-form"
-import * as yup from "yup"
-import { yupResolver } from '@hookform/resolvers/yup'
+import {  db } from '../../firebase.config'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 import { useRef } from 'react'
 import AdminInputImage from '../components/AdminInputImage'
@@ -32,6 +21,7 @@ const AdminAddProduct = () => {
   const [uploadingSpinner , setUploadingSpinner]=useState("")
   const [dataUploaded , setDataUploaded] = useState(false)
   const [firstPicture , setFirstPicture] = useState(0)
+  const [formImages , setFormImages] = useState()
 
 
   const submitFormToDB = async (e) => {
@@ -78,7 +68,9 @@ const AdminAddProduct = () => {
   // Store image in firebase
 
 
-
+const getFromImages = (formFromInput)=>{
+  setFormImages(formFromInput)
+}
 
 
 
@@ -107,7 +99,7 @@ const AdminAddProduct = () => {
 
   function getImagesUrl(imagesURL , activeImage) {
     setImagesUrl(imagesURL)
-    setFirstPicture(activeImage)
+    setFirstPicture(+activeImage)
   }
 
   
@@ -120,7 +112,7 @@ const AdminAddProduct = () => {
           <p className='mt-2 '>product ID: {productId}</p>
           <div className="mt-2">
             <span>category : </span>
-            <input disabled={imagesUrl.length} ref={categoryRef} onChange={updateProductInfo} name='category' className="form-control" type="text" placeholder="enter category..." />
+            <input disabled={formImages.length} ref={categoryRef} onChange={updateProductInfo} name='category' className="form-control" type="text" placeholder="enter category..." />
             {/* {errors?.category?.message && <p className="text-danger">{errors?.category?.message}</p>} */}
           </div>
           <p className='mb-2 mt-3 text-capitalize'>
@@ -128,7 +120,7 @@ const AdminAddProduct = () => {
           </p>
         </div>
 
-        <AdminInputImage items={{ category: productInfo?.category, productId , dataUploaded }} getImagesUrl={getImagesUrl} />
+        <AdminInputImage items={{ category: productInfo?.category, productId , dataUploaded }} getImagesUrl={getImagesUrl} getFromImages={getFromImages} />
       </div>
 
       <form className="container m-auto col-12 col-md-5 row" onSubmit={submitFormToDB}>

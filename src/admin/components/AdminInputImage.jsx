@@ -1,5 +1,3 @@
-import { faSpinner, faX } from "@fortawesome/free-solid-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { deleteObject, getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
 import { useEffect } from "react"
 import { useRef } from "react"
@@ -7,8 +5,8 @@ import { useState } from "react"
 import { toast } from "react-toastify"
 
 
-const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImagesUrl }) => {
-  // console.log(productId)
+const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImagesUrl , getFromImages }) => {
+
   const storage = getStorage()
   const [formImages, setFormImages] = useState([])
   const [imagesUrl, setImagesUrl] = useState([])
@@ -50,13 +48,14 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
       return
     })
     if (imgUrls) {
+      console.log(imagesUrl)
       imgUrls.map((url) => {
         if (url !== undefined) {
           setImagesUrl((prev) => [...prev, url])
         }
       })
     }
-    getImagesUrl(imagesUrl)
+    getImagesUrl(imagesUrl , activeImage)
   }
 
   const storeImage = async (image) => {
@@ -108,6 +107,7 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
   }
 
   useEffect(() => {
+    getFromImages(formImages)
     const uploadData = async () => {
       await uploadImages()
     }
@@ -126,6 +126,7 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
 
   useEffect(() => {
     getImagesUrl(imagesUrl , activeImage)
+    if(!imagesUrl.length) imageInputRef.current.value=null
   }, [imagesUrl])
 
 
@@ -135,10 +136,7 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
     
   // },[])
   const selectAciveImage = (e)=>{
-    console.log(`${category}/${productId}/` + formImages[e.target.value].name)
-    const indexOfImageInUrlArr = imagesUrl.findIndex((url)=>getPathStorageFromUrl(url) === `${category}/${productId}/` + formImages[e.target.value].name)
-    console.log(indexOfImageInUrlArr)
-    setActiveImage(indexOfImageInUrlArr)
+    setActiveImage(e.target.value)
   }
 
     function getPathStorageFromUrl(url) {
@@ -169,7 +167,7 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
       const newImagesUrl = imagesUrl.filter((url)=>getPathStorageFromUrl(url)!==`${category}/${productId}/` + image.name)
       setImagesUrl(newImagesUrl)
       setProgressBarContent((prev)=>({...prev , [image.name]:0}))
-      getImagesUrl(newImagesUrl)
+      getImagesUrl(newImagesUrl , activeImage)
       if(!newImagesUrl.length) imageInputRef.current.value=null
     }).catch((error) => {
       //double check
@@ -206,7 +204,7 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
           </div>
         })}
       </div>
-      {imagesUrl.length !== 0 && <button className='btn btn-danger mt-4' onClick={removeAllImage}>
+      {imagesUrl.length !== 0 && formImages.every((image)=>progressBarContent[image.name]===100) && <button className='btn btn-danger mt-4' onClick={removeAllImage}>
         remove all images
       </button>}
     </div>
