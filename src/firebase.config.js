@@ -124,6 +124,7 @@ export const signUpWithEmail = async (
       uid,
       purchasedItems:[]
     });
+    
   } catch (error) {
     console.log(error);
   }

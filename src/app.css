@@ -48,6 +48,8 @@ body{
 .ff-payment-box {
     right: 50px;
     background-color: rgb(220, 220, 220);
+    width: 350px !important;
+    height: 450px !important;
 }
 
 .ff-items-category-home {

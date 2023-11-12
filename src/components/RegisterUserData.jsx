@@ -34,8 +34,9 @@ const RegisterUserData = ()=>{
     const {register , handleSubmit , formState:{errors}} = useForm({resolver:yupResolver(userSchema)})
 
     const submitFormToDB = async ({email ,name , lastName, password ,address , phoneNumber})=>{
-        const preRegisterItemsInCart = await signUpWithEmail(email ,name , lastName, password ,address,phoneNumber ,cartItems)
-        cartDispatch( {type:"SET_CART_ITEMS" , preRegisterItemsInCart})
+        await signUpWithEmail(email ,name , lastName, password ,address,phoneNumber ,cartItems)
+        cartDispatch( {type:"SET_CART_ITEMS" , payload:cartItems})
+        cartDispatch({ type: "CHANGING_IN_CART" });
         // cartDispatch({type:"SET_SIGNING_TYPE" , payload:"signup"})
         navigate("/")
     }

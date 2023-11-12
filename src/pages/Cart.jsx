@@ -9,12 +9,22 @@ import { UserContext } from "../context/UserContext"
 
 
 const Cart = ()=>{
+const {setUserDoc , currentUser}=useContext(UserContext)
   const {cartItems} = useContext(CartContext)
 
 
+  useEffect(() => {
+    const getUserInfo = async () => {
+      if (!currentUser) return
+      const userInfo = await getDocumentUser(currentUser.uid);
+      setUserDoc(userInfo)
+    };
+    getUserInfo();
+  }, []);
+
     return (
         <div className="row">
-            <div className="col-12 col-md-9 m-3" >
+            <div className="col-12 col-lg-7 m-3" >
                 {cartItems?.map((item,index)=>(
                     <ItemToPurchase key={`itemToPurchase${index}`} item={item}/>
                 ))}

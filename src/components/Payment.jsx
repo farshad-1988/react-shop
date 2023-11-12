@@ -18,7 +18,7 @@ function Payment() {
   const {totalCountAndPrice,cartItems , cartDispatch} = useContext(CartContext)
   const {totalCount , totalPrice} = totalCountAndPrice
   const [deliveryDay , setDeliveryDay] = useState("")
-  const {sm} = QueryResponsive()
+  const {sm , lg} = QueryResponsive()
 
 
   const stripe = useStripe()
@@ -80,15 +80,15 @@ function Payment() {
 
  
   return (
-    <div className={`col-12 col-lg-6 rounded text-center m-auto mb-5 p-4 w-auto h-auto r-1 mt-3 ${sm && "position-fixed"} ff-payment-box`} >
+    <div className={`col-12 col-lg-6 rounded text-center m-auto mb-5 p-4 r-1 mt-3 ${lg && "position-fixed"} ff-payment-box`} >
       <p>number of ordered item {totalCount}</p>
       <p>total price {totalPrice}$</p>
       {userDoc?.address ? <div>
         <p>deliver to: {userDoc?.address.city}</p>
         <p>{userDoc?.address.address1}</p>
       <p>{userDoc?.address.address2}</p>
-      </div> : <span className='text-danger'>please compelete your profile info before payment</span>}
-      <button type="button" className=" mb-3 btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+      </div> : <span className='text-danger text-nowrap'>please compelete your profile info before payment</span>}
+      <button type="button" className=" mb-3 btn btn-primary dropdown-toggle mt-3" data-bs-toggle="dropdown">
         {deliveryDay || "select a day to deliver"}
       </button>
       <ul name="time" className='dropdown-menu'>
@@ -99,7 +99,7 @@ function Payment() {
         }
       </ul>
       <form onSubmit={pay}>
-        <div><CardElement options={{style:{
+        <div className='mt-3'><CardElement options={{style:{
           base:{
             fontSize:"16px",
             backgroundColor:"#555",
@@ -109,7 +109,7 @@ function Payment() {
           }
         }}}/></div>
         
-        <button disabled={cartItems?.length === 0 || !deliveryDay || !userDoc?.address} type='submit' className="btn btn-danger mt-3" >proceed to payment</button>
+        <button disabled={cartItems?.length === 0 || !deliveryDay || !userDoc?.address} type='submit' className="btn btn-danger mt-5" >proceed to payment</button>
       </form>
     </div>
   )
