@@ -112,7 +112,7 @@ const getFromImages = (formFromInput)=>{
           <p className='mt-2 '>product ID: {productId}</p>
           <div className="mt-2">
             <span>category : </span>
-            <input disabled={!formImages?.length} ref={categoryRef} onChange={updateProductInfo} name='category' className="form-control" type="text" placeholder="enter category..." />
+            <input disabled={formImages?.length} ref={categoryRef} onChange={updateProductInfo} name='category' className="form-control" type="text" placeholder="enter category..." />
             {/* {errors?.category?.message && <p className="text-danger">{errors?.category?.message}</p>} */}
           </div>
           <p className='mb-2 mt-3 text-capitalize'>
