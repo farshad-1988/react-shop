@@ -86,24 +86,28 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
     })
   }
 
-  const removeAllImage = () => {
+  const removeAllImage =async () => {
     if (!formImages.length) return
     if (window.confirm("confirm to remove all picture ?") === true) {
-      formImages.map((file) => {
+      const promisesRemovedItem = formImages.map(async(file) => {
         const storageRef = ref(storage, `${category}/${productId}/` + file.name)
-        deleteObject(storageRef).then(() => {
-        }).catch((error) => {
-          toast.error(error)
-          return
-        });
-      })
-      toast.success("successfully deleted")
-      setFormImages([])
-      setProgressBarContent({})
-      setImagesUrl([])
-      imageInputRef.current.value = null
+        return await deleteObject(storageRef)
+        })
+        try {
+          await Promise.all(promisesRemovedItem)
+          toast.success("successfully deleted")
+          setFormImages([])
+          setProgressBarContent({})
+          setImagesUrl([])
+          imageInputRef.current.value = null
+        } catch (error) {
+          toast.error("there is a problem in removing pictures")
+          console.log(error)
+        }
+      }
+
       //   categoryRef.current.disabled = false
-    }
+    
   }
 
   useEffect(() => {
@@ -156,8 +160,8 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
   //remove url correpond to image
   
   const removeOneSelectedPhoto =(e,image)=>{
-    e.currentTarget.textContent = ""
-    e.currentTarget.className = "m-auto spinner-border"
+    // e.currentTarget.textContent = ""
+    // e.currentTarget.className = "m-auto spinner-border"
     // e.currentTarget = <FontAwesomeIcon icon={faSpinner} />
     const storageRef = ref(storage, `${category}/${productId}/` + image.name)
     deleteObject(storageRef).then(() => {
