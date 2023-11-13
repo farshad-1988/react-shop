@@ -145,10 +145,10 @@ const removeCategoryCompletely = async()=>{
   return (
     <div className='d-flex flex-column' style={{ width: "100%" }}>
       <div className='d-flex align-items-center'>
-        <select onChange={chooseCategory} className='w-25 m-auto text-center rounded-2 mt-3 mb-2'>
+        <select defaultValue={selectedCategory} onChange={chooseCategory} className='w-25 m-auto text-center rounded-2 mt-3 mb-2'>
           {categorySelectBox?.map((category, index) => {
             // index===1 && setSelectedCategory(category)
-            return <option key={`categoryChoose${index}`} selected={category === selectedCategory} value={category}>{category}</option>
+            return <option key={`categoryChoose${index}`} value={category}>{category}</option>
           })}
         </select>
       </div>

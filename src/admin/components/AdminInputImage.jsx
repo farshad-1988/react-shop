@@ -42,9 +42,10 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
         if (progressBarContent[image.name] === 100) return
         return storeImage(image)
       })
-    ).catch(() => {
+    ).catch((error) => {
       // setLoading(false)
       toast.error('Images not uploaded')
+      console.log(error)
       return
     })
     if (imgUrls) {
@@ -61,7 +62,7 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
   const storeImage = async (image) => {
     return new Promise((resolve, reject) => {
       const fileName = `${image.name}`
-      const storageRef = ref(storage, `${category}/${productId}/` + fileName)
+      const storageRef = ref(storage, `${category.toLocaleLowerCase().trim()}/${productId}/` + fileName)
 
       const uploadTask = uploadBytesResumable(storageRef, image)
 
