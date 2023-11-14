@@ -63,7 +63,6 @@ function Payment() {
       }
     })
     if(paymentResult.error){
-      console.log(paymentResult.error)
       return toast.error("there is a problem in payment")
     }else if(paymentResult.paymentIntent.status === "succeeded") {
       toast.success("payment was successful")

@@ -36,6 +36,10 @@ export const shopReducer = (state ,action)=>{
             return {
                 ...state , searchedItem:payload , loadingPage:false
             }
+        case "ADD_CATEGORY_TO_DB":
+            return {
+                ...state , categoriesTitle:[...state.categoriesTitle , payload]
+            }
         default:
             return state;
     }

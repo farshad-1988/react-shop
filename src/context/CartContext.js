@@ -19,7 +19,6 @@ const CartContextProvider = ({ children }) => {
 
   const increment = async (itemInfo, isItemInCart) => {
     let newItems;
-    console.log(state.cartItems)
     if (!isItemInCart) {
       newItems = [
         ...state.cartItems,

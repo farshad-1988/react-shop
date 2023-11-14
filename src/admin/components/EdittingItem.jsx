@@ -4,22 +4,26 @@ import { useState } from "react"
 import AdminInputImage from "./AdminInputImage"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faAngleLeft, faAngleRight, faCheck, faImage, faPanorama, faTrashCan, faX } from "@fortawesome/free-solid-svg-icons"
-import { deleteObject, getStorage, ref } from "firebase/storage"
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
 import { toast } from "react-toastify"
 import { deleteDoc, doc, setDoc, updateDoc } from "firebase/firestore"
 import { db } from "../../firebase.config"
+import { useContext } from "react"
+import { ShopContext } from "../../context/ShopContext"
+import axios from "axios"
 
 
-const EdittingItem = ({ item, getEditedProductId }) => {
+const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
     const [enableEditting, setEnableEdittng] = useState(false)
-    const { name, countInStock, purchasedCount, category, price, imagesUrl, id, dateAdded,firstPicture } = { ...item }
-
+    const { name, countInStock, purchasedCount, category, price, imagesUrl, id, dateAdded, firstPicture } = { ...item }
+    const { categoriesTitle , dispatch } = useContext(ShopContext)
     const editedInfo = { addedImagesUrl: [], editedName: name, editedCountInStock: countInStock, editedPurchasedCount: purchasedCount, editedCategory: category, editedPrice: price, editedImagesUrl: [...imagesUrl] }
     const [editedItem, setEditedItem] = useState(Object.assign({}, editedInfo))
     const [editedImagesUrl, seteditedImagesUrl] = useState([...imagesUrl])
     const { editedName, editedCountInStock, editedPurchasedCount, editedCategory, editedPrice, addedImagesUrl } = { ...editedItem }
     const [activeImageNum, setActiveImageNum] = useState(firstPicture)
-    const [firstPictureInUi , setFirstPictureInUi] = useState(firstPicture)
+    const [firstPictureInUi, setFirstPictureInUi] = useState(firstPicture)
+    const [formImages, setFormImages] = useState()
 
 
 
@@ -34,12 +38,35 @@ const EdittingItem = ({ item, getEditedProductId }) => {
         setEditedItem((prev) => ({ ...prev, editedImagesUrl }))
     }
 
+
+    const removePicFromDB = async (urlToDel) => {
+        const imgPath = getPathStorageFromUrl(urlToDel)
+        const storage = getStorage()
+        await deleteObject(ref(storage, imgPath))
+    }
+
+    const abortEditedData = () => {
+        if (addedImagesUrl.length) {
+            if (window.confirm("are you sure to cancle changes ?(all added and deleted images will be lost)") === true) {
+                setEditedItem((prev) => ({ ...prev, editedImagesUrl: [...imagesUrl] }))
+                setEnableEdittng(false)
+                addedImagesUrl.map(async (url) => await removePicFromDB(url))
+            }
+        } else {
+            setEditedItem((prev) => ({ ...prev, editedImagesUrl: [...imagesUrl] }))
+            setEnableEdittng(false)
+        }
+    }
+
     const removeProduct = async () => {
         if (window.confirm("press ok to remove product from database")) {
             const CATEGORY = category.toLocaleUpperCase()
             const docRef = doc(db, "PRODUCTS", CATEGORY, CATEGORY, id)
-            try {
 
+            try {
+                imagesUrl?.map(async (url) => {
+                    await removePicFromDB(url)
+                })
                 await deleteDoc(docRef)
                 toast.success("product deleted")
                 getEditedProductId(id)
@@ -53,29 +80,73 @@ const EdittingItem = ({ item, getEditedProductId }) => {
     }
 
 
+
     const postEditedData = async () => {
         // imagesUrl
         const CATEGORY = category.toLocaleUpperCase()
         const oldDocRef = doc(db, "PRODUCTS", CATEGORY, CATEGORY, id)
-        const objToUpload = { imagesUrl: [...editedImagesUrl, ...addedImagesUrl], name: editedName, category: editedCategory.trim(), subCategory: editedCategory.trim(), countInStock: editedCountInStock, price: editedPrice, purchasedCount: editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), id, dateAdded, dateEdited: new Date() }
-        try {
-            if (category !== editedCategory) {
-                await deleteDoc(oldDocRef)
-                const EDITEDCATEGORY = editedCategory.toLocaleUpperCase()
-                const newDocRef = doc(db, "PRODUCTS", EDITEDCATEGORY, EDITEDCATEGORY, id)
-                await setDoc(newDocRef, objToUpload)
-            } else {
-                await updateDoc(oldDocRef, { imagesUrl: [...editedImagesUrl, ...addedImagesUrl], name: editedName, countInStock: editedCountInStock, price: editedPrice, purchasedCount: editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), dateEdited: new Date() })
+        let objToUpload
+        if (category !== editedCategory) {
+            try {
+                const isEditedCatExist = categoriesTitle.find((category) => category === editedCategory)
+
+                const newDlUrlsPromise = imagesUrl.map(async (url) => {
+                    try {
+                        const storage = getStorage()
+                        let ImageName = url.split(RegExp("%2..*%2F(.*?)\?alt"))[1]
+                        ImageName = ImageName.substring(0, ImageName.length - 1)
+                        const newPath = `${editedCategory}/${id}/${ImageName}`
+                        const newRef = ref(storage, newPath)
+                        const response = await axios.get(url, { responseType: "blob" })
+                        await uploadBytes(newRef, response.data)    
+                        return getDownloadURL(newRef)
+                    } catch (error) {
+                        return toast.error(error)
+                    }
+                })
+
+                try {
+                    const dlUrls = await Promise.all(newDlUrlsPromise)
+                    seteditedImagesUrl(dlUrls)
+                    
+                    await imagesUrl.map(async(url)=>await removePicFromDB(url))
+                    await deleteDoc(oldDocRef)
+                    const EDITEDCATEGORY = editedCategory.toLocaleUpperCase()
+                    const newDocRef = doc(db, "PRODUCTS", EDITEDCATEGORY, EDITEDCATEGORY, id)
+                    objToUpload = { imagesUrl: [...dlUrls], firstPicture: firstPictureInUi, name: editedName, category: editedCategory.trim().toLocaleLowerCase(), subCategory: editedCategory.trim().toLocaleLowerCase(), countInStock: editedCountInStock, price: editedPrice, purchasedCount: editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), id, dateAdded, dateEdited: new Date() }
+                    await setDoc(newDocRef, objToUpload)
+                    
+                } catch (error) {
+                    console.log(error)
+                }
+                
+
+                if (!isEditedCatExist) {
+                    const docRef = doc(db, "ADDITIONAL_INFO", "CATEGORIES")
+                    await updateDoc(docRef, { categories: [...categoriesTitle, editedCategory] })
+                    dispatch({type:"ADD_CATEGORY_TO_DB" , payload:editedCategory})
+                    addedCategory(editedCategory)
+                }
+                toast.success("product edit successful")
+                setEnableEdittng(false)
+                getEditedProductId(id)
+            } catch (error) {
+                console.log(error)
+                toast.error("there is a problem")
             }
+
+        } else {
+            await updateDoc(oldDocRef, { imagesUrl: [...editedImagesUrl, ...addedImagesUrl], name: editedName, countInStock: editedCountInStock, price: editedPrice, purchasedCount: editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), dateEdited: new Date() })
             toast.success("product edit successful")
             setEnableEdittng(false)
+            objToUpload = { imagesUrl: [...editedImagesUrl , ...addedImagesUrl], firstPicture: firstPictureInUi, name: editedName, category: editedCategory.trim().toLocaleLowerCase(), subCategory: editedCategory.trim().toLocaleLowerCase(), countInStock: editedCountInStock, price: editedPrice, purchasedCount: editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), id, dateAdded, dateEdited: new Date() }
             getEditedProductId(objToUpload)
-        } catch (error) {
-            console.log(error)
-            toast.error("there is a problem")
         }
 
+
     }
+
+
 
     function getPathStorageFromUrl(url) {
 
@@ -93,24 +164,9 @@ const EdittingItem = ({ item, getEditedProductId }) => {
     }
 
 
-    const removePicFromDB = (urlToDel) => {
-        const imgPath = getPathStorageFromUrl(urlToDel)
-        const storage = getStorage()
-        deleteObject(ref(storage, imgPath))
-    }
 
-    const abortEditedData = () => {
-        if (addedImagesUrl.length) {
-            if (window.confirm("are you sure to cancle changes ?(all added and deleted images will be lost)") === true) {
-                setEditedItem((prev) => ({ ...prev, editedImagesUrl: [...imagesUrl] }))
-                setEnableEdittng(false)
-                addedImagesUrl.map((url) => removePicFromDB(url))
-            }
-        } else {
-            setEditedItem((prev) => ({ ...prev, editedImagesUrl: [...imagesUrl] }))
-            setEnableEdittng(false)
-        }
-    }
+
+
 
     const incrementImageNum = (e) => {
         !enableEditting && seteditedImagesUrl([...imagesUrl])
@@ -124,7 +180,6 @@ const EdittingItem = ({ item, getEditedProductId }) => {
         })
     }
     const decrementImageNum = (e) => {
-        console.log(activeImageNum)
         !enableEditting && seteditedImagesUrl([...imagesUrl])
         setActiveImageNum((prev) => {
             if (prev > 0) {
@@ -153,10 +208,10 @@ const EdittingItem = ({ item, getEditedProductId }) => {
         item.length && setEditedItem({ ...item })
     }
 
-    const setAsActiveImageInDb = async ()=>{
+    const setAsActiveImageInDb = async () => {
         try {
-            const docRef = doc(db , "PRODUCTS" , category.toLocaleUpperCase() , category.toLocaleUpperCase() , id)
-            await updateDoc(docRef , {firstPicture:activeImageNum})
+            const docRef = doc(db, "PRODUCTS", category.toLocaleUpperCase(), category.toLocaleUpperCase(), id)
+            await updateDoc(docRef, { firstPicture: activeImageNum })
             toast.success("image set as active image")
             setFirstPictureInUi(activeImageNum)
         } catch (error) {
@@ -165,13 +220,50 @@ const EdittingItem = ({ item, getEditedProductId }) => {
     }
 
 
+    // const tester = ()=>{
+    //     const oldPath = getPathStorageFromUrl(url)
+    //     imagesUrl.map(async(url)=>{
+
+    //         const storage = getStorage()
+    //         const ImageName = url.split(RegExp("%2..*%2F(.*?)\?alt"))[1]
+    //         const newPath = `${editedCategory}/${id}/${ImageName}`
+    //         const newRef = ref(storage , newPath)
+    //         const response = await fetch(url)
+    //         const blob = await response.blob()
+    //         uploadBytes(newRef , blob)
+    //     })
+    // }
+
+    const getFromImages = () => {
+
+    }
+
+    //     async function moveFile(oldEntirePath, newEntirePath) {
+    //     var bucket = getStorage().bucket();
+    //     return bucket.file(oldEntirePath).move(newEntirePath)
+    //     .then(resp => {
+
+    //       let bucketPart = resp[1].resource.bucket
+    //       let namePart = resp[0].id
+    //       let tokenPart = resp[1].resource.metadata.firebaseStorageDownloadTokens
+
+    //       const url = "https://firebasestorage.googleapis.com/v0/b/"+ bucketPart +"/o/"+ namePart +"?alt=media&token=" + tokenPart
+    //       console.log(`Image url = ${url}`)
+    //       return url
+
+    //     })
+    //     .catch(err => {
+    //         console.log(`Unable to upload image ${err}`)
+    //     })
+    //   }
     return (
         <div className="row mb-3" style={{ position: "relative" }}>
+
             <div className="row mt-3 d-flex border border-1 rounded-3 pt-3 pb-2" >
                 {!imagesUrl.length ? <FontAwesomeIcon style={{ width: "250px", height: "250px" }} icon={faImage} /> :
                     !enableEditting && <div className="col-xl-3 col-12 d-flex flex-column" style={{ width: "330px", height: "350px" }}>
                         <img alt={"product"} className="rounded-3" width={300} height={300} src={imagesUrl[activeImageNum]} />
-                        {firstPictureInUi===activeImageNum && <button className="btn text-success" style={{position:"absolute", left:"270px" , top:"30px"}}><FontAwesomeIcon size="xl" icon={faCheck} /></button>}
+                        {firstPictureInUi === activeImageNum && <button className="btn text-success" style={{ position: "absolute", left: "270px", top: "30px" }}><FontAwesomeIcon size="xl" icon={faCheck} /></button>}
                         <div className="col-12 d-flex justify-content-between">
                             <button className="btn border-0 text-primary" disabled={activeImageNum === 0 ? true : false} onClick={decrementImageNum}><FontAwesomeIcon icon={faAngleLeft} size="lg" /></button>
                             {enableEditting && <button className="btn text-danger" onClick={() => deletePic(imagesUrl[activeImageNum])}><FontAwesomeIcon icon={faTrashCan} size="lg" /></button>}
@@ -182,7 +274,7 @@ const EdittingItem = ({ item, getEditedProductId }) => {
                 {!editedImagesUrl.length ? <FontAwesomeIcon style={{ width: "250px", height: "250px" }} icon={faImage} /> :
                     enableEditting && <div className="col-xl-3 col-12 d-flex flex-column" style={{ width: "330px", height: "350px" }}>
                         <img alt="product" className="rounded-3" width={300} height={300} src={editedImagesUrl[activeImageNum]} />
-                        {firstPictureInUi===activeImageNum && <button className="btn text-success" style={{position:"absolute", left:"270px" , top:"30px"}}><FontAwesomeIcon size="xl" icon={faCheck} /></button>}
+                        {firstPictureInUi === activeImageNum && <button className="btn text-success" style={{ position: "absolute", left: "270px", top: "30px" }}><FontAwesomeIcon size="xl" icon={faCheck} /></button>}
                         <div className="col-12 d-flex justify-content-between">
                             <button className="btn border-0 text-primary" disabled={activeImageNum == 0 ? true : false} onClick={decrementImageNum}><FontAwesomeIcon icon={faAngleLeft} size="lg" /></button>
                             {enableEditting && <button className="btn text-danger" onClick={() => deletePic(imagesUrl[activeImageNum])}><FontAwesomeIcon icon={faTrashCan} size="lg" /></button>}
@@ -193,19 +285,20 @@ const EdittingItem = ({ item, getEditedProductId }) => {
 
 
                 <div className="col-xl-3 col-12 ms-3 lh-base">
-                    {!enableEditting ? <div> <span className="text-primary">category:</span>{category}</div> : <div className="d-flex flex-column"><span>category</span><input name="editedCategory" onChange={updateeditedItem} type="text" defaultValue={category} /></div>}
+                    <p>product ID : {id}</p>
+                    {!enableEditting ? <div> <span className="text-primary">category:</span>{category}</div> : <div className="d-flex flex-column"><span>category</span><input disabled={addedImagesUrl.length} name="editedCategory" onChange={updateeditedItem} type="text" defaultValue={category} />{!categoriesTitle.find((category)=>category===editedCategory) && <p className="text-danger">{`you will create new category ${editedCategory}`}</p>}</div>}
                     {!enableEditting ? <div> <span className="text-primary">name:</span>{name}</div> : <div className="d-flex flex-column"><span>name</span><textarea name="editedName" onChange={updateeditedItem} type="text" defaultValue={name} /> </div>}
                     {!enableEditting ? <div> <span className="text-primary">price:</span>{price}$</div> : <div className="d-flex flex-column"><span>price</span><input name="editedPrice" onChange={updateeditedItem} type="text" defaultValue={price} /></div>}
                     {!enableEditting ? <div> <span className="text-primary">warehouse count:</span>{countInStock}</div> : <div className="d-flex flex-column"><span>count in stock</span><input name="editedCountInStock" onChange={updateeditedItem} type="text" defaultValue={countInStock} /></div>}
                     {!enableEditting ? <div> <span className="text-primary">sold count:</span> {purchasedCount}</div> : <div className="d-flex flex-column"><span>purchased count</span><input name="editedPurchasedCount" onChange={updateeditedItem} type="text" defaultValue={purchasedCount} /></div>}
-                    <button disabled={activeImageNum===firstPictureInUi} onClick={setAsActiveImageInDb} className="btn btn-success mt-3">set as active image</button>
+                    <button disabled={activeImageNum === firstPictureInUi} onClick={setAsActiveImageInDb} className="btn btn-success mt-3">set as active image</button>
                 </div>
 
                 <div className="col-xl-5 col-12 d-flex flex-column justify-content-between">
                     {enableEditting &&
                         <div>
-                            <p className="text-center">add new picture</p>
-                            <AdminInputImage items={{ category, id }} getImagesUrl={getImagesUrl} />
+                            {category===editedCategory && <p className="text-center">add new picture</p>}
+                            {category===editedCategory ? <AdminInputImage items={{ category, id }} getImagesUrl={getImagesUrl} getFromImages={getFromImages} /> : <p className="text-danger mt-3 text-center">you can't change category and add picture at the same time</p>}
                         </div>}
 
                     {/* <div className="col-3 align-self-end mt-4"> */}

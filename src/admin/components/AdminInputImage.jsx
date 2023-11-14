@@ -49,7 +49,6 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
       return
     })
     if (imgUrls) {
-      console.log(imagesUrl)
       imgUrls.map((url) => {
         if (url !== undefined) {
           setImagesUrl((prev) => [...prev, url])

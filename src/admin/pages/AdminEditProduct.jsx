@@ -30,7 +30,6 @@ const AdminEditProduct = () => {
     if (tenItemsDocs.length === 0) setIfThereIsMoreItems(false)
     setLastItem(tenItemsDocs[tenItemsDocs.length - 1])
     const tenItems = tenItemsDocs.map((item) => item.data())
-    console.log(tenItems)
     dispatch({ type: "UPDATE_SINGLE_CATEGORY", payload: tenItems })
   }
 
@@ -63,28 +62,13 @@ const AdminEditProduct = () => {
       const tenItems = tenItemsDocs.map((item) => item.data())
       dispatch({ type: "SET_SINGLE_CATEGORY", payload: tenItems })
       tenItemsDocs.length <= 4 ? setIfThereIsMoreItems(false) : setIfThereIsMoreItems(true)
-
+      setSelectedCategory(categoriesTitle[0])
     }
     getItems()
     // singleCategoryToShow.map((item) => { setActiveImageNumber((prev) => ({ ...prev, [item.id]: 0 })) })
     // return () => dispatch({ type: "RESET_SINGLE_CATEGORY" })
   }, [])
-  useEffect(() => {
-    const getItems = async () => {
-      // dispatch({ type: "LOADING_PAGE_ON" })
-      const categories = await getCategoriesNameFromDB();
-      setSelectedCategory(categories.categories[0])
-      const tenItemsDocs = await getSingleCategoryItem(categories.categories[0], 0, sortType)
-      setLastItem(tenItemsDocs[tenItemsDocs.length - 1])
-      const tenItems = tenItemsDocs.map((item) => item.data())
-      dispatch({ type: "SET_SINGLE_CATEGORY", payload: tenItems })
-      tenItemsDocs.length <= 4 ? setIfThereIsMoreItems(false) : setIfThereIsMoreItems(true)
 
-    }
-    getItems()
-    // singleCategoryToShow.map((item) => { setActiveImageNumber((prev) => ({ ...prev, [item.id]: 0 })) })
-    // return () => dispatch({ type: "RESET_SINGLE_CATEGORY" })
-  }, [categorySelectBox])
 
 
   const categorySort = [["newest", "dateAdded", "desc"], ["name", "name", "asc"], ["best seller", "purchasedCount", "desc"], ["cheapest", "price", "asc"], ["the most expensive", "price", "desc"]]
@@ -100,10 +84,10 @@ const removeCategoryCompletely = async()=>{
   const snapshot = await getDoc(catDocRef)
   const catList = snapshot.data()
   const newCatList = catList.categories.filter((category)=>category.toLocaleLowerCase() !== selectedCategory.toLocaleLowerCase())
-  console.log(newCatList)
   setCategorySelectBox(newCatList)
   await updateDoc(catDocRef , {categories:newCatList})
-  toast.success("you successfully delete category, it will remove from local storage after half an hour")
+  setSelectedCategory(categorySelectBox[0])
+  toast.success(`you successfully delete category ${selectedCategory}`)
 }
 
   // function getPathStorageFromUrl(url) {
@@ -131,7 +115,6 @@ const removeCategoryCompletely = async()=>{
     let newProducts
     if (typeof productSpec === "string") {
       newProducts = singleCategoryToShow.filter((product) => product.id !== productSpec)
-      console.log(newProducts)
       dispatch({ type: "SET_SINGLE_CATEGORY", payload: newProducts })
     } else {
       newProducts = singleCategoryToShow.map((product) => {
@@ -140,6 +123,9 @@ const removeCategoryCompletely = async()=>{
       })
       dispatch({ type: "SET_SINGLE_CATEGORY", payload: newProducts })
     }
+  }
+  const addedCategory = (addedCat)=>{
+    setCategorySelectBox((prev)=>[...prev , addedCat])
   }
 
   return (
@@ -162,7 +148,7 @@ const removeCategoryCompletely = async()=>{
           <InfiniteScroll className="overflow-hidden" endMessage={<p className="text-center text-success">you've seen all items</p>} dataLength={singleCategoryToShow.length} hasMore={ifThereIsMoreItems} next={nextLoading} loader={<p className="text-center">loading<span className="spinner-border spinner-border-sm"></span></p>}>
             <div className="m-auto" style={{ width: "95%" }} >
               {singleCategoryToShow?.map((item, index) => {
-                return <EdittingItem key={`editedItemsInCategory${index}`} item={item} getEditedProductId={getEditedProductId} />
+                return <EdittingItem key={`editedItemsInCategory${index}`} item={item} getEditedProductId={getEditedProductId} addedCategory={addedCategory}/>
               })}
 
             </div>

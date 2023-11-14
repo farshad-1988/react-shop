@@ -39,7 +39,6 @@ exports.handler = async(event) => {
             
             const purchasedItemDoc = await transaction.get(docRef);
             if (!purchasedItemDoc) throw new Error("Document does not exist!");
-            // console.log(purchasedItemDoc)
             
             const newCountInStock = purchasedItemDoc.data().countInStock - item.countInCart;
             const newPurchasedCount = purchasedItemDoc.data().purchasedCount + item.countInCart;

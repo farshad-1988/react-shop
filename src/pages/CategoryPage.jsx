@@ -36,7 +36,6 @@ const CategoryPage = ()=>{
         if(tenItemsDocs.length===0)setIfThereIsMoreItems(false)
         setLastItem(tenItemsDocs[tenItemsDocs.length-1])
         const tenItems = tenItemsDocs.map((item) => item.data())
-        console.log(tenItems)
         dispatch({type:"UPDATE_SINGLE_CATEGORY" , payload:tenItems})
     }
 
@@ -75,7 +74,6 @@ const CategoryPage = ()=>{
         setSortType(e.target.value.split(","))
     }
  
-    // console.log(sortType) 
     return (
 
         <div>

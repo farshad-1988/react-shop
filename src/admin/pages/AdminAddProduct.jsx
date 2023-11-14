@@ -66,7 +66,6 @@ const AdminAddProduct = () => {
     }
   }
 
-  // console.log(cat)
 
 
   // Store image in firebase

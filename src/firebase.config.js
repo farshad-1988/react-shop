@@ -80,7 +80,6 @@ export const registerPurchasedItem = async (
     const { countInStock, ...rest } = { ...purchasedItem };
     return { ...rest };
   });
-  // console.log(Math.round(Date.now()*0.001))
   const summaryPurchaseInfo = {
     ...totalCountPrice,
     purchasedAt: new Date(),
@@ -159,9 +158,9 @@ export const syncLocalStorageDbAndContext = async (
 // };
 
 export const getCategoriesNameFromDB = async () => {
-  const localCat = JSON.parse(localStorage.getItem("categories"));
-  if (localCat && localCat?.timeSet + 180000 > new Date().getTime())
-    return localCat;
+  // const localCat = JSON.parse(localStorage.getItem("categories"));
+  // if (localCat && localCat?.timeSet + 180000 > new Date().getTime())
+  //   return localCat;
 
   const docRef = doc(db, "ADDITIONAL_INFO", "CATEGORIES");
   const categoriesSnapshot = await getDoc(docRef);

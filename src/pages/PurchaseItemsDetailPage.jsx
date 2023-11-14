@@ -15,7 +15,6 @@ const PurchaseItemsDetailPage = () => {
   const products =userDoc.purchasedItems?.find((item)=>item.summaryPurchaseInfo.purchasedId === purchaseId)
   
   
-  console.log(products)
 
 
   return (
