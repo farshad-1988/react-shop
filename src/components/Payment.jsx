@@ -9,6 +9,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import QueryResponsive from '../utilities/QueryResponsive'
 import "./components.css"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStripe } from '@fortawesome/free-brands-svg-icons'
 
 
 function Payment() {
@@ -69,30 +71,25 @@ function Payment() {
       }else if(paymentResult.paymentIntent.status === "succeeded") {
         toast.success("payment was successful")
       }
-      
-    } catch (error) {
-      toast.error(error)
-      setUploadingSpinner("")
-    }
-
-    try {
       await registerPurchasedItem(currentUser.uid , cartItems ,{totalCountAndPrice} , deliveryDay )
       // await finalPay(currentUser ,cartItems)
       cartDispatch({type:"SET_CART_ITEMS" , payload:[]})
       cartDispatch({type:"CHANGING_IN_CART"})
       setUploadingSpinner("")
       navigate(`/profile/${userId}`)
+      setUploadingSpinner("")
     } catch (error) {
-      toast.error("purchased data not uploaded to database")
+      toast.error(error)
       setUploadingSpinner("")
     }
   }
-
   
 
  
   return (
-    <div className={`col-12 col-lg-6 rounded text-center m-auto mb-5 p-4 r-1 mt-3 ${lg && "position-fixed"} ff-payment-box`} >
+    <div className={`col-12 col-lg-6 rounded text-center m-auto mb-5 r-1 mt-3 ${lg && "position-fixed"} ff-payment-box`} >
+      <div className='text-light text-start'><FontAwesomeIcon size='2xl' icon={faStripe}/></div>
+      <div className='p-3'>
       <p>number of ordered item {totalCount}</p>
       <p>total price {totalPrice}$</p>
       {userDoc?.address ? <div>
@@ -121,8 +118,9 @@ function Payment() {
           }
         }}}/></div>
         
-        <button disabled={cartItems?.length === 0 || !deliveryDay || !userDoc?.address} type='submit' className="btn btn-danger mt-5" ><span style={{ width: "15px", height: "15px", fontSize: "10px" }} className={`${uploadingSpinner}`}></span>proceed to payment</button>
+        <button disabled={cartItems?.length === 0 || !deliveryDay || !userDoc?.address} type='submit' className="btn btn-danger mt-5 ps-5 pe-5" ><span style={{ width: "15px", height: "15px", fontSize: "10px" }} className={`${uploadingSpinner}`}></span>pay now</button>
       </form>
+      </div>
     </div>
   )
 }
