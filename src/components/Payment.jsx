@@ -49,7 +49,10 @@ function Payment() {
     setUploadingSpinner("spinner-border")
     e.preventDefault()
 
-    if(!stripe || !elements)return
+    if(!stripe || !elements){
+      toast.error("problem in connection to stripe")
+      return
+    }
 
     
     try {
@@ -67,7 +70,8 @@ function Payment() {
         }
       })
       if(paymentResult.error){
-        return toast.error("there is a problem in payment")
+        toast.error("there is a problem in payment")
+        throw new Error("payment problem")
       }else if(paymentResult.paymentIntent.status === "succeeded") {
         toast.success("payment was successful")
       }
@@ -118,7 +122,7 @@ function Payment() {
           }
         }}}/></div>
         
-        <button disabled={cartItems?.length === 0 || !deliveryDay || !userDoc?.address} type='submit' className="btn btn-danger mt-5 ps-5 pe-5" ><span style={{ width: "15px", height: "15px", fontSize: "10px" }} className={`${uploadingSpinner}`}></span>pay now</button>
+        <button disabled={cartItems?.length === 0 || !deliveryDay || !userDoc?.address} type='submit' className="btn btn-danger mt-5 ps-5 pe-5" ><span style={{ width: "15px", height: "15px", fontSize: "10px" }} className={`${uploadingSpinner}`}></span> pay now</button>
       </form>
       </div>
     </div>
