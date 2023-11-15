@@ -23,6 +23,7 @@ const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
     const { editedName, editedCountInStock, editedPurchasedCount, editedCategory, editedPrice, addedImagesUrl } = { ...editedItem }
     const [activeImageNum, setActiveImageNum] = useState(firstPicture)
     const [firstPictureInUi, setFirstPictureInUi] = useState(firstPicture)
+    const [uploadingSpinner, setUploadingSpinner] = useState("")
     const [formImages, setFormImages] = useState()
 
 
@@ -82,6 +83,7 @@ const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
 
 
     const postEditedData = async () => {
+        setUploadingSpinner("spinner-border")
         // imagesUrl
         const CATEGORY = category.toLocaleUpperCase()
         const oldDocRef = doc(db, "PRODUCTS", CATEGORY, CATEGORY, id)
@@ -143,6 +145,7 @@ const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
             getEditedProductId(objToUpload)
         }
 
+        setUploadingSpinner("")
 
     }
 
@@ -308,7 +311,7 @@ const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
                     </div> :
                         <div className="d-flex justify-content-end mb-4">
                             <button className="btn btn-danger me-3" onClick={abortEditedData}>ABORT</button>
-                            <button className="btn btn-primary" onClick={postEditedData}>POST</button>
+                            <button className="btn btn-primary" onClick={postEditedData}><span style={{ width: "15px", height: "15px", fontSize: "10px" }} className={`${uploadingSpinner}`}></span>{uploadingSpinner ? "POSTING..." : "POST"}</button>
                         </div>}
                     {/* </div> */}
 

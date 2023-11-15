@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { UserContext } from '../context/UserContext'
 import { CartContext } from '../context/CartContext'
 import {CardElement , useStripe , useElements} from "@stripe/react-stripe-js"
 import axios from 'axios'
-import { getDocumentUser, registerPurchasedItem } from '../firebase.config'
+import { registerPurchasedItem } from '../firebase.config'
 import { format, sub } from 'date-fns'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -14,11 +14,12 @@ import "./components.css"
 function Payment() {
   const navigate = useNavigate()
   const {userId} = useParams()
-  const {currentUser, userDoc , setUserDoc} = useContext(UserContext)
+  const {currentUser, userDoc} = useContext(UserContext)
   const {totalCountAndPrice,cartItems , cartDispatch} = useContext(CartContext)
   const {totalCount , totalPrice} = totalCountAndPrice
   const [deliveryDay , setDeliveryDay] = useState("")
-  const {sm , lg} = QueryResponsive()
+  const [uploadingSpinner, setUploadingSpinner] = useState("")
+  const {lg} = QueryResponsive()
 
 
   const stripe = useStripe()
@@ -43,36 +44,48 @@ function Payment() {
 
 
   const pay = async(e)=>{
+    setUploadingSpinner("spinner-border")
     e.preventDefault()
 
     if(!stripe || !elements)return
 
-  
-
-    const response = await axios.post("/.netlify/functions/create-payment-intent" , { cartItems , currentUser})
-    const data = await response.data
-
-    const clientSecret =  data.paymentIntent.client_secret
-
-    const paymentResult= await stripe.confirmCardPayment(clientSecret , {
-      payment_method:{
-        card: elements.getElement(CardElement),
-        billing_details:{
-          name:"farshad farazdel"
-        }
-      }
-    })
-    if(paymentResult.error){
-      return toast.error("there is a problem in payment")
-    }else if(paymentResult.paymentIntent.status === "succeeded") {
-      toast.success("payment was successful")
-    }
     
-    await registerPurchasedItem(currentUser.uid , cartItems ,{totalCountAndPrice} , deliveryDay )
-    // await finalPay(currentUser ,cartItems)
-    cartDispatch({type:"SET_CART_ITEMS" , payload:[]})
-    cartDispatch({type:"CHANGING_IN_CART"})
-    navigate(`/profile/${userId}`)
+    try {
+      const response = await axios.post("/.netlify/functions/create-payment-intent" , { cartItems , currentUser})
+      const data = await response.data
+  
+      const clientSecret =  data.paymentIntent.client_secret
+  
+      const paymentResult= await stripe.confirmCardPayment(clientSecret , {
+        payment_method:{
+          card: elements.getElement(CardElement),
+          billing_details:{
+            name:"farshad farazdel"
+          }
+        }
+      })
+      if(paymentResult.error){
+        return toast.error("there is a problem in payment")
+      }else if(paymentResult.paymentIntent.status === "succeeded") {
+        toast.success("payment was successful")
+      }
+      
+    } catch (error) {
+      toast.error(error)
+      setUploadingSpinner("")
+    }
+
+    try {
+      await registerPurchasedItem(currentUser.uid , cartItems ,{totalCountAndPrice} , deliveryDay )
+      // await finalPay(currentUser ,cartItems)
+      cartDispatch({type:"SET_CART_ITEMS" , payload:[]})
+      cartDispatch({type:"CHANGING_IN_CART"})
+      setUploadingSpinner("")
+      navigate(`/profile/${userId}`)
+    } catch (error) {
+      toast.error("purchased data not uploaded to database")
+      setUploadingSpinner("")
+    }
   }
 
   
@@ -108,7 +121,7 @@ function Payment() {
           }
         }}}/></div>
         
-        <button disabled={cartItems?.length === 0 || !deliveryDay || !userDoc?.address} type='submit' className="btn btn-danger mt-5" >proceed to payment</button>
+        <button disabled={cartItems?.length === 0 || !deliveryDay || !userDoc?.address} type='submit' className="btn btn-danger mt-5" ><span style={{ width: "15px", height: "15px", fontSize: "10px" }} className={`${uploadingSpinner}`}></span>proceed to payment</button>
       </form>
     </div>
   )

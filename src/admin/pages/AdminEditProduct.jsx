@@ -10,6 +10,7 @@ import EdittingItem from '../components/EdittingItem'
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 import { toast } from 'react-toastify'
 
+
 const AdminEditProduct = () => {
   const { categoriesTitle, singleCategoryToShow, dispatch, loadingPage } = useContext(ShopContext)
   const [categorySelectBox , setCategorySelectBox] = useState(categoriesTitle)
