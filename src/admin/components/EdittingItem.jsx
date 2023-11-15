@@ -115,7 +115,7 @@ const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
                     await deleteDoc(oldDocRef)
                     const EDITEDCATEGORY = editedCategory.toLocaleUpperCase()
                     const newDocRef = doc(db, "PRODUCTS", EDITEDCATEGORY, EDITEDCATEGORY, id)
-                    objToUpload = { imagesUrl: [...dlUrls], firstPicture: firstPictureInUi, name: editedName, category: editedCategory.trim().toLocaleLowerCase(), subCategory: editedCategory.trim().toLocaleLowerCase(), countInStock: editedCountInStock, price: editedPrice, purchasedCount: editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), id, dateAdded, dateEdited: new Date() }
+                    objToUpload = { imagesUrl: [...dlUrls], firstPicture: firstPictureInUi, name: editedName, category: editedCategory.trim().toLocaleLowerCase(), subCategory: editedCategory.trim().toLocaleLowerCase(), countInStock: +editedCountInStock, price: +editedPrice, purchasedCount: +editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), id, dateAdded, dateEdited: new Date() }
                     await setDoc(newDocRef, objToUpload)
                     
                 } catch (error) {
@@ -138,10 +138,10 @@ const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
             }
 
         } else {
-            await updateDoc(oldDocRef, { imagesUrl: [...editedImagesUrl, ...addedImagesUrl], name: editedName, countInStock: editedCountInStock, price: editedPrice, purchasedCount: editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), dateEdited: new Date() })
+            await updateDoc(oldDocRef, { imagesUrl: [...editedImagesUrl, ...addedImagesUrl], name: editedName, countInStock: +editedCountInStock, price: +editedPrice, purchasedCount: +editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), dateEdited: new Date() })
             toast.success("product edit successful")
             setEnableEdittng(false)
-            objToUpload = { imagesUrl: [...editedImagesUrl , ...addedImagesUrl], firstPicture: firstPictureInUi, name: editedName, category: editedCategory.trim().toLocaleLowerCase(), subCategory: editedCategory.trim().toLocaleLowerCase(), countInStock: editedCountInStock, price: editedPrice, purchasedCount: editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), id, dateAdded, dateEdited: new Date() }
+            objToUpload = { imagesUrl: [...editedImagesUrl , ...addedImagesUrl], firstPicture: firstPictureInUi, name: editedName, category: editedCategory.trim().toLocaleLowerCase(), subCategory: editedCategory.trim().toLocaleLowerCase(), countInStock: +editedCountInStock, price: +editedPrice, purchasedCount: +editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), id, dateAdded, dateEdited: new Date() }
             getEditedProductId(objToUpload)
         }
 

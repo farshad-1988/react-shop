@@ -1,4 +1,4 @@
-import profileSvg from "../../svg/profileSvg"
+
 import GoogleIcon from "../../svg/GoogleIcon";
 import { useContext } from "react";
 import { UserContext } from "../../context/UserContext";
@@ -7,9 +7,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { signInWithGoogle, signOutUser } from "../../firebase.config";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping, faHomeUser, faHouseCrack, faUser, faUserAlt, faUserAltSlash, faUserCircle, faUserCog, faUserLarge } from "@fortawesome/free-solid-svg-icons";
+import { faCartShopping, faHomeUser} from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
-import { useEffect } from "react";
 
 const SigningAndProfile = () => {
   const { currentUser } = useContext(UserContext);

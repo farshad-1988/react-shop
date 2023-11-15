@@ -1,0 +1,2 @@
+when product info or category,... changed , products those are already in user cart will ramain intact
+when user logged out insufficient permission triggered

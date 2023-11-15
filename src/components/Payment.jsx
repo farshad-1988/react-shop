@@ -46,8 +46,8 @@ function Payment() {
 
 
   const pay = async(e)=>{
-    setUploadingSpinner("spinner-border")
     e.preventDefault()
+    setUploadingSpinner("spinner-border")
 
     if(!stripe || !elements){
       toast.error("problem in connection to stripe")
@@ -122,7 +122,7 @@ function Payment() {
           }
         }}}/></div>
         
-        <button disabled={cartItems?.length === 0 || !deliveryDay || !userDoc?.address} type='submit' className="btn btn-danger mt-5 ps-5 pe-5" ><span style={{ width: "15px", height: "15px", fontSize: "10px" }} className={`${uploadingSpinner}`}></span> pay now</button>
+        <button disabled={cartItems?.length === 0 || !deliveryDay || !userDoc?.address} type='submit' className="btn btn-danger mt-3 ps-5 pe-5" ><span style={{ width: "15px", height: "15px", fontSize: "10px" }} className={`${uploadingSpinner}`}></span> pay now</button>
       </form>
       </div>
     </div>

@@ -37,7 +37,7 @@ const AdminAddProduct = () => {
       toast.error("please complete all fields...")
       return
     }
-    const objToUpload = { name, category, subCategory: category, countInStock, price, purchasedCount: 0, splittedName: name.toLocaleLowerCase().split(" "), id: productId, dateAdded: new Date(), imagesUrl, firstPicture }
+    const objToUpload = { name, category, subCategory: category, countInStock:+countInStock, price:+price, purchasedCount: 0, splittedName: name.toLocaleLowerCase().split(" "), id: productId, dateAdded: new Date(), imagesUrl, firstPicture }
     const CATEGORY = category.toLocaleUpperCase()
     const docRef = doc(db, "PRODUCTS", CATEGORY, CATEGORY, productId)
     try {
