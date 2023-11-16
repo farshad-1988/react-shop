@@ -3,13 +3,13 @@ require("dotenv").config()
 
 
 const admin = require("firebase-admin")
-
+const { FIREBASE_PRIVATE_KEY } = JSON.parse(process.env.FIREBASE_PRIVATE_KEY);
 
 const serviceAccount = {
   type: "service_account",
   project_id: "shop2-8814c",
   private_key_id: "48ed091846aba0ec37ff7177fc05349e6d4b40b8",
-  private_key: JSON.parse(process.env.FIREBASE_PRIVATE_KEY),
+  private_key: FIREBASE_PRIVATE_KEY,
   client_email: "firebase-adminsdk-1hngd@shop2-8814c.iam.gserviceaccount.com",
   client_id: "108117369323790742378",
   auth_uri: "https://accounts.google.com/o/oauth2/auth",
