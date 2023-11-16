@@ -5,7 +5,7 @@ const admin = require("firebase-admin")
 require("dotenv").config()
 const cors = require('cors')({origin: true})
 
- !admin.apps.length ? admin.initializeApp({
+ const ini = !admin.apps.length ? admin.initializeApp({
   credential: admin.credential.cert({
     projectId:"shop2-8814c",
     clientEmail:"firebase-adminsdk-1hngd@shop2-8814c.iam.gserviceaccount.com",
@@ -17,7 +17,7 @@ const cors = require('cors')({origin: true})
 admin.use(cors({ origin: true }))
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
-const db = admin.firestore()
+const db = admin.firestore(ini)
 
 
 
