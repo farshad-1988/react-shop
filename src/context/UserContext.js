@@ -20,7 +20,6 @@ const UserContextProvider = ({children})=>{
     useEffect(()=>{
         const unsubscribe = userAuthChange((user)=>{
             setCurrentUser(user)
-            
         })
         return unsubscribe
     },[])

@@ -291,7 +291,7 @@ export const signInWithGoogle = async (currentCart)=>{
     // await updateDoc(docRef , {cart:currentCart ,loginAt:serverTimestamp()})
     newCart = await syncDataWhenSignIn(userSnapshot , currentCart , userCredetial.user.uid)
   }
-  return userSnapshot.data()?.address ? {user:userCredetial.user,hasAddress:true,newCart} : {user:userCredetial.user,hasAddress:false,newCart:false}
+  return userSnapshot.data()?.address ? {user:userCredetial.user , userInfo:userSnapshot.data(),hasAddress:true,newCart} : {user:userCredetial.user ,userInfo:userSnapshot.data(),hasAddress:false,newCart:false}
   
 }
 
@@ -308,7 +308,7 @@ export const signInWithEmail = async (email, password , currentCart) => {
 
 
       const newCart = await syncDataWhenSignIn(userSnapshot , currentCart , userCredetial.user.uid)
-      return newCart
+      return {newCart, userInfo:userSnapshot.data()}
   } catch (error) {
     alert(error);
   }

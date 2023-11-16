@@ -5,11 +5,13 @@ import { signInWithEmail, signOutUser } from "../firebase.config"
 import { useContext } from "react"
 import { CartContext } from "../context/CartContext"
 import { useNavigate } from "react-router-dom"
+import { UserContext } from "../context/UserContext"
 
 
 
 const Signin = ()=>{
         const {cartDispatch , cartItems} = useContext(CartContext)
+        const {setUserDoc} = useContext(UserContext)
         const navigate = useNavigate()
         const userSchema = yup.object().shape({
             email:yup.string().email("your email is not valid").required("you must enter your email address"),
@@ -20,10 +22,11 @@ const Signin = ()=>{
     
         const login = async({email , password})=>{
             try {
-                const cartAfterSignin = await signInWithEmail(email , password , cartItems)
-                cartDispatch({type:"SET_CART_ITEMS" , payload:cartAfterSignin})
+                const cartAndUserAfterSignin = await signInWithEmail(email , password , cartItems)
+                cartDispatch({type:"SET_CART_ITEMS" , payload:cartAndUserAfterSignin.newCart})
+                setUserDoc(cartAndUserAfterSignin.userInfo)
                 cartDispatch({type:"CHANGING_IN_CART"})
-                // cartDispatch({type:"SET_SIGNING_TYPE" , payload:"signin"})
+                
                 navigate("/")
             } catch (error) {
                 console.error(errors)

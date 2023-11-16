@@ -11,7 +11,7 @@ import { faCartShopping, faHomeUser} from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
 const SigningAndProfile = () => {
-  const { currentUser } = useContext(UserContext);
+  const { currentUser , setUserDoc} = useContext(UserContext);
   const { cartDispatch, totalCountAndPrice, cartItems } = useContext(CartContext);
   const [beatUserIcon, setBeatUserIcon] = useState(false)
   const [shopIconBeat, setShopIconBeat] = useState("")
@@ -40,6 +40,7 @@ const SigningAndProfile = () => {
 
   const googleSignIn = async () => {
     const user = await signInWithGoogle(cartItems)
+    setUserDoc(user.userInfo)
     user && toast.success(`welcome ${user.user.displayName}! ${!user.hasAddress ? "you are successfully logged in but we need more info for complete your registeration" : ""}`)
     user.newCart && cartDispatch({ type: "SET_CART_ITEMS", payload: user.newCart })
     user.newCart && cartDispatch({ type: "CHANGING_IN_CART" });
