@@ -1,6 +1,4 @@
 1-when product info or category,... changed , products those are already in user cart will ramain intact --> on auth check purchased, and in auth cart if they are currect.
-2-when user logged out insufficient permission error.---
-3-on post items and purchased items disable every thing that user cant change state
-4-at first it doesnt have time to get credetials , so it need refresh and only with refresh will get docref again ---
+2-on post items and purchased items disable every thing that user cant change state
 
-5-get certificate for key.pem with netlify
+3-get certificate for key.pem with netlify

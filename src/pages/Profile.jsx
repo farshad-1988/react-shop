@@ -34,6 +34,7 @@ const Profile = () => {
     ...address,
   };
 
+  const sortedPurchased = allCompletedPurchase?.sort((a,b)=>b.summaryPurchaseInfo.purchasedAt - a.summaryPurchaseInfo.purchasedAt)
   return (
     // <Routes>
     //     <Route index element={
@@ -72,7 +73,7 @@ const Profile = () => {
 
         <div className="col-12 col-xl-6">
           {allCompletedPurchase ?
-            Object.entries(allCompletedPurchase)?.map(
+            Object.entries(sortedPurchased)?.map(
               (allPurchasedItemsInfo, index) => {
                 return (
                     <PurchasedItems allPurchasedItemsInfo={allPurchasedItemsInfo} key={`purchasedInfo${index}`}/>
