@@ -3,7 +3,7 @@ const admin = require("firebase-admin")
 
 
 require("dotenv").config()
-const cors = require('cors')({origin: true})
+
 
 const serviceAccount = {
   type: "service_account",
@@ -21,11 +21,11 @@ const serviceAccount = {
 
 
  !admin.apps.length ? admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL:"https://shop2-8814c.firebaseapp.com/"
+  credential: admin.credential.cert(serviceAccount)
+  // databaseURL:"https://shop2-8814c.firebaseapp.com/"
 }) : admin.app()
 //.split(String.raw`\n`).join('\n')
-admin.use(cors({ origin: true }))
+
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
 const db = admin.firestore()
