@@ -25,7 +25,7 @@ const AdminAddProduct = () => {
   const [firstPicture, setFirstPicture] = useState(0)
   const [formImages, setFormImages] = useState([])
   const [messageOfNewCategory,setMessageOfNewCategory] = useState("")
-
+  const [categoriesDropDown , setCategoriesDropDown]= useState(categoriesTitle)
 
 
   const submitFormToDB = async (e) => {
@@ -48,6 +48,7 @@ const AdminAddProduct = () => {
       !catData.categories.includes(category) && await updateDoc(additionalDocRef, { categories: [...catData.categories, category] })
 
       await setDoc(docRef, objToUpload)
+      !categoriesTitle.find((category)=> category === categoryRef.current?.value) && setCategoriesDropDown((prev)=>[...prev, categoryRef.current.value])
       toast.success("file uploaded successfully")
       setDataUploaded(true)
       setProductId(uuidv4())
@@ -132,7 +133,7 @@ const AdminAddProduct = () => {
                 select category
               </button>
               <ul className="dropdown-menu">
-                {categoriesTitle?.map((category , index)=>{
+                {categoriesDropDown?.map((category , index)=>{
                   return <li key={`selectCat${index}`}><button onClick={selectCategory} value={category} className="dropdown-item">{category}</button></li>
                 })}
               </ul>
