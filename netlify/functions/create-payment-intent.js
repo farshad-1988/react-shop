@@ -63,7 +63,11 @@ try{
   const paymentIntent = await stripe.paymentIntents.create({amount:+totalPrice*100 , currency:"usd" , payment_method_types: ["card"]}) 
   
   // await updateDoc(userDocRef , {purchasedItems:arrayUnion({...purchasedItems})} )
-    return {statusCode:200 , body:JSON.stringify({paymentIntent})}
+    return {statusCode:200 ,    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true,
+      'Access-Control-Allow-Headers': 'Authorization'
+    }, body:JSON.stringify({paymentIntent})}
 } catch(error){
     console.log(error) 
     return {statusCode:400 , body:JSON.stringify({error}) }
