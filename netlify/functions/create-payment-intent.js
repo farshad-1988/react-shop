@@ -4,14 +4,14 @@ const admin = require("firebase-admin")
 
 require("dotenv").config()
 
- admin.initializeApp({
+ !admin.apps.length ? admin.initializeApp({
   credential: admin.credential.cert({
     projectId:"shop2-8814c",
     clientEmail:"firebase-adminsdk-1hngd@shop2-8814c.iam.gserviceaccount.com",
     privateKey:process.env.FIREBASE_PRIVATE_KEY
   }),
   databaseURL:"https://shop2-8814c.firebaseapp.com/"
-})
+}) : admin.app()
 //.split(String.raw`\n`).join('\n')
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
