@@ -1,2 +1,3 @@
-when product info or category,... changed , products those are already in user cart will ramain intact
-when user logged out insufficient permission triggered
+1-when product info or category,... changed , products those are already in user cart will ramain intact --> on auth check purchased, and in auth cart if they are currect.
+2-when user logged out insufficient permission error.
+3-on post items and purchased items disable every thing that user cant change state

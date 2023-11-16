@@ -115,7 +115,7 @@ function Payment() {
         <div className='mt-3'><CardElement options={{style:{
           base:{
             fontSize:"16px",
-            backgroundColor:"#555",
+            backgroundColor:"#eee",
             fontSmoothing:"always",
             fontStyle:"italic",
             iconColor:"green"
