@@ -21,10 +21,9 @@ const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
     const [editedItem, setEditedItem] = useState(Object.assign({}, editedInfo))
     const [editedImagesUrl, seteditedImagesUrl] = useState([...imagesUrl])
     const { editedName, editedCountInStock, editedPurchasedCount, editedCategory, editedPrice, addedImagesUrl } = { ...editedItem }
-    const [activeImageNum, setActiveImageNum] = useState(firstPicture)
+    const [activeImageNum, setActiveImageNum] = useState(0)
     const [firstPictureInUi, setFirstPictureInUi] = useState(firstPicture)
     const [uploadingSpinner, setUploadingSpinner] = useState("")
-    const [formImages, setFormImages] = useState()
 
 
 
@@ -215,8 +214,8 @@ const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
         try {
             const docRef = doc(db, "PRODUCTS", category.toLocaleUpperCase(), category.toLocaleUpperCase(), id)
             await updateDoc(docRef, { firstPicture: activeImageNum })
-            toast.success("image set as active image")
             setFirstPictureInUi(activeImageNum)
+            toast.success("image set as active image")
         } catch (error) {
             toast.error("image is not set as active image")
         }
