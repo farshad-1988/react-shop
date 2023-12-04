@@ -1,21 +1,22 @@
 import { deleteObject, getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
 import { useEffect } from "react"
+import { useCallback } from "react"
 import { useRef } from "react"
 import { useState } from "react"
 import { toast } from "react-toastify"
 
 
-const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImagesUrl , getFromImages }) => {
+const AdminInputImage = ({ items: { category, productId, dataUploaded }, getImagesUrl, getFromImages }) => {
 
   const storage = getStorage()
   const [formImages, setFormImages] = useState([])
   const [imagesUrl, setImagesUrl] = useState([])
-  const [activeImage , setActiveImage] = useState(0)
+  const [activeImage, setActiveImage] = useState(0)
   const [progressBarContent, setProgressBarContent] = useState({})
   const imageInputRef = useRef()
 
   const onMutate = async (e) => {
-    if(e.target.files.length + formImages.length >4){
+    if (e.target.files.length + formImages.length > 4) {
       toast.error("maximum number of allowed image is four")
       return
     }
@@ -32,118 +33,125 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
 
   }
 
+  const storeImage = useCallback(() =>
+    async (image) => {
+      return new Promise((resolve, reject) => {
+        const fileName = `${image.name}`
+        const storageRef = ref(storage, `${category.toLocaleLowerCase().trim()}/${productId}/` + fileName)
 
+        const uploadTask = uploadBytesResumable(storageRef, image)
 
-  const uploadImages = async () => {
-    // e.preventDefault()
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            setProgressBarContent((prev) => ({ ...prev, [fileName]: progress }))
 
-    const imgUrls = await Promise.all(
-      formImages.map((image) => {
-        if (progressBarContent[image.name] === 100) return
-        return storeImage(image)
+          },
+          (error) => {
+            reject(error)
+          },
+          () => {
+            console.log("done")
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+              resolve(downloadURL)
+            })
+          }
+        )
       })
-    ).catch((error) => {
-      // setLoading(false)
-      toast.error('Images not uploaded')
-      console.log(error)
-      return
-    })
-    if (imgUrls) {
-      imgUrls.map((url) => {
-        if (url !== undefined) {
-          setImagesUrl((prev) => [...prev, url])
-        }
+    }, [category, productId, storage])
+
+
+  const uploadImages = useCallback(async () => {
+    return async () => {
+      // e.preventDefault()
+
+      const imgUrls = await Promise.all(
+        formImages.map((image) => {
+          if (progressBarContent[image.name] === 100) return
+          return storeImage(image)
+        })
+      ).catch((error) => {
+        // setLoading(false)
+        toast.error('Images not uploaded')
+        console.log(error)
+        return
       })
+      if (imgUrls) {
+        imgUrls.map((url) => {
+          if (url !== undefined) {
+            setImagesUrl((prev) => [...prev, url])
+          }
+        })
+      }
+      getImagesUrl(imagesUrl, activeImage)
     }
-    getImagesUrl(imagesUrl , activeImage)
-  }
 
-  const storeImage = async (image) => {
-    return new Promise((resolve, reject) => {
-      const fileName = `${image.name}`
-      const storageRef = ref(storage, `${category.toLocaleLowerCase().trim()}/${productId}/` + fileName)
+  }, [activeImage, formImages, getImagesUrl, imagesUrl, progressBarContent, storeImage])
 
-      const uploadTask = uploadBytesResumable(storageRef, image)
 
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          setProgressBarContent((prev) => ({ ...prev, [fileName]: progress }))
 
-        },
-        (error) => {
-          reject(error)
-        },
-        () => {
-          console.log("done")
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            resolve(downloadURL)
-          })
-        }
-      )
-    })
-  }
 
-  const removeAllImage =async () => {
+  const removeAllImage = async () => {
     if (!formImages.length) return
     if (window.confirm("confirm to remove all picture ?") === true) {
-      const promisesRemovedItem = formImages.map(async(file) => {
+      const promisesRemovedItem = formImages.map(async (file) => {
         const storageRef = ref(storage, `${category}/${productId}/` + file.name)
         return await deleteObject(storageRef)
-        })
-        try {
-          await Promise.all(promisesRemovedItem)
-          toast.success("successfully deleted")
-          setFormImages([])
-          setProgressBarContent({})
-          setImagesUrl([])
-          imageInputRef.current.value = null
-        } catch (error) {
-          toast.error("there is a problem in removing pictures")
-          console.log(error)
-        }
+      })
+      try {
+        await Promise.all(promisesRemovedItem)
+        toast.success("successfully deleted")
+        setFormImages([])
+        setProgressBarContent({})
+        setImagesUrl([])
+        imageInputRef.current.value = null
+      } catch (error) {
+        toast.error("there is a problem in removing pictures")
+        console.log(error)
       }
+    }
 
-      //   categoryRef.current.disabled = false
-    
+    //   categoryRef.current.disabled = false
+
   }
 
   useEffect(() => {
+
     getFromImages(formImages)
     const uploadData = async () => {
       await uploadImages()
     }
     uploadData()
-  }, [formImages])
+  }, [formImages, getFromImages, uploadImages])
 
 
-  useEffect(()=>{
-    if(dataUploaded){
+  useEffect(() => {
+
+    if (dataUploaded) {
       setFormImages([])
       setProgressBarContent({})
       setImagesUrl([])
     }
-  },[dataUploaded])
+  }, [dataUploaded])
 
 
   useEffect(() => {
-    getImagesUrl(imagesUrl , activeImage)
-    if(!imagesUrl.length) imageInputRef.current.value=null
-  }, [imagesUrl])
+    console.log("object")
+
+    getImagesUrl(imagesUrl, activeImage)
+    if (!imagesUrl.length) imageInputRef.current.value = null
+  }, [activeImage, getImagesUrl, imagesUrl])
 
 
 
-  // useEffect(()=>{
 
-    
-  // },[])
-  const selectAciveImage = (e)=>{
+  const selectAciveImage = (e) => {
     setActiveImage(e.target.value)
   }
 
-    function getPathStorageFromUrl(url) {
+  function getPathStorageFromUrl(url) {
 
     const baseUrl = "https://firebasestorage.googleapis.com/v0/b/shop2-8814c.appspot.com/o/";
 
@@ -158,28 +166,28 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
     return imagePath;
   }
   //remove url correpond to image
-  
-  const removeOneSelectedPhoto =(e,image)=>{
+
+  const removeOneSelectedPhoto = (e, image) => {
     // e.currentTarget.textContent = ""
     // e.currentTarget.className = "m-auto spinner-border"
     // e.currentTarget = <FontAwesomeIcon icon={faSpinner} />
     const storageRef = ref(storage, `${category}/${productId}/` + image.name)
     deleteObject(storageRef).then(() => {
       toast.success(`${image.name} successfully deleted`)
-      const newFromImages = formImages.filter((file)=>file.name !== image.name)
+      const newFromImages = formImages.filter((file) => file.name !== image.name)
       setFormImages(newFromImages)
-      const newImagesUrl = imagesUrl.filter((url)=>getPathStorageFromUrl(url)!==`${category}/${productId}/` + image.name)
+      const newImagesUrl = imagesUrl.filter((url) => getPathStorageFromUrl(url) !== `${category}/${productId}/` + image.name)
       setImagesUrl(newImagesUrl)
-      setProgressBarContent((prev)=>({...prev , [image.name]:0}))
-      getImagesUrl(newImagesUrl , activeImage)
-      if(!newImagesUrl.length) imageInputRef.current.value=null
+      setProgressBarContent((prev) => ({ ...prev, [image.name]: 0 }))
+      getImagesUrl(newImagesUrl, activeImage)
+      if (!newImagesUrl.length) imageInputRef.current.value = null
     }).catch((error) => {
       //double check
       toast.error(error)
     })
   }
-  
-  
+
+
 
   return (
     <div className="d-flex flex-column">
@@ -199,16 +207,16 @@ const AdminInputImage = ({ items: { category, productId , dataUploaded}, getImag
       <div className='mt-2 d-flex'>
         {formImages?.map((image, index) => {
           return <div className='d-flex flex-column me-2 ' style={{ width: "100px" }} key={`adminImagesUpdated${index}`}>
-            {progressBarContent[image.name] === 100 && <span style={{cursor:"pointer"}} className="m-auto badge text-danger " onClick={(e)=>removeOneSelectedPhoto(e,image)}>X</span>}
+            {progressBarContent[image.name] === 100 && <span style={{ cursor: "pointer" }} className="m-auto badge text-danger " onClick={(e) => removeOneSelectedPhoto(e, image)}>X</span>}
             <img src={URL.createObjectURL(image)} width={100} height={100} alt={image.name} />
             <div className={`progress mt-2 ${!progressBarContent[image.name] ? "d-none" : "d-block"} }`}>
               <div key={`progressBar${index}`} className={`progress-bar ${progressBarContent[image.name] === 100 && "bg-success"}`} style={{ width: `${progressBarContent[image.name]}%` }}>{Math.floor(progressBarContent[image.name])}%</div>
             </div>
-            <input className="mt-1" title="set as active image" defaultChecked={index===0} type="radio" name="selectPic" value={index} onChange={selectAciveImage}/>
+            <input className="mt-1" title="set as active image" defaultChecked={index === 0} type="radio" name="selectPic" value={index} onChange={selectAciveImage} />
           </div>
         })}
       </div>
-      {imagesUrl.length !== 0 && formImages.every((image)=>progressBarContent[image.name]===100) && <button className='btn btn-danger mt-4' onClick={removeAllImage}>
+      {imagesUrl.length !== 0 && formImages.every((image) => progressBarContent[image.name] === 100) && <button className='btn btn-danger mt-4' onClick={removeAllImage}>
         remove all images
       </button>}
     </div>

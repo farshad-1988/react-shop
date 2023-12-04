@@ -1,9 +1,9 @@
-
+console.log("ran")
 export const initialCartState = {
     cartItems:JSON.parse(localStorage.getItem("cart")) || [],
     totalCountAndPrice:[{totalCount:0 , totalPrice:0}],
-    newSignIn:"refresh",
-    change:false
+    newSignIn:"refresh"
+    // change:false
 }
 
 
@@ -22,10 +22,10 @@ export const cartReducer = (state , action)=>{
             return {
                 ...state , newSignIn:payload
             }
-        case "CHANGING_IN_CART":
-            return {
-                ...state , change:!state.change
-            }
+        // case "CHANGING_IN_CART":
+        //     return {
+        //         ...state , change:!state.change
+        //     }
         case "SET_SINGLE_ITEM_LOADING_FALSE":
             return {
                 ...state , cartItems:payload

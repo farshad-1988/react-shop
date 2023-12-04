@@ -13,7 +13,7 @@ import { toast } from 'react-toastify'
 
 const AdminEditProduct = () => {
   const { categoriesTitle, singleCategoryToShow, dispatch, loadingPage } = useContext(ShopContext)
-  const [categorySelectBox , setCategorySelectBox] = useState(categoriesTitle)
+  const [categorySelectBox, setCategorySelectBox] = useState(categoriesTitle)
   const [selectedCategory, setSelectedCategory] = useState("")
 
   const [lastItem, setLastItem] = useState("")
@@ -51,7 +51,7 @@ const AdminEditProduct = () => {
     }
     getItems(selectedCategory)
     return () => dispatch({ type: "RESET_SINGLE_CATEGORY" })
-  }, [selectedCategory, sortType])
+  }, [dispatch, selectedCategory, sortType])
 
   useEffect(() => {
     const getItems = async () => {
@@ -68,7 +68,7 @@ const AdminEditProduct = () => {
     getItems()
     // singleCategoryToShow.map((item) => { setActiveImageNumber((prev) => ({ ...prev, [item.id]: 0 })) })
     // return () => dispatch({ type: "RESET_SINGLE_CATEGORY" })
-  }, [])
+  }, [categoriesTitle, dispatch, sortType])
 
 
 
@@ -77,19 +77,19 @@ const AdminEditProduct = () => {
     setSortType(e.target.value.split(","))
   }
 
-const removeCategoryCompletely = async()=>{
-  if(singleCategoryToShow.length){
-    return toast.error("you could only remove empty category...")
+  const removeCategoryCompletely = async () => {
+    if (singleCategoryToShow.length) {
+      return toast.error("you could only remove empty category...")
+    }
+    const catDocRef = doc(db, "ADDITIONAL_INFO", "CATEGORIES")
+    const snapshot = await getDoc(catDocRef)
+    const catList = snapshot.data()
+    const newCatList = catList.categories.filter((category) => category.toLocaleLowerCase() !== selectedCategory.toLocaleLowerCase())
+    setCategorySelectBox(newCatList)
+    await updateDoc(catDocRef, { categories: newCatList })
+    setSelectedCategory(categorySelectBox[0])
+    toast.success(`you successfully delete category ${selectedCategory}`)
   }
-  const catDocRef = doc(db , "ADDITIONAL_INFO" , "CATEGORIES")
-  const snapshot = await getDoc(catDocRef)
-  const catList = snapshot.data()
-  const newCatList = catList.categories.filter((category)=>category.toLocaleLowerCase() !== selectedCategory.toLocaleLowerCase())
-  setCategorySelectBox(newCatList)
-  await updateDoc(catDocRef , {categories:newCatList})
-  setSelectedCategory(categorySelectBox[0])
-  toast.success(`you successfully delete category ${selectedCategory}`)
-}
 
   // function getPathStorageFromUrl(url) {
 
@@ -125,8 +125,8 @@ const removeCategoryCompletely = async()=>{
       dispatch({ type: "SET_SINGLE_CATEGORY", payload: newProducts })
     }
   }
-  const addedCategory = (addedCat)=>{
-    setCategorySelectBox((prev)=>[...prev , addedCat])
+  const addedCategory = (addedCat) => {
+    setCategorySelectBox((prev) => [...prev, addedCat])
   }
 
   return (
@@ -140,6 +140,7 @@ const removeCategoryCompletely = async()=>{
         </select>
       </div>
 
+
       <div>
         <div className="nav-pills d-flex align-items-center ms-3" role="tablist"><span>sort by:</span>{categorySort.map((typeOfSort, index) => {
           return <button disabled={loadingPage} data-bs-toggle="pill" type="button" onClick={selectSortType} value={typeOfSort.slice(1, 3)} key={`sort-type${index}`} className={`btn text-primary p-1  ${typeOfSort[0] === "newest" && "active"} ff-sort-type`}>{typeOfSort[0]}</button>
@@ -149,7 +150,7 @@ const removeCategoryCompletely = async()=>{
           <InfiniteScroll className="overflow-hidden" endMessage={<p className="text-center text-success">you've seen all items</p>} dataLength={singleCategoryToShow.length} hasMore={ifThereIsMoreItems} next={nextLoading} loader={<p className="text-center">loading<span className="spinner-border spinner-border-sm"></span></p>}>
             <div className="m-auto" style={{ width: "95%" }} >
               {singleCategoryToShow?.map((item, index) => {
-                return <EdittingItem key={`editedItemsInCategory${index}`} item={item} getEditedProductId={getEditedProductId} addedCategory={addedCategory}/>
+                return <EdittingItem key={`editedItemsInCategory${item.id}`} item={item} getEditedProductId={getEditedProductId} addedCategory={addedCategory} />
               })}
 
             </div>
@@ -165,18 +166,3 @@ export default AdminEditProduct
 
 
 
-{/* <div className="carousel-inner">
-    {imagesUrl?.map((image, index) =>
-    (<div key={`img-pic${index}`} className={`carousel-item ${index === 1 && "active"}`} >
-        <img src={image} alt="" className="d-block w-100 rounded-3" />
-    </div>)
-    )}
-</div>
-
-<button className="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
-    <span className="carousel-control-prev-icon"></span>
-</button>
-<button className="carousel-control-next" type="button" data-bs-target="#demo" data-bs-slide="next">
-    <span className="carousel-control-next-icon"></span>
-</button>
-</div> */}

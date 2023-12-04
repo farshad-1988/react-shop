@@ -2,8 +2,8 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
-  useState,
 } from "react";
 import { syncLocalStorageDbAndContext } from "../firebase.config";
 import { UserContext } from "./UserContext";
@@ -14,8 +14,6 @@ export const CartContext = createContext();
 const CartContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialCartState);
   const { currentUser } = useContext(UserContext);
-  const [itemIdLoadingFalse, setItemIdLoadingFalse] = useState([]);
-  // const [change , setChange] = useState(true)
 
   const increment = async (itemInfo, isItemInCart) => {
     let newItems;
@@ -32,9 +30,15 @@ const CartContextProvider = ({ children }) => {
       });
     }
     dispatch({ type: "SET_CART_ITEMS", payload: newItems });
-    await syncLocalStorageDbAndContext(currentUser, newItems);
-    setItemIdLoadingFalse((prev) => [...prev, itemInfo.id]);
-    dispatch({ type: "CHANGING_IN_CART" });
+    try {
+      await syncLocalStorageDbAndContext(currentUser, newItems);
+      const makeLoadingFalse = newItems.map((item) =>  ({ ...item, loading: false }) )
+      dispatch({ type: "SET_CART_ITEMS", payload: makeLoadingFalse });
+    } catch (error) {
+      console.log(error)
+    }
+
+    // dispatch({ type: "CHANGING_IN_CART" });
   };
 
   const decrement = async (itemInfo, isItemInCart) => {
@@ -51,44 +55,30 @@ const CartContextProvider = ({ children }) => {
     dispatch({ type: "SET_CART_ITEMS", payload: newItems });
     try {
       await syncLocalStorageDbAndContext(currentUser, newItems);
+      const makeLoadingFalse = newItems.map((item)=> ({ ...item, loading: false }) )
+      dispatch({ type: "SET_CART_ITEMS", payload: makeLoadingFalse });
     } catch (error) {
       console.log(error);
       dispatch({ type: "SET_CART_ITEMS", payload: state.cartItems });
     }
-
-    if (!(isItemInCart.countInCart === 1)) {
-      setItemIdLoadingFalse((prev) => [...prev, itemInfo.id]);
-    }
-    dispatch({ type: "CHANGING_IN_CART" });
+    // dispatch({ type: "CHANGING_IN_CART" });
   };
-
-  useEffect(() => {
-    dispatch({ type: "CHANGING_IN_CART" });
-  }, []);
-
+  const cartItems = useMemo(() => {
+    return state.cartItems
+  },[state.cartItems])
+  
+  
   //set new sign in as dependancy for signup and first time you signed in true
   useEffect(() => {
-    const f1 = async () => {
-      const newItem = state.cartItems?.map((item) => {
-        if (itemIdLoadingFalse?.includes(item.id)) {
-          setItemIdLoadingFalse((prev) =>
-            prev.filter((itemId) => item.id !== itemId)
-          );
-          return { ...item, loading: false };
-        } else {
-          return item;
-        }
-      });
-
-      dispatch({ type: "SET_CART_ITEMS", payload: newItem });
+    const f1 =  () => {
       dispatch({
         type: "SET_TOTAL_COUNT_AND_PRICE",
         payload: {
-          totalCount: state.cartItems?.reduce(
+          totalCount: cartItems?.reduce(
             (lastCount, current) => lastCount + current.countInCart,
             0
           ),
-          totalPrice: state.cartItems?.reduce(
+          totalPrice: cartItems?.reduce(
             (lastTotalPrice, current) =>
               lastTotalPrice + current.countInCart * current.price,
             0
@@ -97,17 +87,16 @@ const CartContextProvider = ({ children }) => {
       });
     };
     f1();
-  }, [state.change]);
+  }, [ cartItems]);
 
-  // useEffect(()=>{
-  //     },[state.cartItems , currentUser])
+
 
   return (
     <CartContext.Provider
       value={{
         increment,
         decrement,
-        cartItems: state.cartItems,
+        cartItems,
         cartDispatch: dispatch,
         totalCountAndPrice: state.totalCountAndPrice,
         newSignIn: state.newSignIn,

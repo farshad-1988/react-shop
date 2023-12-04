@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import {  useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { getDocumentUser } from "../firebase.config";
 import PurchasedItems from "./PurchasedItems";
@@ -7,7 +7,6 @@ import PurchasedItems from "./PurchasedItems";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { userId } = useParams();
   const { userDoc, setUserDoc, currentUser } = useContext(UserContext)
 
 
@@ -20,7 +19,7 @@ const Profile = () => {
       setUserDoc(userInfo)
     };
     getUserInfo();
-  }, [currentUser]);
+  }, [currentUser, setUserDoc]);
 
   const {
     name,
@@ -34,7 +33,7 @@ const Profile = () => {
     ...address,
   };
 
-  const sortedPurchased = allCompletedPurchase?.sort((a,b)=>b.summaryPurchaseInfo.purchasedAt - a.summaryPurchaseInfo.purchasedAt)
+  const sortedPurchased = allCompletedPurchase?.sort((a, b) => b.summaryPurchaseInfo.purchasedAt - a.summaryPurchaseInfo.purchasedAt)
   return (
     // <Routes>
     //     <Route index element={
@@ -76,7 +75,7 @@ const Profile = () => {
             Object.entries(sortedPurchased)?.map(
               (allPurchasedItemsInfo, index) => {
                 return (
-                    <PurchasedItems allPurchasedItemsInfo={allPurchasedItemsInfo} key={`purchasedInfo${index}`}/>
+                  <PurchasedItems allPurchasedItemsInfo={allPurchasedItemsInfo} key={`purchasedInfo${index}`} />
                 );
               }
             ) : <span className="spinner spinner-border  mt-4"></span>}

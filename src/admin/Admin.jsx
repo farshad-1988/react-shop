@@ -11,16 +11,16 @@ import { toast } from "react-toastify"
 
 
 const AdminApp = () => {
-  const {currentUser} = useContext(UserContext)
+  const { currentUser } = useContext(UserContext)
   const navigate = useNavigate()
 
-useEffect(()=>{
-  if(currentUser?.uid !== process.env.REACT_APP_ADMIN_UID){
-    return navigate("/")
-  }
-},[])
+  useEffect(() => {
+    if (currentUser?.uid !== process.env.REACT_APP_ADMIN_UID) {
+      return navigate("/")
+    }
+  }, [currentUser?.uid, navigate])
 
-return currentUser?.uid === process.env.REACT_APP_ADMIN_UID ? (
+  return currentUser?.uid === process.env.REACT_APP_ADMIN_UID ? (
     <Routes>
       <Route index element={<AdminHome />} />
       <Route path="addnewproduct" element={<AdminAddProduct />} />

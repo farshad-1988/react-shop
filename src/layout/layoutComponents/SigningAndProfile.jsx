@@ -7,11 +7,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { signInWithGoogle, signOutUser } from "../../firebase.config";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping, faHomeUser} from "@fortawesome/free-solid-svg-icons";
+import { faCartShopping, faHomeUser } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
 const SigningAndProfile = () => {
-  const { currentUser , setUserDoc} = useContext(UserContext);
+  const { currentUser, setUserDoc } = useContext(UserContext);
   const { cartDispatch, totalCountAndPrice, cartItems } = useContext(CartContext);
   const [beatUserIcon, setBeatUserIcon] = useState(false)
   const [shopIconBeat, setShopIconBeat] = useState("")
@@ -33,7 +33,7 @@ const SigningAndProfile = () => {
     if (window.confirm("confirm to signout ?") === true) {
       await signOutUser();
       cartDispatch({ type: "SET_CART_ITEMS", payload: [] });
-      cartDispatch({ type: "CHANGING_IN_CART" });
+      // cartDispatch({ type: "CHANGING_IN_CART" });
       navigate("/")
     }
   };
@@ -43,7 +43,7 @@ const SigningAndProfile = () => {
     setUserDoc(user.userInfo)
     user && toast.success(`welcome ${user.user.displayName}! ${!user.hasAddress ? "you are successfully logged in but we need more info for complete your registeration" : ""}`)
     user.newCart && cartDispatch({ type: "SET_CART_ITEMS", payload: user.newCart })
-    user.newCart && cartDispatch({ type: "CHANGING_IN_CART" });
+    // user.newCart && cartDispatch({ type: "CHANGING_IN_CART" });
     !user.hasAddress && navigate(`/edituserdata/${user.user.uid}`)
   }
 
@@ -74,7 +74,7 @@ const SigningAndProfile = () => {
               {totalCountAndPrice?.totalCount || 0}
             </span>
           </div>
-          </div>
+        </div>
         ) : (<div className="d-flex">
           <button className="btn btn-success d-flex" onClick={goToProfile} onMouseLeave={() => setBeatUserIcon(false)} onMouseEnter={() => setBeatUserIcon(true)}>
             {beatUserIcon ? <FontAwesomeIcon icon={faHomeUser} beat /> : <FontAwesomeIcon icon={faHomeUser} />}

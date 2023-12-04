@@ -1,4 +1,3 @@
-import { useCallback } from "react"
 import { useEffect } from "react"
 import { useState } from "react"
 import AdminInputImage from "./AdminInputImage"
@@ -13,17 +12,16 @@ import { ShopContext } from "../../context/ShopContext"
 import axios from "axios"
 
 
-const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
-    const [enableEditting, setEnableEdittng] = useState(false)
+const EdittingItem = ({ item, getEditedProductId, addedCategory }) => {
     const { name, countInStock, purchasedCount, category, price, imagesUrl, id, dateAdded, firstPicture } = { ...item }
-    const { categoriesTitle , dispatch } = useContext(ShopContext)
-    const editedInfo = { addedImagesUrl: [], editedName: name, editedCountInStock: countInStock, editedPurchasedCount: purchasedCount, editedCategory: category, editedPrice: price, editedImagesUrl: [...imagesUrl] }
-    const [editedItem, setEditedItem] = useState(Object.assign({}, editedInfo))
-    const [editedImagesUrl, seteditedImagesUrl] = useState([...imagesUrl])
+    const { categoriesTitle, dispatch } = useContext(ShopContext)
+    const [editedItem, setEditedItem] = useState(Object.assign({}, { addedImagesUrl: [], editedName: name, editedCountInStock: countInStock, editedPurchasedCount: purchasedCount, editedCategory: category, editedPrice: price, editedImagesUrl: [...imagesUrl] }))
     const { editedName, editedCountInStock, editedPurchasedCount, editedCategory, editedPrice, addedImagesUrl } = { ...editedItem }
     const [activeImageNum, setActiveImageNum] = useState(0)
     const [firstPictureInUi, setFirstPictureInUi] = useState(firstPicture)
     const [uploadingSpinner, setUploadingSpinner] = useState("")
+    const [enableEditting, setEnableEdittng] = useState(false)
+    const [editedImagesUrl, seteditedImagesUrl] = useState([...imagesUrl])
 
 
 
@@ -31,7 +29,7 @@ const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
         setEditedItem((prev) => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
-    const deletePic = (e) => {
+    const deletePic = () => {
         editedImagesUrl.splice(activeImageNum, 1)
         // nextPrevFunc()
         if (activeImageNum !== 0) setActiveImageNum((prev) => prev - 1)
@@ -99,7 +97,7 @@ const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
                         const newPath = `${editedCategory}/${id}/${ImageName}`
                         const newRef = ref(storage, newPath)
                         const response = await axios.get(url, { responseType: "blob" })
-                        await uploadBytes(newRef, response.data)    
+                        await uploadBytes(newRef, response.data)
                         return getDownloadURL(newRef)
                     } catch (error) {
                         return toast.error(error)
@@ -109,23 +107,23 @@ const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
                 try {
                     const dlUrls = await Promise.all(newDlUrlsPromise)
                     seteditedImagesUrl(dlUrls)
-                    
-                    await imagesUrl.map(async(url)=>await removePicFromDB(url))
+
+                    await imagesUrl.map(async (url) => await removePicFromDB(url))
                     await deleteDoc(oldDocRef)
                     const EDITEDCATEGORY = editedCategory.toLocaleUpperCase()
                     const newDocRef = doc(db, "PRODUCTS", EDITEDCATEGORY, EDITEDCATEGORY, id)
                     objToUpload = { imagesUrl: [...dlUrls], firstPicture: firstPictureInUi, name: editedName, category: editedCategory.trim().toLocaleLowerCase(), subCategory: editedCategory.trim().toLocaleLowerCase(), countInStock: +editedCountInStock, price: +editedPrice, purchasedCount: +editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), id, dateAdded, dateEdited: new Date() }
                     await setDoc(newDocRef, objToUpload)
-                    
+
                 } catch (error) {
                     console.log(error)
                 }
-                
+
 
                 if (!isEditedCatExist) {
                     const docRef = doc(db, "ADDITIONAL_INFO", "CATEGORIES")
                     await updateDoc(docRef, { categories: [...categoriesTitle, editedCategory] })
-                    dispatch({type:"ADD_CATEGORY_TO_DB" , payload:editedCategory})
+                    dispatch({ type: "ADD_CATEGORY_TO_DB", payload: editedCategory })
                     addedCategory(editedCategory)
                 }
                 toast.success("product edit successful")
@@ -140,7 +138,7 @@ const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
             await updateDoc(oldDocRef, { imagesUrl: [...editedImagesUrl, ...addedImagesUrl], name: editedName, countInStock: +editedCountInStock, price: +editedPrice, purchasedCount: +editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), dateEdited: new Date() })
             toast.success("product edit successful")
             setEnableEdittng(false)
-            objToUpload = { imagesUrl: [...editedImagesUrl , ...addedImagesUrl], firstPicture: firstPictureInUi, name: editedName, category: editedCategory.trim().toLocaleLowerCase(), subCategory: editedCategory.trim().toLocaleLowerCase(), countInStock: +editedCountInStock, price: +editedPrice, purchasedCount: +editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), id, dateAdded, dateEdited: new Date() }
+            objToUpload = { imagesUrl: [...editedImagesUrl, ...addedImagesUrl], firstPicture: firstPictureInUi, name: editedName, category: editedCategory.trim().toLocaleLowerCase(), subCategory: editedCategory.trim().toLocaleLowerCase(), countInStock: +editedCountInStock, price: +editedPrice, purchasedCount: +editedPurchasedCount, splittedName: editedName.toLocaleLowerCase().split(" "), id, dateAdded, dateEdited: new Date() }
             getEditedProductId(objToUpload)
         }
 
@@ -195,7 +193,7 @@ const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
     useEffect(() => {
         seteditedImagesUrl([...imagesUrl])
         // nextPrevFunc()
-    }, [enableEditting])
+    }, [enableEditting, imagesUrl])
 
 
 
@@ -288,7 +286,7 @@ const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
 
                 <div className="col-xl-3 col-12 ms-3 lh-base">
                     <p>product ID : {id}</p>
-                    {!enableEditting ? <div> <span className="text-primary">category:</span>{category}</div> : <div className="d-flex flex-column"><span>category</span><input disabled={addedImagesUrl.length} name="editedCategory" onChange={updateeditedItem} type="text" defaultValue={category} />{!categoriesTitle.find((category)=>category===editedCategory) && <p className="text-danger">{`you will create new category ${editedCategory}`}</p>}</div>}
+                    {!enableEditting ? <div> <span className="text-primary">category:</span>{category}</div> : <div className="d-flex flex-column"><span>category</span><input disabled={addedImagesUrl.length} name="editedCategory" onChange={updateeditedItem} type="text" defaultValue={category} />{!categoriesTitle.find((category) => category === editedCategory) && <p className="text-danger">{`you will create new category ${editedCategory}`}</p>}</div>}
                     {!enableEditting ? <div> <span className="text-primary">name:</span>{name}</div> : <div className="d-flex flex-column"><span>name</span><textarea name="editedName" onChange={updateeditedItem} type="text" defaultValue={name} /> </div>}
                     {!enableEditting ? <div> <span className="text-primary">price:</span>{price}$</div> : <div className="d-flex flex-column"><span>price</span><input name="editedPrice" onChange={updateeditedItem} type="text" defaultValue={price} /></div>}
                     {!enableEditting ? <div> <span className="text-primary">warehouse count:</span>{countInStock}</div> : <div className="d-flex flex-column"><span>count in stock</span><input name="editedCountInStock" onChange={updateeditedItem} type="text" defaultValue={countInStock} /></div>}
@@ -299,8 +297,8 @@ const EdittingItem = ({ item, getEditedProductId , addedCategory }) => {
                 <div className="col-xl-5 col-12 d-flex flex-column justify-content-between">
                     {enableEditting &&
                         <div>
-                            {category===editedCategory && <p className="text-center">add new picture</p>}
-                            {category===editedCategory ? <AdminInputImage items={{ category, id }} getImagesUrl={getImagesUrl} getFromImages={getFromImages} /> : <p className="text-danger mt-3 text-center">you can't change category and add picture at the same time</p>}
+                            {category === editedCategory && <p className="text-center">add new picture</p>}
+                            {category === editedCategory ? <AdminInputImage items={{ category, id }} getImagesUrl={getImagesUrl} getFromImages={getFromImages} /> : <p className="text-danger mt-3 text-center">you can't change category and add picture at the same time</p>}
                         </div>}
 
                     {/* <div className="col-3 align-self-end mt-4"> */}

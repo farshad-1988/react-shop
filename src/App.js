@@ -26,14 +26,7 @@ import PurchaseItemsDetailPage from "./pages/PurchaseItemsDetailPage";
 
 function App() {
   const {currentUser} = useContext(UserContext)
-  // useEffect(()=>{
 
-  //   const seasf = async()=>{
-  //     await setAllItemsOnFirestore(data)
-  //   }
-
-  //   seasf()
-  // },[])
   
   
 

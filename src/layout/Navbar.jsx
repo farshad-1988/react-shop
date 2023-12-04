@@ -1,16 +1,15 @@
-import react, { useContext, useEffect, useState } from "react";
+import react, { useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCartShopping, faX,
+  faX,
 } from "@fortawesome/free-solid-svg-icons";
 import "./navbar.css";
 import {
   getDocumentUser,
 } from "../firebase.config";
 import { UserContext } from "../context/UserContext";
-import { CartContext } from "../context/CartContext";
-import { toast } from "react-toastify";
+
 
 import homeLogo from "../svg/homeLogo"
 import SearchComponent from "./layoutComponents/SearchComponent";
@@ -20,6 +19,7 @@ import QueryResponsive from "../utilities/QueryResponsive";
 const Navbar = () => {
   const { currentUser, setUserDoc } = useContext(UserContext);
   const { lg, md } = QueryResponsive()
+  const navigate = useNavigate()
 
 
   // const queryResponsive = ()=>(
@@ -54,7 +54,7 @@ const Navbar = () => {
       setUserDoc(userInfo)
     };
     getUserInfo();
-  }, [currentUser]);
+  }, [currentUser, setUserDoc]);
 
 
   return (
@@ -68,9 +68,9 @@ const Navbar = () => {
           {(lg || window.location.pathname === "/") && <SearchComponent />}
           <div className={`d-flex justify-content-between mt-2 ${md && "w-100"}`}>
 
-            {(md && window.location.pathname !== "/") ? <Link to={"/"} className="align-self-center text-light">
+            {(md && window.location.pathname !== "/") ? <button onClick={() => navigate("/")} className="btn align-self-center text-light">
               <FontAwesomeIcon className="text-center text-danger" icon={faX} />
-            </Link> : <span> </span>}
+            </button> : <span> </span>}
 
             <div className="d-flex align-items-center ">
               <SigningAndProfile />

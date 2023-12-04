@@ -1,4 +1,4 @@
 1-when product info or category,... changed , products those are already in user cart will ramain intact --> on auth check purchased, and in auth cart if they are currect.
 2-on post items and purchased items disable every thing that user cant change state
-
 3-get certificate for key.pem with netlify
+4-firstPicture after an item removed or move to another place will get previos state

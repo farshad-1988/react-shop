@@ -5,7 +5,7 @@ const QueryResponsive =()=>{
         
         lg:useMediaQuery({ query: '(min-width: 1000px)' }),
         md:useMediaQuery({ query: '(max-width: 999px)' }),
-        sm:useMediaQuery({ query: '(min-width: 800px)' })
+        sm:useMediaQuery({ query: '(max-width: 800px)' })
     }}
 
 
