@@ -54,9 +54,9 @@ export const getDocumentUser = async (uid) => {
   return userInfo;
 };
 
-export const editDocumentUser = async (uid  ,name , lastName ,address , phoneNumber) => {
+export const editDocumentUser = async (uid, name, lastName, address, phoneNumber) => {
   const docRef = doc(db, "USERS", uid);
-  await updateDoc(docRef , {name , lastName ,address , phoneNumber});
+  await updateDoc(docRef, { name, lastName, address, phoneNumber });
   console.log("done");
 };
 
@@ -88,9 +88,9 @@ export const registerPurchasedItem = async (
   };
   const userDocRef = doc(db, "USERS", uid);
   await updateDoc(userDocRef, {
-    purchasedItems: arrayUnion({ purchasedItems, summaryPurchaseInfo ,cart:[]}),
+    purchasedItems: arrayUnion({ purchasedItems, summaryPurchaseInfo, cart: [] }),
   });
-  localStorage.setItem("cart" , JSON.stringify([]))
+  localStorage.setItem("cart", JSON.stringify([]))
 };
 
 export const signUpWithEmail = async (
@@ -121,9 +121,9 @@ export const signUpWithEmail = async (
       loginAt: serverTimestamp(),
       cart: currentCart,
       uid,
-      purchasedItems:[]
+      purchasedItems: []
     });
-    
+
   } catch (error) {
     console.log(error);
   }
@@ -147,14 +147,14 @@ export const syncLocalStorageDbAndContext = async (
     return [...currentCart];
   }
   const docRef = doc(db, "USERS", user.uid);
-  let newCart = currentCart.map((item)=>({...item , loading:false}))
-    await updateDoc(docRef, {
-      cart: newCart,
-      loginAt: serverTimestamp()
-    });
-    localStorage.setItem("cart", JSON.stringify([...newCart]));
-    return newCart;
-  }
+  let newCart = currentCart.map((item) => ({ ...item, loading: false }))
+  await updateDoc(docRef, {
+    cart: newCart,
+    loginAt: serverTimestamp()
+  });
+  localStorage.setItem("cart", JSON.stringify([...newCart]));
+  return newCart;
+}
 // };
 
 export const getCategoriesNameFromDB = async () => {
@@ -174,9 +174,9 @@ export const getCategoriesNameFromDB = async () => {
 
 
 export const searchFirestore = async (categories, text) => {
-  const CATEGORIES = categories.map((category)=>category.toLocaleUpperCase())
+  const CATEGORIES = categories.map((category) => category.toLocaleUpperCase())
   try {
-  const allItems = await CATEGORIES.map(async (category) => {
+    const allItems = await CATEGORIES.map(async (category) => {
       const colRef = collection(db, "PRODUCTS", category, category);
       const q = query(
         colRef,
@@ -196,7 +196,7 @@ export const searchFirestore = async (categories, text) => {
 };
 
 export const getThreeOfEachCat = async (categories) => {
-  const CATEGORIES = categories.map((category)=>category.toLocaleUpperCase())
+  const CATEGORIES = categories.map((category) => category.toLocaleUpperCase())
   const allItems = await CATEGORIES?.map(async (category) => {
     try {
       const colRef = collection(db, "PRODUCTS", category, category);
@@ -212,15 +212,15 @@ export const getThreeOfEachCat = async (categories) => {
   return await Promise.all(allItems);
 };
 
-export const getSingleCategoryItem = async (category , lastItem , sortType) => {
+export const getSingleCategoryItem = async (category, lastItem, sortType) => {
   category = category?.toLocaleUpperCase();
   const colRef = collection(db, "PRODUCTS", category, category);
-  
+
   let q
-  if(lastItem){
-    q = query(colRef, limit(5), orderBy(sortType[0], sortType[1]), startAfter(lastItem) );
-  }else{
-    q=query(colRef, limit(5) , orderBy(sortType[0], sortType[1]));
+  if (lastItem) {
+    q = query(colRef, limit(5), orderBy(sortType[0], sortType[1]), startAfter(lastItem));
+  } else {
+    q = query(colRef, limit(5), orderBy(sortType[0], sortType[1]));
   }
   const itemsSnapshot = await getDocs(q);
   return itemsSnapshot.docs
@@ -229,21 +229,18 @@ export const getSingleCategoryItem = async (category , lastItem , sortType) => {
 
 
 
-export const singleItemFullInfo = async(category , productId)=>{
-  const docRef = doc(db ,"PRODUCTS", category , category , productId)
+export const singleItemFullInfo = async (category, productId) => {
+  const docRef = doc(db, "PRODUCTS", category, category, productId)
   const snapShot = await getDoc(docRef)
-  const itemInfo =snapShot.data()
+  const itemInfo = snapShot.data()
   return itemInfo
 }
 
-const googleProvider = new GoogleAuthProvider()
-googleProvider.setCustomParameters({
-  prompt:"select_account"
-})
 
 
-const syncDataWhenSignIn = async(userSnapshot , currentCart , uid)=>{
-  const docRef = doc(db , "USERS" , uid)
+
+const syncDataWhenSignIn = async (userSnapshot, currentCart, uid) => {
+  const docRef = doc(db, "USERS", uid)
   let newCart;
   if (userSnapshot.exists()) {
     const userInfoOnDB = userSnapshot.data();
@@ -270,33 +267,39 @@ const syncDataWhenSignIn = async(userSnapshot , currentCart , uid)=>{
         return item;
       }
     });
-  }else {
-      newCart = [...currentCart];
-    }
-    await updateDoc(docRef, { cart: newCart, loginAt: serverTimestamp() });
-    localStorage.setItem("cart", JSON.stringify([...newCart]));
-    return [...newCart]
+  } else {
+    newCart = [...currentCart];
+  }
+  await updateDoc(docRef, { cart: newCart, loginAt: serverTimestamp() });
+  localStorage.setItem("cart", JSON.stringify([...newCart]));
+  return [...newCart]
 }
 
-export const signInWithGoogle = async (currentCart)=>{
-  const userCredetial = await signInWithPopup(auth , googleProvider)
-  const docRef = doc(db , "USERS" , userCredetial.user.uid)
+const googleProvider = new GoogleAuthProvider()
+googleProvider.setCustomParameters({
+  prompt: "select_account"
+})
+//userId signInWithGoogle and uid in signup!!!
+
+export const signInWithGoogle = async (currentCart) => {
+  const userCredetial = await signInWithPopup(auth, googleProvider)
+  const docRef = doc(db, "USERS", userCredetial.user.uid)
   const userSnapshot = await getDoc(docRef)
   let newCart
-  if(!userSnapshot.exists()){
-    const [name , lastName]= userCredetial.user.displayName.split(" ")
-    await setDoc(docRef , {cart:currentCart,purchasedItems:[],name , lastName,email:userCredetial.user.email , userId:userCredetial.user.uid , createAt:serverTimestamp() , loginAt:serverTimestamp()})
-  }else {
+  if (!userSnapshot.exists()) {
+    const [name, lastName] = userCredetial.user.displayName.split(" ")
+    await setDoc(docRef, { cart: currentCart, purchasedItems: [], name, lastName, email: userCredetial.user.email, userId: userCredetial.user.uid, createAt: serverTimestamp(), loginAt: serverTimestamp() })
+  } else {
     //duplicate code must check
     // await updateDoc(docRef , {cart:currentCart ,loginAt:serverTimestamp()})
-    newCart = await syncDataWhenSignIn(userSnapshot , currentCart , userCredetial.user.uid)
+    newCart = await syncDataWhenSignIn(userSnapshot, currentCart, userCredetial.user.uid)
   }
-  return userSnapshot.data()?.address ? {user:userCredetial.user , userInfo:userSnapshot.data(),hasAddress:true,newCart} : {user:userCredetial.user ,userInfo:userSnapshot.data(),hasAddress:false,newCart:false}
-  
+  return userSnapshot.data()?.address ? { user: userCredetial.user, userInfo: userSnapshot.data(), hasAddress: true, newCart } : { user: userCredetial.user, userInfo: userSnapshot.data(), hasAddress: false, newCart: false }
+
 }
 
 
-export const signInWithEmail = async (email, password , currentCart) => {
+export const signInWithEmail = async (email, password, currentCart) => {
   try {
     const userCredetial = await signInWithEmailAndPassword(
       auth,
@@ -307,8 +310,8 @@ export const signInWithEmail = async (email, password , currentCart) => {
     const userSnapshot = await getDoc(docRef);
 
 
-      const newCart = await syncDataWhenSignIn(userSnapshot , currentCart , userCredetial.user.uid)
-      return {newCart, userInfo:userSnapshot.data()}
+    const newCart = await syncDataWhenSignIn(userSnapshot, currentCart, userCredetial.user.uid)
+    return { newCart, userInfo: userSnapshot.data() }
   } catch (error) {
     alert(error);
   }
@@ -346,8 +349,8 @@ export const setAllItemsOnFirestore = async (data) => {
         category: object.title.toLocaleLowerCase(),
         subCategory: object.title.toLocaleLowerCase(),
         countInStock: 100,
-        purchasedCount:0,
-        dateAdded:new Date()
+        purchasedCount: 0,
+        dateAdded: new Date()
       });
     });
   });

@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { useState } from "react"
 import AdminInputImage from "./AdminInputImage"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faAngleLeft, faAngleRight, faCheck, faImage, faPanorama, faTrashCan, faX } from "@fortawesome/free-solid-svg-icons"
+import { faAngleLeft, faAngleRight, faCheck, faImage, faTrashCan } from "@fortawesome/free-solid-svg-icons"
 import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
 import { toast } from "react-toastify"
 import { deleteDoc, doc, setDoc, updateDoc } from "firebase/firestore"
@@ -276,7 +276,7 @@ const EdittingItem = ({ item, getEditedProductId, addedCategory }) => {
                         <img alt="product" className="rounded-3" width={300} height={300} src={editedImagesUrl[activeImageNum]} />
                         {firstPictureInUi === activeImageNum && <button className="btn text-success" style={{ position: "absolute", left: "270px", top: "30px" }}><FontAwesomeIcon size="xl" icon={faCheck} /></button>}
                         <div className="col-12 d-flex justify-content-between">
-                            <button className="btn border-0 text-primary" disabled={activeImageNum == 0 ? true : false} onClick={decrementImageNum}><FontAwesomeIcon icon={faAngleLeft} size="lg" /></button>
+                            <button className="btn border-0 text-primary" disabled={activeImageNum === 0 ? true : false} onClick={decrementImageNum}><FontAwesomeIcon icon={faAngleLeft} size="lg" /></button>
                             {enableEditting && <button className="btn text-danger" onClick={() => deletePic(imagesUrl[activeImageNum])}><FontAwesomeIcon icon={faTrashCan} size="lg" /></button>}
                             <button className="btn border-0 text-primary" disabled={editedImagesUrl.length === 1 || activeImageNum === editedImagesUrl.length - 1 ? true : false} onClick={incrementImageNum}><FontAwesomeIcon icon={faAngleRight} size="lg" /></button>
                         </div>

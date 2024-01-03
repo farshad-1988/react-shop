@@ -3,7 +3,7 @@ import { UserContext } from '../context/UserContext'
 import { CartContext } from '../context/CartContext'
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js"
 import axios from 'axios'
-import { registerPurchasedItem } from '../firebase.config'
+import { db, registerPurchasedItem } from '../firebase.config'
 import { format, sub } from 'date-fns'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -55,8 +55,10 @@ function Payment() {
     }
 
 
+
+
     try {
-      const response = await axios.post("/.netlify/functions/create-payment-intent", { cartItems, currentUser })
+      const response = await axios.post("/.netlify/functions/create-payment-intent", { totalPrice })
       const data = await response.data
 
       const clientSecret = data.paymentIntent.client_secret
@@ -75,6 +77,37 @@ function Payment() {
       } else if (paymentResult.paymentIntent.status === "succeeded") {
         toast.success("payment was successful")
       }
+
+      //decrement items from db products
+      await db.runTransaction(async (transaction) => {
+        let arrayOfDocRefAndCount = []
+
+        for (let item of cartItems) {
+
+          const docRef = db.collection("PRODUCTS").doc(item.category.toLocaleUpperCase()).collection(item.category.toLocaleUpperCase()).doc(item.id)
+
+
+
+          const purchasedItemDoc = await transaction.get(docRef);
+          if (!purchasedItemDoc) throw new Error("Document does not exist!");
+
+          const newCountInStock = purchasedItemDoc.data().countInStock - item.countInCart;
+          const newPurchasedCount = purchasedItemDoc.data().purchasedCount + item.countInCart;
+
+
+          if (newCountInStock <= 0) throw new Error("stock is not enough!");
+
+          arrayOfDocRefAndCount.push({ docRef, countInStock: newCountInStock, purchasedCount: newPurchasedCount })
+
+
+        }
+        for (let obj of arrayOfDocRefAndCount) {
+          transaction.update(obj.docRef, { countInStock: obj.countInStock, purchasedCount: obj.purchasedCount });
+        }
+      });
+
+      //register items that user bought
+
       await registerPurchasedItem(currentUser.uid, cartItems, { totalCountAndPrice }, deliveryDay)
       // await finalPay(currentUser ,cartItems)
       cartDispatch({ type: "SET_CART_ITEMS", payload: [] })

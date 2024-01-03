@@ -1,5 +1,5 @@
 import "./app.css"
-import { BrowserRouter as Router , Routes , Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Signup from "./pages/Signup";
@@ -17,6 +17,7 @@ import Admin from "./admin/Admin";
 import NavbarAdmin from "./admin/components/NavbarAdmin";
 import { UserContext } from "./context/UserContext";
 import PurchaseItemsDetailPage from "./pages/PurchaseItemsDetailPage";
+import GalleryShapePage from "./mobile/GalleryShapePage";
 // import { setAllItemsOnFirestore } from "./firebase.config";
 // import data from "./shop-data.js"
 
@@ -25,39 +26,39 @@ import PurchaseItemsDetailPage from "./pages/PurchaseItemsDetailPage";
 // const client = new QueryClient({})
 
 function App() {
-  const {currentUser} = useContext(UserContext)
+  const { currentUser } = useContext(UserContext)
 
-  
-  
+
+
 
 
   return (
     //add admin uid and secret of json file in cloud function in process env
     <Router>
-      {currentUser?.uid === process.env.REACT_APP_ADMIN_UID ? <NavbarAdmin/> :(<><NavTips/>
-        <Navbar/></>)}
-        
-        <Routes>
-          <Route path="/" element={<Home/>}/>
-          {/* <Route index element={<Navbar/>}/> */}
-          <Route path="/admin/*" element={<Admin/>}/>
+      {currentUser?.uid === process.env.REACT_APP_ADMIN_UID ? <NavbarAdmin /> : (<><NavTips />
+        <Navbar /></>)}
 
-          {/* <Route path="/adminproductedit" element={<AdminEditProduct/>}/> */}
-          <Route path="/profile/:userId" element={<Profile/>}/>
-          <Route path="/profile/:userId/edituserdata" element={<EditUserData/>}/>
-          <Route path="/profile/:userId/purchasedItems/:purchaseId" element={<PurchaseItemsDetailPage/>}/>
-            
+      <Routes>
+        <Route path="/" element={<Home />} />
+        {/* <Route index element={<Navbar/>}/> */}
+        <Route path="/admin/*" element={<Admin />} />
+        <Route path="/gallery/:category" element={<GalleryShapePage />} />
+        {/* <Route path="/adminproductedit" element={<AdminEditProduct/>}/> */}
+        <Route path="/profile/:userId" element={<Profile />} />
+        <Route path="/profile/:userId/edituserdata" element={<EditUserData />} />
+        <Route path="/profile/:userId/purchasedItems/:purchaseId" element={<PurchaseItemsDetailPage />} />
 
-          <Route path="/signin" element={<Signin/>}/>
-          <Route path="/signup" element={<Signup/>}/>
-          {/* <Route path="/editUserData"/> */}
-          <Route path="/category/:category" element={<CategoryPage/>}/>
-          <Route path="/:category/:productId" element={<SingleItem/>}/>
-          <Route path="/cart/:userId" element={<Cart/>}/>
-          <Route path="/searchedItems/:searchedWord" element={<ShowFoundItems/>}/>
-          <Route path="*" element={<NotFound/>}/>
-        </Routes>
-      </Router>
+
+        <Route path="/signin" element={<Signin />} />
+        <Route path="/signup" element={<Signup />} />
+        {/* <Route path="/editUserData"/> */}
+        <Route path="/category/:category" element={<CategoryPage />} />
+        <Route path="/:category/:productId" element={<SingleItem />} />
+        <Route path="/cart/:userId" element={<Cart />} />
+        <Route path="/searchedItems/:searchedWord" element={<ShowFoundItems />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 }
 
