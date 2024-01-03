@@ -10,6 +10,7 @@ import {
   or,
   orderBy,
   query,
+  runTransaction,
   serverTimestamp,
   setDoc,
   startAfter,
@@ -357,3 +358,38 @@ export const setAllItemsOnFirestore = async (data) => {
   await batch.commit();
   console.log("data uploaded");
 };
+
+
+
+
+export const decrementItemFromDbInPurchase = async (cart) => {
+  try {
+    await runTransaction(db, async (transaction) => {
+      let arrayOfDocRefAndCount = []
+
+
+      for (let item of cart) {
+
+        // const docRef = db.collection("PRODUCTS").doc(item.category.toLocaleUpperCase()).collection(item.category.toLocaleUpperCase()).doc(item.id)
+        const docRef = doc(db, "PRODUCTS", item.category.toLocaleUpperCase(), item.category.toLocaleUpperCase(), item.id)
+        const purchasedItemDoc = await transaction.get(docRef);
+        if (!purchasedItemDoc) throw new Error("Document does not exist!");
+
+        const newCountInStock = purchasedItemDoc.data().countInStock - item.countInCart;
+        const newPurchasedCount = purchasedItemDoc.data().purchasedCount + item.countInCart;
+
+
+        if (newCountInStock <= 0) throw new Error("stock is not enough!");
+
+        arrayOfDocRefAndCount.push({ docRef, countInStock: newCountInStock, purchasedCount: newPurchasedCount })
+      }
+
+      for (let obj of arrayOfDocRefAndCount) {
+        transaction.update(obj.docRef, { countInStock: obj.countInStock, purchasedCount: obj.purchasedCount });
+      }
+    });
+
+  } catch (error) {
+    console.log(error)
+  }
+}

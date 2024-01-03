@@ -3,7 +3,7 @@ import { UserContext } from '../context/UserContext'
 import { CartContext } from '../context/CartContext'
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js"
 import axios from 'axios'
-import { db, registerPurchasedItem } from '../firebase.config'
+import { decrementItemFromDbInPurchase, registerPurchasedItem } from '../firebase.config'
 import { format, sub } from 'date-fns'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -30,19 +30,23 @@ function Payment() {
 
 
 
-  // useEffect(()=>{
+  const registerItemsInDb = async () => {
+    try {
+      await decrementItemFromDbInPurchase(cartItems)
+      await registerPurchasedItem(currentUser.uid, cartItems, { totalCountAndPrice }, deliveryDay)
+      // await finalPay(currentUser ,cartItems)
+      cartDispatch({ type: "SET_CART_ITEMS", payload: [] })
+      // cartDispatch({ type: "CHANGING_IN_CART" })
+    } catch (error) {
+      console.log(error)
+      toast.error("there was an error in register items in doc")
+      return
+    }
+  }
 
-  //   const getUserInfo =async ()=>{
-  //     if(!currentUser) return
-  //     // {
-  //     //   return navigate("/signin")
-  //     // }
-  //     const userInfo = await getDocumentUser(currentUser.uid)
-  //     setUserDoc(userInfo)
-  //   } 
-  //   getUserInfo()
-  //   // return ()=>{console.log("first")}
-  // },[currentUser])
+
+
+
 
 
   const pay = async (e) => {
@@ -54,53 +58,9 @@ function Payment() {
       return
     }
 
-
-
-
     try {
       const response = await axios.post("/.netlify/functions/create-payment-intent", { totalPrice })
       const data = await response.data
-
-
-
-      //decrement items from db products
-      await db.runTransaction(async (transaction) => {
-        let arrayOfDocRefAndCount = []
-
-        for (let item of cartItems) {
-
-          const docRef = db.collection("PRODUCTS").doc(item.category.toLocaleUpperCase()).collection(item.category.toLocaleUpperCase()).doc(item.id)
-
-
-
-          const purchasedItemDoc = await transaction.get(docRef);
-          if (!purchasedItemDoc) throw new Error("Document does not exist!");
-
-          const newCountInStock = purchasedItemDoc.data().countInStock - item.countInCart;
-          const newPurchasedCount = purchasedItemDoc.data().purchasedCount + item.countInCart;
-
-
-          if (newCountInStock <= 0) throw new Error("stock is not enough!");
-
-          arrayOfDocRefAndCount.push({ docRef, countInStock: newCountInStock, purchasedCount: newPurchasedCount })
-
-
-        }
-        for (let obj of arrayOfDocRefAndCount) {
-          transaction.update(obj.docRef, { countInStock: obj.countInStock, purchasedCount: obj.purchasedCount });
-        }
-      });
-
-      //register items that user bought
-
-      await registerPurchasedItem(currentUser.uid, cartItems, { totalCountAndPrice }, deliveryDay)
-      // await finalPay(currentUser ,cartItems)
-      cartDispatch({ type: "SET_CART_ITEMS", payload: [] })
-      // cartDispatch({ type: "CHANGING_IN_CART" })
-      setUploadingSpinner("")
-      navigate(`/profile/${userId}`)
-      setUploadingSpinner("")
-
       const clientSecret = data.paymentIntent.client_secret
 
       const paymentResult = await stripe.confirmCardPayment(clientSecret, {
@@ -116,13 +76,16 @@ function Payment() {
         toast.error("there is a problem in payment")
         throw new Error("payment problem")
       } else if (paymentResult.paymentIntent.status === "succeeded") {
+        await registerItemsInDb()
+        setUploadingSpinner("")
+        navigate(`/profile/${userId}`)
         toast.success("payment was successful")
       }
-
     } catch (error) {
-      toast.error(error)
-      setUploadingSpinner("")
+      console.log(error)
     }
+
+    setUploadingSpinner("")
   }
 
 
