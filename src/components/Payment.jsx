@@ -61,22 +61,7 @@ function Payment() {
       const response = await axios.post("/.netlify/functions/create-payment-intent", { totalPrice })
       const data = await response.data
 
-      const clientSecret = data.paymentIntent.client_secret
 
-      const paymentResult = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-          billing_details: {
-            name: "farshad farazdel"
-          }
-        }
-      })
-      if (paymentResult.error) {
-        toast.error("there is a problem in payment")
-        throw new Error("payment problem")
-      } else if (paymentResult.paymentIntent.status === "succeeded") {
-        toast.success("payment was successful")
-      }
 
       //decrement items from db products
       await db.runTransaction(async (transaction) => {
@@ -115,6 +100,25 @@ function Payment() {
       setUploadingSpinner("")
       navigate(`/profile/${userId}`)
       setUploadingSpinner("")
+
+      const clientSecret = data.paymentIntent.client_secret
+
+      const paymentResult = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+          billing_details: {
+            name: "farshad farazdel"
+          }
+        }
+      })
+
+      if (paymentResult.error) {
+        toast.error("there is a problem in payment")
+        throw new Error("payment problem")
+      } else if (paymentResult.paymentIntent.status === "succeeded") {
+        toast.success("payment was successful")
+      }
+
     } catch (error) {
       toast.error(error)
       setUploadingSpinner("")
