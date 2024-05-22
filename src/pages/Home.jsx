@@ -35,8 +35,8 @@ const Home = () => {
                     </div>)}
                     <div className="slideshow-container middleItem">
                         {categoriesPageItems.map((category, index) => <div key={index} className={index === slideIndex && "fade"} style={{ display: `${index === slideIndex ? "block" : "none"}`, position: "relative" }}>
-                            <img className='w-100' src={category[0].imagesUrl[category[0].firstPicture]} alt={`${category[0].name}`} />
-                            <button onClick={() => { navigate(`/${category[0].category}/${category[0].id}`) }} className='btn btn-success' style={{ position: 'absolute', top: "2vh", left: "10px" }}>Order Now</button>
+                            <img className='w-100' src={category[1].imagesUrl[category[1].firstPicture]} alt={`${category[1].name}`} />
+                            <button onClick={() => { navigate(`/${category[1].category}/${category[1].id}`) }} className='btn btn-success' style={{ position: 'absolute', top: "2vh", left: "10px" }}>Order Now</button>
 
 
                             <div style={{ textAlign: "center", position: 'absolute', top: "10px", right: "10px" }}>
