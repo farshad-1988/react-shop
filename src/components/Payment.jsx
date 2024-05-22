@@ -8,7 +8,6 @@ import { format, sub } from 'date-fns'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import QueryResponsive from '../utilities/QueryResponsive'
-import "./components.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStripe } from '@fortawesome/free-brands-svg-icons'
 
@@ -88,7 +87,7 @@ function Payment() {
     setUploadingSpinner("")
   }
 
-
+  if (!currentUser) return
 
   return (
     <div className={`col-12 col-lg-6 rounded text-center m-auto mb-5 r-1 mt-3 ${lg && "position-fixed"} ff-payment-box`} >

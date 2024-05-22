@@ -1,11 +1,10 @@
 import ItemCounter from "./ItemCounter"
 import { useNavigate } from "react-router-dom"
-import "./components.css"
 
 
 
 const Item = ({ itemInfo }) => {
-    const { imagesUrl, price, countInStock, category, id,firstPicture } = { ...itemInfo }
+    const { imagesUrl, price, countInStock, category, id, firstPicture } = { ...itemInfo }
     const navigate = useNavigate()
 
     const goToSingleItem = () => {

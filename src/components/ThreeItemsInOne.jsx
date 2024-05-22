@@ -9,7 +9,7 @@ const ThreeItemsInOne = (props) => {
     const navigate = useNavigate()
 
     const goToCategory = () => {
-        navigate(`category/${threeItems[0]?.category}`)
+        navigate(`/category/${threeItems[0]?.category}`)
     }
 
 

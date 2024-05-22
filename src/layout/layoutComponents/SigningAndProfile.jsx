@@ -22,10 +22,9 @@ const SigningAndProfile = () => {
 
 
   const goToCart = () => {
-    if (currentUser) {
-      navigate(`/cart/${currentUser?.uid}`);
-    } else {
-      navigate("/signin");
+    navigate(`/cart/${currentUser?.uid}`);
+    if (!currentUser) {
+      // navigate("/signin");
       toast.error("please signin/signup before proceed to cart");
     }
   };
@@ -85,7 +84,6 @@ const SigningAndProfile = () => {
               onClick={goToCart}
               onMouseLeave={() => setShopIconBeat("")} onMouseEnter={() => setShopIconBeat("beat")}
             >
-              {/* onMouseEnter={(e)=>{e.target.setAttribute("class", "svg-inline--fa fa-house-user fa-beat-fade")}} onMouseLeave={(e)=>{e.target.setAttribute("className", "svg-inline--fa fa-house-user")}} */}
               {shopIconBeat ? <FontAwesomeIcon icon={faCartShopping} beat /> : <FontAwesomeIcon icon={faCartShopping} />}
             </button>
             <span className="badge rounded-pill bg-danger ff-badge">
@@ -107,6 +105,19 @@ const SigningAndProfile = () => {
             create an account
           </Link>
         </div>
+        <div className="me-1 ff-cart-icon-container ms-3" >
+          <button
+            className="btn btn-success d-flex flex-column-reverse"
+            onClick={goToCart}
+            onMouseLeave={() => setShopIconBeat("")} onMouseEnter={() => setShopIconBeat("beat")}
+          >
+            {shopIconBeat ? <FontAwesomeIcon icon={faCartShopping} beat /> : <FontAwesomeIcon icon={faCartShopping} />}
+          </button>
+          <span className="badge rounded-pill bg-danger ff-badge">
+            {totalCountAndPrice?.totalCount || 0}
+          </span>
+        </div>
+
       </div>
     )
 

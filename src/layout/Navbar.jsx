@@ -1,10 +1,9 @@
 import react, { useContext, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faX,
 } from "@fortawesome/free-solid-svg-icons";
-import "./navbar.css";
 import {
   getDocumentUser,
 } from "../firebase.config";
@@ -15,11 +14,19 @@ import homeLogo from "../svg/homeLogo"
 import SearchComponent from "./layoutComponents/SearchComponent";
 import SigningAndProfile from "./layoutComponents/SigningAndProfile";
 import QueryResponsive from "../utilities/QueryResponsive";
+import { ShopContext } from "../context/ShopContext";
 
 const Navbar = () => {
   const { currentUser, setUserDoc } = useContext(UserContext);
   const { lg, md } = QueryResponsive()
   const navigate = useNavigate()
+  const { category: selectedCategory } = useParams()
+  const { categoriesTitle } = useContext(ShopContext)
+  const location = useLocation()
+
+  // const navigate = useNavigate()
+
+
 
 
   // const queryResponsive = ()=>(
@@ -80,6 +87,13 @@ const Navbar = () => {
 
         </div>
       </nav>
+      <div>
+        <div className='d-flex justify-content-between'>
+          <div >{categoriesTitle.map((category, index) => <button key={index} onClick={() => navigate(`category/${category}`)} className={`btn user-select-none text-capitalize ${category === selectedCategory && "text-primary"}`}>{category}</button>)}</div>
+          <button onClick={() => navigate("/categories")} className={`btn ${location.pathname === "/categories" && "text-primary"}`}>All Categories</button>
+        </div>
+
+      </div>
     </react.Fragment>
   );
 };
