@@ -31,7 +31,7 @@ const Profile = () => {
 
   const sortedPurchased = allCompletedPurchase?.sort(
     (a, b) =>
-      b.summaryPurchaseInfo.purchasedAt - a.summaryPurchaseInfo.purchasedAt
+      b.summaryPurchaseInfo.purchasedAt - a.summaryPurchaseInfo.purchasedAt,
   );
   return (
     // <Routes>
@@ -70,7 +70,7 @@ const Profile = () => {
 
                 <button
                   disabled={!userDoc}
-                  className="btn btn-danger mt-3 w-100"
+                  className="btn btn-warning mt-3 w-100"
                   onClick={() => navigate(`editUserData`)}
                 >
                   edit
@@ -90,7 +90,7 @@ const Profile = () => {
                     key={`purchasedInfo${index}`}
                   />
                 );
-              }
+              },
             )
           ) : (
             <span className="spinner spinner-border  mt-4"></span>

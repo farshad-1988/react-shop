@@ -254,7 +254,7 @@ const CategorySection = ({ category, products }) => {
           onClick={() => {
             navigate(`/category/${category}`);
           }}
-          className="text-decoration-none fw-semibold d-flex align-items-center gap-2"
+          className="text-decoration-none fw-semibold d-flex align-items-center gap-2 bg-transparent border-0"
           style={{ color: "#667eea" }}
         >
           View All

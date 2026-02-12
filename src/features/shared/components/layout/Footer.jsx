@@ -221,7 +221,7 @@ const Footer = () => {
               </div>
               <button
                 type="submit"
-                className="btn btn-primary w-100 py-2 fw-semibold"
+                className="btn btn-warning w-100 py-2 fw-semibold"
               >
                 <i className="bi bi-send me-2"></i>Submit
               </button>
@@ -257,7 +257,7 @@ const Footer = () => {
         <div className="row mt-4 pt-4 border-top border-secondary">
           <div className="col-md-6 text-center text-md-start mb-3 mb-md-0">
             <p className="mb-0 text-light opacity-75">
-              © 2024 React Shop. All rights reserved.
+              © {new Date().getFullYear()} React Shop. All rights reserved.
             </p>
           </div>
           <div className="col-md-6 text-center text-md-end">

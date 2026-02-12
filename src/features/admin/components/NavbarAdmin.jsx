@@ -1,5 +1,5 @@
 import React from "react";
-import homeLogo from "../../../assets/svg/homeLogo";
+import homeLogo from "../../../assets/homeLogo.png";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -51,7 +51,7 @@ const NavbarAdmin = () => {
     const categories = await getCategoriesNameFromDB();
     const allFoundedItems = await searchFirestore(
       categories.categories,
-      searchText
+      searchText,
     );
     dispatch({ type: "SET_SEARCHED_ITEMS", payload: allFoundedItems });
     navigate(`/admin/admineditproductbysearch/${searchText}`);
@@ -66,7 +66,12 @@ const NavbarAdmin = () => {
             to={"/"}
             className="align-self-start ms-3 d-flex align-items-center"
           >
-            {homeLogo}
+            <img
+              src={homeLogo}
+              alt="Home Logo"
+              className="img-fluid bg-transparent"
+              style={{ width: "40px", height: "40px", objectFit: "contain" }}
+            />
           </Link>
         )}
 

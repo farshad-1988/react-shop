@@ -19,7 +19,7 @@ const Categories = () => {
   return loadingPage ? (
     <LoadingPageComponent />
   ) : (
-    <div className="row ms-3">
+    <div className="row mx-3 d-flex align-items-center justify-content-center">
       {categoriesPageItems?.map((threeItems, index) => {
         return <ThreeItemsInOne key={"home" + index} threeItems={threeItems} />;
       })}

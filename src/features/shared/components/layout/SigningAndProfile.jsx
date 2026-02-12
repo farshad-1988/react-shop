@@ -1,4 +1,3 @@
-import GoogleIcon from "../../../../assets/svg/GoogleIcon";
 import { useContext } from "react";
 import { UserContext } from "../../context/UserContext";
 import { CartContext } from "../../context/CartContext";
@@ -19,11 +18,12 @@ const SigningAndProfile = () => {
   const navigate = useNavigate();
 
   const goToCart = () => {
-    navigate(`/cart/${currentUser?.uid}`);
     if (!currentUser) {
-      // navigate("/signin");
       toast.error("please signin/signup before proceed to cart");
+      return;
     }
+    navigate(`/cart/${currentUser?.uid}`);
+    // navigate("/signin");
   };
   const logOut = async () => {
     if (window.confirm("confirm to signout ?") === true) {
@@ -32,23 +32,6 @@ const SigningAndProfile = () => {
       // cartDispatch({ type: "CHANGING_IN_CART" });
       navigate("/");
     }
-  };
-
-  const googleSignIn = async () => {
-    const user = await signInWithGoogle(cartItems);
-    setUserDoc(user.userInfo);
-    user &&
-      toast.success(
-        `welcome ${user.user.displayName}! ${
-          !user.hasAddress
-            ? "you are successfully logged in but we need more info for complete your registeration"
-            : ""
-        }`
-      );
-    user.newCart &&
-      cartDispatch({ type: "SET_CART_ITEMS", payload: user.newCart });
-    // user.newCart && cartDispatch({ type: "CHANGING_IN_CART" });
-    !user.hasAddress && navigate(`/edituserdata/${user.user.uid}`);
   };
 
   const goToProfile = () => {
@@ -85,7 +68,7 @@ const SigningAndProfile = () => {
       ) : (
         <div className="d-flex">
           <button
-            className="btn btn-primary d-flex"
+            className="btn btn-warning d-flex"
             onClick={goToProfile}
             onMouseLeave={() => setBeatUserIcon(false)}
             onMouseEnter={() => setBeatUserIcon(true)}
@@ -98,7 +81,7 @@ const SigningAndProfile = () => {
           </button>
           <div className="me-1 ff-cart-icon-container ms-3">
             <button
-              className="btn btn-primary d-flex flex-column-reverse"
+              className="btn btn-warning d-flex flex-column-reverse"
               onClick={goToCart}
               onMouseLeave={() => setShopIconBeat("")}
               onMouseEnter={() => setShopIconBeat("beat")}
@@ -117,10 +100,10 @@ const SigningAndProfile = () => {
       )}
     </div>
   ) : (
-    <div className="d-flex">
-      <button onClick={googleSignIn} className="btn p-1">
+    <div className="d-flex justify-content-center align-items-center">
+      {/* <button onClick={googleSignIn} className="btn p-1">
         <GoogleIcon />
-      </button>
+      </button> */}
       <div className="d-flex flex-column me-2">
         <Link to={"/signin"} className="text-end text-decoration-none ">
           sign in
@@ -134,7 +117,7 @@ const SigningAndProfile = () => {
       </div>
       <div className="me-1 ff-cart-icon-container ms-3">
         <button
-          className="btn btn-danger d-flex flex-column-reverse"
+          className="btn bg-warning d-flex flex-column-reverse"
           onClick={goToCart}
           onMouseLeave={() => setShopIconBeat("")}
           onMouseEnter={() => setShopIconBeat("beat")}
