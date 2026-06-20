@@ -416,13 +416,231 @@ const Navbar = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Add your search logic here
     console.log("Searching for:", searchQuery);
   };
 
+  // Reusable category dropdown JSX
+  const CategoryDropdown = () => (
+    <div
+      className="position-relative"
+      style={{ minWidth: lg ? "180px" : "120px" }}
+    >
+      <button
+        className="btn d-flex align-items-center justify-content-between w-100 gap-2"
+        onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
+        style={{
+          color: "#2C3E50",
+          fontSize: lg ? "0.95rem" : "0.85rem",
+          fontWeight: "600",
+          background: "#F8F9FA",
+          border: "1px solid #E8E8E8",
+          borderRadius: "10px",
+          padding: lg ? "0.6rem 1rem" : "0.5rem 0.75rem",
+          transition: "all 0.3s ease",
+        }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.background = "#E67E22";
+          e.currentTarget.style.borderColor = "#E67E22";
+          e.currentTarget.style.color = "#FFFFFF";
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.background = "#F8F9FA";
+          e.currentTarget.style.borderColor = "#E8E8E8";
+          e.currentTarget.style.color = "#2C3E50";
+        }}
+      >
+        <span className="text-truncate">
+          {selectedCategory || "Categories"}
+        </span>
+        <FontAwesomeIcon
+          icon={faChevronDown}
+          style={{
+            fontSize: "0.75rem",
+            transition: "transform 0.3s ease",
+            transform: categoryDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
+          }}
+        />
+      </button>
+
+      {categoryDropdownOpen && (
+        <>
+          <div
+            onClick={() => setCategoryDropdownOpen(false)}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 1035,
+            }}
+          />
+          <div
+            className="position-absolute mt-2 shadow-lg"
+            style={{
+              background: "#FFFFFF",
+              borderRadius: "12px",
+              minWidth: lg ? "220px" : "180px",
+              maxHeight: "400px",
+              overflowY: "auto",
+              zIndex: 1040,
+              left: 0,
+              border: "1px solid #E8E8E8",
+            }}
+          >
+            {categoriesTitle.map((category, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  navigate(`category/${category}`);
+                  setCategoryDropdownOpen(false);
+                }}
+                className="btn w-100 text-start text-capitalize"
+                style={{
+                  padding: lg ? "0.75rem 1rem" : "0.65rem 0.85rem",
+                  borderRadius: "0",
+                  background:
+                    category === selectedCategory ? "#FFF5EE" : "transparent",
+                  color: category === selectedCategory ? "#E67E22" : "#2C3E50",
+                  borderBottom:
+                    index < categoriesTitle.length - 1
+                      ? "1px solid #F0F0F0"
+                      : "none",
+                  fontWeight: category === selectedCategory ? "600" : "500",
+                  fontSize: lg ? "0.9rem" : "0.85rem",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseOver={(e) => {
+                  if (category !== selectedCategory) {
+                    e.currentTarget.style.background = "#FFF5EE";
+                    e.currentTarget.style.color = "#E67E22";
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (category !== selectedCategory) {
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.color = "#2C3E50";
+                  }
+                }}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+
+  // Reusable search JSX
+  const SearchBar = () => (
+    <div className="position-relative">
+      {!searchOpen ? (
+        <button
+          onClick={() => setSearchOpen(true)}
+          className="btn d-flex align-items-center justify-content-center"
+          style={{
+            width: "40px",
+            height: "40px",
+            borderRadius: "50%",
+            background: "#F8F9FA",
+            border: "1px solid #E8E8E8",
+            transition: "all 0.3s ease",
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = "#E67E22";
+            e.currentTarget.style.borderColor = "#E67E22";
+            e.currentTarget.querySelector("svg").style.color = "#FFFFFF";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = "#F8F9FA";
+            e.currentTarget.style.borderColor = "#E8E8E8";
+            e.currentTarget.querySelector("svg").style.color = "#2C3E50";
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faSearch}
+            style={{
+              color: "#2C3E50",
+              transition: "color 0.3s ease",
+              fontSize: "0.95rem",
+            }}
+          />
+        </button>
+      ) : (
+        <form
+          onSubmit={handleSearch}
+          className="btn d-flex align-items-center justify-content-center"
+          style={{
+            right: 0,
+            top: 0,
+            background: "#FFFFFF",
+            borderRadius: "25px",
+            border: "2px solid #E67E22",
+            padding: "0.25rem 0.5rem",
+            boxShadow: "0 4px 20px rgba(230, 126, 34, 0.2)",
+            width: lg ? "300px" : md ? "250px" : "220px",
+            animation: "slideIn 0.3s ease",
+            zIndex: 1050,
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faSearch}
+            style={{
+              color: "#E67E22",
+              marginLeft: "0.5rem",
+              fontSize: "0.9rem",
+            }}
+          />
+          <input
+            type="text"
+            className="form-control border-0 shadow-none"
+            placeholder="Search products..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            autoFocus
+            style={{
+              fontSize: "0.9rem",
+              padding: "0.5rem",
+              color: "#2C3E50",
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              setSearchOpen(false);
+              setSearchQuery("");
+            }}
+            className="btn p-0 d-flex align-items-center justify-content-center"
+            style={{
+              width: "30px",
+              height: "30px",
+              borderRadius: "50%",
+              background: "transparent",
+              border: "none",
+              transition: "all 0.2s ease",
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = "#FFF5EE";
+              e.currentTarget.style.transform = "rotate(90deg)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = "transparent";
+              e.currentTarget.style.transform = "rotate(0deg)";
+            }}
+          >
+            <FontAwesomeIcon
+              icon={faX}
+              style={{ color: "#E67E22", fontSize: "0.75rem" }}
+            />
+          </button>
+        </form>
+      )}
+    </div>
+  );
+
   return (
     <React.Fragment>
-      {/* Single Line Navbar */}
       <nav
         className="navbar navbar-expand sticky-top shadow-sm"
         style={{
@@ -432,15 +650,14 @@ const Navbar = () => {
         }}
       >
         <div className="container-fluid px-2 px-md-4 py-2">
-          <div className="d-flex align-items-center justify-content-between w-100 gap-2 gap-md-3">
+          {/* ── DESKTOP layout (md and up) ── */}
+          <div className="d-none d-md-flex align-items-center justify-content-between w-100 gap-2 gap-md-3">
             <div className="d-flex align-items-center justify-content-between gap-3">
               {/* Logo */}
               <Link
                 to={"/"}
                 className="navbar-brand d-flex align-items-center m-0 p-0"
-                style={{
-                  transition: "transform 0.2s ease",
-                }}
+                style={{ transition: "transform 0.2s ease" }}
                 onMouseOver={(e) => {
                   e.currentTarget.style.transform = "scale(1.05)";
                 }}
@@ -460,127 +677,7 @@ const Navbar = () => {
                 />
               </Link>
 
-              {/* Categories Dropdown */}
-              <div
-                className="position-relative"
-                style={{ minWidth: lg ? "180px" : "120px" }}
-              >
-                <button
-                  className="btn d-flex align-items-center justify-content-between w-100 gap-2"
-                  onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
-                  style={{
-                    color: "#2C3E50",
-                    fontSize: lg ? "0.95rem" : "0.85rem",
-                    fontWeight: "600",
-                    background: "#F8F9FA",
-                    border: "1px solid #E8E8E8",
-                    borderRadius: "10px",
-                    padding: lg ? "0.6rem 1rem" : "0.5rem 0.75rem",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background = "#E67E22";
-                    e.currentTarget.style.borderColor = "#E67E22";
-                    e.currentTarget.style.color = "#FFFFFF";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background = "#F8F9FA";
-                    e.currentTarget.style.borderColor = "#E8E8E8";
-                    e.currentTarget.style.color = "#2C3E50";
-                  }}
-                >
-                  <span className="text-truncate">
-                    {selectedCategory || "Categories"}
-                  </span>
-                  <FontAwesomeIcon
-                    icon={faChevronDown}
-                    style={{
-                      fontSize: "0.75rem",
-                      transition: "transform 0.3s ease",
-                      transform: categoryDropdownOpen
-                        ? "rotate(180deg)"
-                        : "rotate(0deg)",
-                    }}
-                  />
-                </button>
-
-                {/* Dropdown Menu */}
-                {categoryDropdownOpen && (
-                  <>
-                    {/* Backdrop */}
-                    <div
-                      onClick={() => setCategoryDropdownOpen(false)}
-                      style={{
-                        position: "fixed",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        zIndex: 1035,
-                      }}
-                    />
-
-                    <div
-                      className="position-absolute mt-2 shadow-lg"
-                      style={{
-                        background: "#FFFFFF",
-                        borderRadius: "12px",
-                        minWidth: lg ? "220px" : "180px",
-                        maxHeight: "400px",
-                        overflowY: "auto",
-                        zIndex: 1040,
-                        left: 0,
-                        border: "1px solid #E8E8E8",
-                      }}
-                    >
-                      {categoriesTitle.map((category, index) => (
-                        <button
-                          key={index}
-                          onClick={() => {
-                            navigate(`category/${category}`);
-                            setCategoryDropdownOpen(false);
-                          }}
-                          className="btn w-100 text-start text-capitalize"
-                          style={{
-                            padding: lg ? "0.75rem 1rem" : "0.65rem 0.85rem",
-                            borderRadius: "0",
-                            background:
-                              category === selectedCategory
-                                ? "#FFF5EE"
-                                : "transparent",
-                            color:
-                              category === selectedCategory
-                                ? "#E67E22"
-                                : "#2C3E50",
-                            borderBottom:
-                              index < categoriesTitle.length - 1
-                                ? "1px solid #F0F0F0"
-                                : "none",
-                            fontWeight:
-                              category === selectedCategory ? "600" : "500",
-                            fontSize: lg ? "0.9rem" : "0.85rem",
-                            transition: "all 0.2s ease",
-                          }}
-                          onMouseOver={(e) => {
-                            if (category !== selectedCategory) {
-                              e.currentTarget.style.background = "#FFF5EE";
-                              e.currentTarget.style.color = "#E67E22";
-                            }
-                          }}
-                          onMouseOut={(e) => {
-                            if (category !== selectedCategory) {
-                              e.currentTarget.style.background = "transparent";
-                              e.currentTarget.style.color = "#2C3E50";
-                            }
-                          }}
-                        >
-                          {category}
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
+              <CategoryDropdown />
 
               {/* All Categories Button */}
               <button
@@ -619,7 +716,8 @@ const Navbar = () => {
                 All Categories
               </button>
             </div>
-            {/* Greeting - Hidden on small screens */}
+
+            {/* Greeting */}
             <div className="d-none d-xl-flex align-items-center flex-grow-1 justify-content-center">
               {currentUser && (
                 <div
@@ -634,125 +732,56 @@ const Navbar = () => {
                 </div>
               )}
             </div>
-            {/* Spacer for responsive layout */}
+
             <div className="flex-grow-1 d-xl-none" />
 
-            {/* Right Section - Search & Profile */}
-            <div className="d-flex align-items-center gap-2 ">
-              {/* Search */}
-              <div className="position-relative">
-                {!searchOpen ? (
-                  <button
-                    onClick={() => setSearchOpen(true)}
-                    className="btn d-flex align-items-center justify-content-center"
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      borderRadius: "50%",
-                      background: "#F8F9FA",
-                      border: "1px solid #E8E8E8",
-                      transition: "all 0.3s ease",
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.background = "#E67E22";
-                      e.currentTarget.style.borderColor = "#E67E22";
-                      e.currentTarget.querySelector("svg").style.color =
-                        "#FFFFFF";
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.background = "#F8F9FA";
-                      e.currentTarget.style.borderColor = "#E8E8E8";
-                      e.currentTarget.querySelector("svg").style.color =
-                        "#2C3E50";
-                    }}
-                  >
-                    <FontAwesomeIcon
-                      icon={faSearch}
-                      style={{
-                        color: "#2C3E50",
-                        transition: "color 0.3s ease",
-                        fontSize: "0.95rem",
-                      }}
-                    />
-                  </button>
-                ) : (
-                  <form
-                    onSubmit={handleSearch}
-                    className="btn d-flex align-items-center justify-content-center"
-                    style={{
-                      right: 0,
-                      top: 0,
-                      background: "#FFFFFF",
-                      borderRadius: "25px",
-                      border: "2px solid #E67E22",
-                      padding: "0.25rem 0.5rem",
-                      boxShadow: "0 4px 20px rgba(230, 126, 34, 0.2)",
-                      width: lg ? "300px" : md ? "250px" : "220px",
-                      animation: "slideIn 0.3s ease",
-                      zIndex: 1050,
-                    }}
-                  >
-                    <FontAwesomeIcon
-                      icon={faSearch}
-                      style={{
-                        color: "#E67E22",
-                        marginLeft: "0.5rem",
-                        fontSize: "0.9rem",
-                      }}
-                    />
-                    <input
-                      type="text"
-                      className="form-control border-0 shadow-none"
-                      placeholder="Search products..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      autoFocus
-                      style={{
-                        fontSize: "0.9rem",
-                        padding: "0.5rem",
-                        color: "#2C3E50",
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSearchOpen(false);
-                        setSearchQuery("");
-                      }}
-                      className="btn p-0 d-flex align-items-center justify-content-center"
-                      style={{
-                        width: "30px",
-                        height: "30px",
-                        borderRadius: "50%",
-                        background: "transparent",
-                        border: "none",
-                        transition: "all 0.2s ease",
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.background = "#FFF5EE";
-                        e.currentTarget.style.transform = "rotate(90deg)";
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.background = "transparent";
-                        e.currentTarget.style.transform = "rotate(0deg)";
-                      }}
-                    >
-                      <FontAwesomeIcon
-                        icon={faX}
-                        style={{ color: "#E67E22", fontSize: "0.75rem" }}
-                      />
-                    </button>
-                  </form>
-                )}
-              </div>
-
-              {/* Profile Section */}
+            {/* Right: Search + Profile */}
+            <div className="d-flex align-items-center gap-2">
+              <SearchBar />
               <SigningAndProfile />
+            </div>
+          </div>
+
+          {/* ── MOBILE layout (below md) ── */}
+          <div className="d-flex d-md-none flex-column w-100 gap-2">
+            {/* Row 1: Logo + Profile */}
+            <div className="d-flex align-items-center justify-content-between">
+              <Link
+                to={"/"}
+                className="navbar-brand d-flex align-items-center m-0 p-0"
+                style={{ transition: "transform 0.2s ease" }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = "scale(1.05)";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+              >
+                <img
+                  src={homeLogo}
+                  alt="Home Logo"
+                  className="img-fluid bg-transparent"
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    objectFit: "contain",
+                  }}
+                />
+              </Link>
+              <SigningAndProfile />
+            </div>
+
+            {/* Row 2: Category + Search */}
+            <div className="d-flex align-items-center gap-2">
+              <div className="flex-grow-1">
+                <CategoryDropdown />
+              </div>
+              <SearchBar />
             </div>
           </div>
         </div>
       </nav>
-
+      {/* 
       <style jsx>{`
         @keyframes slideIn {
           from {
@@ -764,7 +793,7 @@ const Navbar = () => {
             transform: translateX(0);
           }
         }
-      `}</style>
+      `}</style> */}
     </React.Fragment>
   );
 };

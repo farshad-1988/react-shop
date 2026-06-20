@@ -242,7 +242,7 @@ function Payment() {
         currentUser.uid,
         cartItems,
         { totalCountAndPrice },
-        deliveryDay
+        deliveryDay,
       );
       cartDispatch({ type: "SET_CART_ITEMS", payload: [] });
     } catch (error) {
@@ -264,7 +264,7 @@ function Payment() {
     try {
       const response = await axios.post(
         "/.netlify/functions/create-payment-intent",
-        { totalPrice }
+        { totalPrice },
       );
       const data = await response.data;
       const clientSecret = data.paymentIntent.client_secret;
@@ -297,44 +297,49 @@ function Payment() {
   if (!currentUser) return;
 
   return (
-    <div className="col-12 col-lg-6">
+    <div className="col-12 col-lg-5">
       <div
         ref={paymentRef}
         className={isSticky ? "position-sticky" : ""}
         style={isSticky ? { top: "20px" } : {}}
       >
-        <div className="card shadow-lg border-0 rounded-4 overflow-hidden">
+        <div className="card shadow border-0 rounded-3 overflow-hidden">
           {/* Header with Stripe branding */}
           <div
-            className="card-header bg-gradient text-white "
+            className="card-header text-white py-2 px-3"
             style={{
               background: "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
             }}
           >
             <div className="d-flex align-items-center justify-content-between">
-              <h3 className="mb-0 fw-bold">Secure Checkout</h3>
+              <h5 className="mb-0 fw-bold">Checkout</h5>
               <FontAwesomeIcon
-                size="2xl"
+                size="lg"
                 icon={faStripe}
                 className="opacity-75"
               />
             </div>
           </div>
 
-          <div className="card-body p-4">
+          <div className="card-body p-3">
             {/* Order Summary */}
-            <div className="mb-4">
-              <h5 className="fw-semibold mb-3 text-secondary">Order Summary</h5>
-              <div className="bg-light rounded-3 p-3">
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <span className="text-muted">Items</span>
-                  <span className="badge bg-primary rounded-pill">
+            <div className="mb-3">
+              <h6 className="fw-semibold mb-2" style={{ fontSize: "0.9rem" }}>
+                Order Summary
+              </h6>
+              <div className="bg-light rounded-2 p-2">
+                <div className="d-flex justify-content-between align-items-center mb-1">
+                  <span className="text-muted small">Items</span>
+                  <span
+                    className="badge bg-primary rounded-pill"
+                    style={{ fontSize: "0.75rem" }}
+                  >
                     {totalCount}
                   </span>
                 </div>
-                <div className="d-flex justify-content-between align-items-center pt-2 border-top">
-                  <span className="fw-bold">Total Amount</span>
-                  <span className="fs-4 fw-bold text-success">
+                <div className="d-flex justify-content-between align-items-center pt-1 border-top">
+                  <span className="fw-semibold small">Total</span>
+                  <span className="fs-5 fw-bold text-success">
                     ${totalPrice}
                   </span>
                 </div>
@@ -342,64 +347,72 @@ function Payment() {
             </div>
 
             {/* Delivery Address */}
-            <div className="mb-4">
-              <h5 className="fw-semibold mb-3 text-secondary">
+            <div className="mb-3">
+              <h6 className="fw-semibold mb-2" style={{ fontSize: "0.9rem" }}>
                 Delivery Address
-              </h5>
+              </h6>
               {userDoc?.address ? (
-                <div className="bg-light rounded-3 p-3">
+                <div className="bg-light rounded-2 p-2">
                   <div className="d-flex align-items-start">
-                    <i className="bi bi-geo-alt-fill text-primary me-2 mt-1"></i>
+                    <i
+                      className="bi bi-geo-alt-fill text-primary me-2 mt-1"
+                      style={{ fontSize: "0.85rem" }}
+                    ></i>
                     <div>
-                      <p className="mb-1 fw-semibold">{userDoc.address.city}</p>
-                      <p className="mb-1 text-muted small">
-                        {userDoc.address.address1}
+                      <p className="mb-0 fw-semibold small">
+                        {userDoc.address.city}
                       </p>
-                      {userDoc.address.address2 && (
-                        <p className="mb-0 text-muted small">
-                          {userDoc.address.address2}
-                        </p>
-                      )}
+                      <p
+                        className="mb-0 text-muted"
+                        style={{ fontSize: "0.8rem" }}
+                      >
+                        {userDoc.address.address1}
+                        {userDoc.address.address2 &&
+                          `, ${userDoc.address.address2}`}
+                      </p>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div
-                  className="alert alert-warning border-0 rounded-3 d-flex align-items-center"
+                  className="alert alert-warning border-0 rounded-2 py-2 px-2 mb-0"
                   role="alert"
+                  style={{ fontSize: "0.8rem" }}
                 >
                   <i className="bi bi-exclamation-triangle-fill me-2"></i>
-                  <span>Please complete your profile info before payment</span>
+                  <span>Complete profile info before payment</span>
                 </div>
               )}
             </div>
 
             {/* Delivery Date Selection */}
-            <div className="mb-4">
-              <h5 className="fw-semibold mb-3 text-secondary">
-                Select Delivery Date
-              </h5>
+            <div className="mb-3">
+              <h6 className="fw-semibold mb-2" style={{ fontSize: "0.9rem" }}>
+                Delivery Date
+              </h6>
               <div className="dropdown w-100">
                 <button
                   type="button"
-                  className="btn btn-outline-primary w-100 d-flex justify-content-between align-items-center py-3 rounded-3"
+                  className="btn btn-outline-primary w-100 d-flex justify-content-between align-items-center py-2 rounded-2"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
+                  style={{ fontSize: "0.85rem" }}
                 >
                   <span className={deliveryDay ? "text-dark" : "text-muted"}>
                     <i className="bi bi-calendar-event me-2"></i>
-                    {deliveryDay || "Choose a delivery date"}
+                    {deliveryDay || "Choose delivery date"}
                   </span>
                   <i className="bi bi-chevron-down"></i>
                 </button>
-                <ul className="dropdown-menu w-100 shadow-sm border-0 rounded-3 mt-2">
+                <ul className="dropdown-menu w-100 shadow-sm border-0 rounded-2 mt-1">
                   {Array.from({ length: 5 }).map((item, index) => {
                     const date = sub(new Date(), { days: -index - 1 });
                     return (
                       <li key={`delivery_days_list${index}`}>
                         <button
                           onClick={() => setDeliveryDay(format(date, "PPPP"))}
-                          className="dropdown-item py-2 px-3 rounded-2"
+                          className="dropdown-item py-2 px-2"
+                          style={{ fontSize: "0.85rem" }}
                         >
                           <i className="bi bi-truck me-2 text-primary"></i>
                           {format(date, "PPPP")}
@@ -413,16 +426,16 @@ function Payment() {
 
             {/* Payment Form */}
             <form onSubmit={pay}>
-              <div className="mb-4">
-                <h5 className="fw-semibold mb-3 text-secondary">
+              <div className="mb-3">
+                <h6 className="fw-semibold mb-2" style={{ fontSize: "0.9rem" }}>
                   Payment Details
-                </h5>
-                <div className="border rounded-3 p-3 bg-white shadow-sm">
+                </h6>
+                <div className="border rounded-2 p-2 bg-white">
                   <CardElement
                     options={{
                       style: {
                         base: {
-                          fontSize: "16px",
+                          fontSize: "15px",
                           color: "#424770",
                           fontFamily: '"Segoe UI", Roboto, sans-serif',
                           fontSmoothing: "antialiased",
@@ -439,24 +452,28 @@ function Payment() {
                     }}
                   />
                 </div>
-                <div className="d-flex align-items-center mt-2 text-muted small">
-                  <i className="bi bi-shield-lock-fill me-2 text-success"></i>
-                  <span>Your payment information is encrypted and secure</span>
+                <div
+                  className="d-flex align-items-center mt-1 text-muted"
+                  style={{ fontSize: "0.75rem" }}
+                >
+                  <i className="bi bi-shield-lock-fill me-1 text-success"></i>
+                  <span>Encrypted & secure</span>
                 </div>
               </div>
 
               {/* Submit Button */}
-              <div className="d-grid gap-2">
+              <div className="d-grid">
                 <button
                   disabled={
                     cartItems?.length === 0 || !deliveryDay || !userDoc?.address
                   }
                   type="submit"
-                  className="btn btn-primary btn-lg py-3 rounded-3 fw-semibold position-relative"
+                  className="btn btn-primary py-2 rounded-2 fw-semibold"
                   style={{
                     background:
                       "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
                     border: "none",
+                    fontSize: "0.95rem",
                   }}
                 >
                   {uploadingSpinner ? (
@@ -465,23 +482,24 @@ function Payment() {
                         className="spinner-border spinner-border-sm me-2"
                         role="status"
                         aria-hidden="true"
+                        style={{ width: "1rem", height: "1rem" }}
                       ></span>
-                      Processing Payment...
+                      Processing...
                     </>
                   ) : (
                     <>
                       <i className="bi bi-lock-fill me-2"></i>
-                      Pay ${totalPrice} Now
+                      Pay ${totalPrice}
                     </>
                   )}
                 </button>
               </div>
 
-              {/* Security Badges */}
-              <div className="text-center mt-3">
-                <small className="text-muted">
+              {/* Security Badge */}
+              <div className="text-center mt-2">
+                <small className="text-muted" style={{ fontSize: "0.7rem" }}>
                   <i className="bi bi-shield-check me-1"></i>
-                  Secure SSL Encryption
+                  SSL Encrypted
                 </small>
               </div>
             </form>

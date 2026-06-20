@@ -112,7 +112,7 @@ const SigningAndProfile = () => {
           to={"/signup"}
           className="text-decoration-none border-top border-primary ff-font-12"
         >
-          create an account
+          register
         </Link>
       </div>
       <div className="me-1 ff-cart-icon-container ms-3">
